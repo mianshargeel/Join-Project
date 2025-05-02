@@ -1,0 +1,18 @@
+@import "../mixins.scss";
+
+app-header {
+    width: 100%;
+}
+
+.appContainer {
+    @include flex-center($align: flex-start, $justify: flex-start);
+    width: 100%;
+    max-width: 1920px;
+}
+
+.headerContentContainer {
+    @include flex-center($direction: column, $justify: flex-start);
+    align-self: stretch;
+    width: 100%;
+}
+

@@ -1,0 +1,406 @@
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  z-index: 99999;
+  overflow: hidden;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1212px;
+  height: 595px;
+  padding: 20px;
+  font-family: "Inter", sans-serif;
+  z-index: 10000;
+}
+.container.slide-in {
+  transform: translateX(100%);
+  opacity: 0;
+  animation: slideIn 0.4s ease-out forwards;
+}
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.contact-dialog {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 20px;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.left-panel {
+  width: 38%;
+  background-color: #2a3647;
+  color: white;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.left-panel .logo .join-ing {
+  width: 55.6px;
+  height: 66.48px;
+}
+
+ .vector-line {
+   display: block;
+ }
+.left-panel h2 {
+  font-size: 61px;
+  font-weight: 700;
+  margin-block-end: 0em;
+  margin-block-start: 0em;
+}
+
+.left-panel p {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+
+.right-panel {
+  width: 62%;
+  padding: 40px 60px;
+  position: relative;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-btn {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  font-size: 20px;
+  cursor: pointer;
+  img{
+    width: 13.15px;
+  }
+}
+
+.contact-form {
+  max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.form-body {
+  display: flex;
+  align-items: center;
+  gap: 70px;
+}
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.input-group {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  background: #f6f6f6;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0 10px;
+}
+.error-msg {
+  margin-top: -18px;
+}
+.error-msg span {
+  color: red;
+  font-size: 14px;
+}
+
+.input-group input {
+  border: none;
+  background: none;
+  padding: 12px;
+  flex: 1;
+  font-size: 16px;
+  outline: none;
+}
+input::placeholder {
+  color: #a9a9a9; 
+  opacity: 0.5; 
+  font-weight: 400;
+}
+
+.input-group span img{
+  color: #888;
+  font-size: 18px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.cancel-btn,
+.save-btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: white;
+  border: 1px solid #2a3647;
+  color: #2a3647;
+}
+
+.save-btn {
+  background: #2a3647;
+  color: white;
+}
+.save-btn {
+  &[disabled] {
+    background: #cccccc;
+    border-color: #cccccc;
+    cursor: not-allowed;
+
+    &:hover {
+      background: #cccccc;
+    }
+  }
+}
+@media screen and (max-width: 1209px) {
+  .left-panel h2 {
+    font-size: 56px;
+  }
+}
+@media screen and (max-width: 1132px) {
+  .left-panel h2 {
+    font-size: 44px;
+  }
+    .left-panel p {
+      font-size: 16px;
+    }
+}
+@media screen and (max-width: 999px) {
+  .cancel-btn,
+    .save-btn{
+      padding: 10px 15px;
+    }
+}
+
+@media screen and (max-width: 936px) {
+  .contact-dialog {
+    display: none;
+    
+  }
+}
+@media screen and (max-width: 936px) {
+  .contact-dialog {
+      display: block;
+      width: 396px;
+    }
+  .dialog-overlay {
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0px;
+    overflow-y: auto;
+    margin-top: 28px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin-top: 40px;
+    border-radius: 20px;
+    flex-direction: column;
+  }
+
+  .contact-dialog {
+    flex-direction: column;
+    height: auto;
+  }
+  .avatar{
+    width: 100px;
+    height: 100px;
+  }
+
+  .left-panel {
+    width: 100%;
+    height: 330px;
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+  }
+  h2{
+    font-size: 46px !important;
+  }
+  .left-panel .logo img{
+    display: none;
+  }
+  .vector-line{
+    display: block !important;
+  }
+
+  .right-panel {
+    width: 100%;
+    padding: 20px;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .avatar {
+    margin-top: -75px;
+    margin-bottom: 20px;
+  }
+
+  .form-body {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .form-fields {
+    width: 100%;
+    gap: 0px;
+  }
+
+  .input-group {
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .form-actions {
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 5px;
+    margin-bottom: 30px;
+  }
+
+  .cancel-btn {
+    display: none;
+  }
+
+  .close-btn {
+    top: -312px;
+    right: 25px;
+    color: white;
+    font-size: 16px;
+  }
+    .container.slide-in {
+      transform: translateY(100%);
+      opacity: 0;
+      animation: slideIn 0.4s ease-out forwards;
+}
+  
+    @keyframes slideIn {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+}
+    }
+}
+@media screen and (max-width: 450px) {
+  .right-panel {
+    height: 464px;
+  }
+  h2 {
+    font-size: 36px !important;
+  }
+  .left-panel{
+    padding: 0px 20px 0px;
+    height: 281px;
+  }
+  .left-panel p {
+    font-size: 16px;
+  }
+  .close-btn{
+    top: -260px;
+    right: 25px;
+  }
+  .save-btn{
+    margin-top: 24px;
+  }
+    .form-body {
+      flex-direction: column;
+      align-items: center;
+      gap: 38px;
+    }
+}
+@media screen and (max-width: 420px){
+  .contact-dialog{
+    width: 367px;
+  }
+}
+@media screen and (max-width: 390px) {
+  .contact-dialog {
+    width: 350px;
+  }
+}
+@media screen and (max-width: 370px) {
+  .contact-dialog {
+    width: 320px;
+  }
+}
+@media screen and (max-width: 340px) {
+  .contact-dialog {
+    width: 310px;
+  }
+}
+@media screen and (max-width: 330px) {
+  .contact-dialog {
+    width: 300px;
+  }
+}
+@media screen and (max-height: 668px) {
+  .contact-dialog {
+      width: 324px;
+    }
+        .close-btn {
+          top: -150px;
+          right: 25px;
+        }
+    .left-panel{
+              height: 168px;
+    }
+    .avatar{
+      display: none;
+    }
+    .right-panel{
+      height: 318px;
+    }
+}

@@ -1,0 +1,70 @@
+<nav class="navbarContainer" role="navigation" aria-label="Hauptnavigation">
+  <div class="logoAndMenuEl">
+    <div class="logo">
+      <img
+        class="logoJoin"
+        src="../../../assets/imgs/imgs_story1/LogoWhite.png"
+        alt="Join Logo"
+      />
+    </div>
+
+    <div class="menuElements">
+      <a
+        [routerLink]="['/summary']" routerLinkActive="active" 
+        class="nav-link"
+      >
+        <img
+          src="../../../assets/imgs/imgs_story1/Summary.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <span>Summary</span>
+      </a>
+
+      <a
+        [routerLink]="['/add-task']" routerLinkActive="active" 
+        class="nav-link"
+      >
+        <img
+          src="../../../assets/imgs/imgs_story1/addTask.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <span>Add Task</span>
+      </a>
+
+      <a
+        [routerLink]="['/board']" routerLinkActive="active" 
+        class="nav-link"
+      >
+        <img
+          src="../../../assets/imgs/imgs_story1/Board.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <span>Board</span>
+      </a>
+
+      <a
+        [routerLink]="['/contacts']" routerLinkActive="active" 
+        class="nav-link"
+      >
+        <img
+          src="../../../assets/imgs/imgs_story1/Contacts.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <span>Contacts</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="legal">
+    <a 
+      [routerLink]="['/privacy-policy']" routerLinkActive="active" 
+    >Privacy Policy</a>
+    <a 
+      [routerLink]="['/legal-notice']" routerLinkActive="active" 
+    >Legal notice</a>
+  </div>
+</nav>

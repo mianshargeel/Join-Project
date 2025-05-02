@@ -1,0 +1,55 @@
+<div class="dialog-overlay" (click)="onClose()">
+  <section class="container slide-in" (click)="$event.stopPropagation()">
+    <div class="contact-dialog">
+      <div class="left-panel">
+        <div class="logo">
+          <img class="join-ing" src="./../../../../assets/img/contact-dialog/contact-logo.png" alt="logo">
+          <h2>Edit contact</h2>
+          <p>Tasks are better with a team!</p>
+          <img class="vector-line" src="./../../../../assets/img/contact-dialog/Vector 5.png" alt="decor-line">
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <div class="close-btn" (click)="onClose()">X</div>
+
+        <form #editForm="ngForm" (ngSubmit)="onSave()" class="contact-form">
+          <div class="form-body">
+            <div class="avatar">
+              <div class="avatar-initials">{{ getInitials(contact.name) }}</div>
+            </div>
+
+            <div class="form-fields">
+              <div class="input-group">
+                <input type="text" [(ngModel)]="contact.name" name="name" placeholder="Name" minlength="3" #name="ngModel" pattern="^[a-zA-Z\s]*$" required />
+                <span><img src="./../../../../assets/img/contact-dialog/person.png" alt=""></span>
+              </div>
+               @if(!name.valid && name.touched) {
+                    <div class="error-msg"><span >please enter valid name</span></div>
+                  }
+              <div class="input-group">
+                <input type="email" [(ngModel)]="contact.mail" name="email" placeholder="Email" required #email="ngModel" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" />
+                <span><img src="./../../../../assets/img/contact-dialog/mail.png" alt=""></span>
+              </div>
+              @if(!email.valid && email.touched) {
+                    <div class="error-msg"><span >please enter valid email</span></div>
+                  }
+              <div class="input-group">
+                <input type="tel" [(ngModel)]="contact.phone" name="phone" placeholder="Phone" pattern="^(?:\+|00|0)[1-9]\d{6,14}$" #phone="ngModel" required />
+                <span><img src="./../../../../assets/img/contact-dialog/call.png" alt=""></span>
+              </div>
+              @if(!phone.valid && phone.touched) {
+                    <div class="error-msg"><span >please enter valid phone</span></div>
+                  }
+
+              <div class="form-actions">
+                <button type="button" class="delete-btn" (click)="onDelete()">Delete</button>
+                <button type="submit" class="save-btn" [disabled]="!editForm.form.valid">Save ✔</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</div>
