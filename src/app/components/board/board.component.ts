@@ -19,20 +19,35 @@ import { generateRandomColor } from '../../models/contact.model';
 
 export class BoardComponent {
   firebaseTaskService = inject(TaskService);
+  selectedTask: Task | null = null;
+  dialogOpen = false;
+  showDialog = false;
+
+  openDialog(task: Task) {
+    this.selectedTask = task;
+    this.dialogOpen = true;
+  }
+
+  closeDialog() {
+    this.dialogOpen = false;
+    this.selectedTask = null;
+  }
+
   private avatarColorCache: { [id: string]: string } = {};
+
 
   constructor(public firebaseService: FirebaseService) { }
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
   ngOnInit() {
-  this.firebaseTaskService.loadAllTasks();
+    this.firebaseTaskService.loadAllTasks();
 
-  this.firebaseTaskService.tasks$.subscribe((tasks) => {
-    this.firebaseTaskService.allTasks = tasks;
-    this.updateColumnsFromFirebase(); // Group tasks when they are actually loaded
-  });
-}
+    this.firebaseTaskService.tasks$.subscribe((tasks) => {
+      this.firebaseTaskService.allTasks = tasks;
+      this.updateColumnsFromFirebase(); // Group tasks when they are actually loaded
+    });
+  }
 
-   async deleteTask(taskId: string) {
+  async deleteTask(taskId: string) {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
   }
 
@@ -82,13 +97,13 @@ export class BoardComponent {
       const movedTask = event.container.data[event.currentIndex];
 
       // // Persist the new status in Firebase
-      // this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
-      //   status: columnTitle
-      // });
+      this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
+        status: columnTitle
+      });
     }
   }
 
-updateColumnsFromFirebase(): void {
+  updateColumnsFromFirebase(): void {
     // Clear columns
     this.columns.forEach(col => col.tasks = []);
 
@@ -107,13 +122,13 @@ updateColumnsFromFirebase(): void {
       }
     }
   }
-  
+
   getAvatarColor(id: string): string {
-  if (!this.avatarColorCache[id]) {
-    this.avatarColorCache[id] = generateRandomColor();
-  }
-  return this.avatarColorCache[id];
-} //This guarantees that each assigneeId always gets the same color every time Angular runs change detection.
+    if (!this.avatarColorCache[id]) {
+      this.avatarColorCache[id] = generateRandomColor();
+    }
+    return this.avatarColorCache[id];
+  } //This guarantees that each assigneeId always gets the same color every time Angular runs change detection.
 
 
   getConnectedColumns() {
@@ -129,6 +144,16 @@ updateColumnsFromFirebase(): void {
     const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
     if (!contact) return '?';
     return contact.name.split(' ').map(n => n[0]).join('');
+  }
+
+  emptyLabel(title: string): string {
+    switch (title.toLowerCase()) {
+      case 'to do': return 'No tasks to do';
+      case 'in progress': return 'No tasks in progress';
+      case 'await feedback': return 'No tasks awaiting feedback';
+      case 'done': return 'No tasks done';
+      default: return 'No tasks';
+    }
   }
 
 }
