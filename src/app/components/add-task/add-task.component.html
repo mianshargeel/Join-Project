@@ -96,6 +96,7 @@
       [(ngModel)]="subtasksInput"
       [readonly]="!isTyping"
       (click)="enableTyping()"
+      (keydown.enter)="confirmSubtask()"
       style="width: 100%; padding-right: 70px; box-sizing: border-box; padding: 16px;"
     />
     @if (!isTyping) {
@@ -127,6 +128,7 @@
                 <div style="position: relative; display: flex; align-items: center;">
                   <input
                     [(ngModel)]="editedSubtaskText"
+                    (keydown.enter)="saveEdit($index)" 
                     style="width: 100%; padding-right: 50px; padding-left: 10px; box-sizing: border-box; padding: 15px;"
                   />
                   <span
