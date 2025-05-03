@@ -1,3 +1,25 @@
+
+
+<p *ngIf="dialogOpen">Dialog should be open</p> 
+@if (dialogOpen && selectedTask) {
+  <app-task-dialog
+    [task]="selectedTask"
+    [assignees]="selectedAssignees"
+    (close)="closeDialog()">
+  </app-task-dialog>
+}
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="board-container">
     <div class="board-header-wrapper">
         <div class="board-header">
@@ -44,7 +66,7 @@
                 }
 
                 @for (task of column.tasks; track task.id) {
-                <div class="example-box" cdkDrag>
+                <div class="example-box" cdkDrag (click)="openDialog(task)">
                     <div class="task-category" [ngClass]="{
                         'user-story':      task.category.toLowerCase() === 'user story',
                         'technical-task':  task.category.toLowerCase() === 'technical task'
@@ -83,8 +105,8 @@
         }
     </div>
 </div>
-<!-- <button (click)="showDialog = true">open test dialog</button>
+<button (click)="showDialog = true">open test dialog</button>
 
 @if (showDialog) {
 <app-board-dialog (close)="showDialog = false"></app-board-dialog>
-} -->
+}

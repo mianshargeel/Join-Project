@@ -8,12 +8,13 @@ import { Task } from '../../interfaces/task';
 import { FormsModule } from '@angular/forms';
 import { generateRandomColor } from '../../models/contact.model';
 import { BoardDialogComponent } from './board-dialog/board-dialog.component';
+import { TaskDialogComponent } from './task-dialog/task-dialog.component';
 
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule, BoardDialogComponent],
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule, BoardDialogComponent, TaskDialogComponent],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss', './board.responsive.scss']
 })
@@ -23,10 +24,12 @@ export class BoardComponent {
   selectedTask: Task | null = null;
   dialogOpen = false;
   showDialog = false;
+  public selectedAssignees: { id: string, name: string, initials: string, color: string }[] = [];
 
   openDialog(task: Task) {
     this.selectedTask = task;
     this.dialogOpen = true;
+     this.selectedAssignees = this.getTaskAssignees(task);
   }
 
   closeDialog() {
@@ -156,6 +159,18 @@ export class BoardComponent {
       default: return 'No tasks';
     }
   }
+  //You want to pass enriched assignee info (name, initials, avatar color) to the dialog so it can display the full assignee details without having to re-implement logic from the BoardComponent
+  getTaskAssignees(task: Task) {
+  return task.assignees.map(id => {
+    const contact = this.firebaseTaskService.contactList.find(c => c.id === id);
+    return {
+      id,
+      name: contact ? contact.name : 'Unknown',
+      initials: this.getContactInitials(id),
+      color: this.getAvatarColor(id)
+    };
+  });
+}
 
 }
 
