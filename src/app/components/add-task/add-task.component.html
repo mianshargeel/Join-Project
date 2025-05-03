@@ -96,6 +96,7 @@
       [(ngModel)]="subtasksInput"
       [readonly]="!isTyping"
       (click)="enableTyping()"
+      (keydown.enter)="confirmSubtask()"
       style="width: 100%; padding-right: 70px; box-sizing: border-box; padding: 16px;"
     />
     @if (!isTyping) {
@@ -118,7 +119,7 @@
       <ul style="margin-top: 10px; padding-left: 20px;">
           @for (sub of addedSubtasks; track $index) {
             <li
-              style="position: relative; padding: 6px 40px 6px 6px; background: #f5f5f5; border-radius: 6px; margin-bottom: 6px;"
+              style="list-style: none; position: relative; padding: 6px 40px 6px 6px; background: #f5f5f5; border-radius: 6px; margin-bottom: 6px;"
               (mouseenter)="hoveredIndex = $index"
               (mouseleave)="hoveredIndex = -1"
             >
@@ -127,6 +128,7 @@
                 <div style="position: relative; display: flex; align-items: center;">
                   <input
                     [(ngModel)]="editedSubtaskText"
+                    (keydown.enter)="saveEdit($index)" 
                     style="width: 100%; padding-right: 50px; padding-left: 10px; box-sizing: border-box; padding: 15px;"
                   />
                   <span
@@ -136,7 +138,7 @@
                   <span
                     (click)="saveEdit($index)"
                     style="position: absolute; right: 10px; cursor: pointer; color: purple;"
-                  >✔️</span>
+                  >✔</span>
                 </div>
               } @else {
                 • {{ sub }}
