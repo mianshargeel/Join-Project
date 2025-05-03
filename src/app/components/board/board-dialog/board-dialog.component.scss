@@ -1,0 +1,50 @@
+/* full-screen semi-transparent backdrop */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .35);
+    animation: fade 250ms forwards;
+}
+
+/* the panel itself */
+.dialog {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translate(520px, -50%);
+    /* start off-screen */
+    width: 500px;
+    height: 500px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+    padding: 24px;
+    animation: slideIn 250ms forwards;
+}
+
+
+.close-dialog {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+
+@keyframes slideIn {
+    to {
+        transform: translate(0, -50%);
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

@@ -7,12 +7,13 @@ import { CommonModule } from '@angular/common';
 import { Task } from '../../interfaces/task';
 import { FormsModule } from '@angular/forms';
 import { generateRandomColor } from '../../models/contact.model';
+import { BoardDialogComponent } from './board-dialog/board-dialog.component';
 
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule],
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule, BoardDialogComponent],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss', './board.responsive.scss']
 })
