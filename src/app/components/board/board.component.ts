@@ -8,6 +8,7 @@ import { Task } from '../../interfaces/task';
 import { FormsModule } from '@angular/forms';
 import { generateRandomColor } from '../../models/contact.model';
 import { BoardDialogComponent } from './board-dialog/board-dialog.component';
+import { ContactInterface } from '../../interfaces/contact-interface';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class BoardComponent {
   showDialog = false;
   dragging = false;
   public selectedAssignees: { id: string, name: string, initials: string, color: string }[] = [];
+  contacts: ContactInterface[] = [];
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -38,8 +40,19 @@ export class BoardComponent {
   closeDialog() {
     this.dialogOpen = false;
     this.selectedTask = null;
-    this.firebaseTaskService.loadAllTasks(); //reloading tasks
+
+    this.firebaseTaskService.loadAllTasks();
+
+    // Wait briefly for Firebase to reload data
+    setTimeout(() => {
+      const updated = this.firebaseTaskService.allTasks.find(t => t.id === this.selectedTask?.id);
+      if (updated) {
+        this.selectedTask = updated;
+        this.dialogOpen = true; // reopen
+      }
+    }, 300);
   }
+
 
   private avatarColorCache: { [id: string]: string } = {};
 
@@ -48,6 +61,7 @@ export class BoardComponent {
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
   ngOnInit() {
     this.firebaseTaskService.loadAllTasks();
+    this.contacts = this.firebaseTaskService.contactList;
 
     this.firebaseTaskService.tasks$.subscribe((tasks) => {
       this.firebaseTaskService.allTasks = tasks;
@@ -59,24 +73,24 @@ export class BoardComponent {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
   }
 
-  async updateTask(taskId: string) {
-    const updatedData = {
-      title: 'Database',
-      priority: 'low',
-      status: 'in progress',
-    };
+  // async updateTask(taskId: string) {
+  //   const updatedData = {
+  //     title: 'Database',
+  //     priority: 'low',
+  //     status: 'in progress',
+  //   };
 
-    await this.firebaseTaskService.updateTaskInDatabase(taskId, updatedData);
-  }
+  //   await this.firebaseTaskService.updateTaskInDatabase(taskId, updatedData);
+  // }
 
-  async updateSubtask(taskId: string, subtaskId: string) {
-    const updatedSubtask = {
-      title: 'Creating Database',
-      isdone: false,
-    };
+  // async updateSubtask(taskId: string, subtaskId: string) {
+  //   const updatedSubtask = {
+  //     title: 'Creating Database',
+  //     isdone: false,
+  //   };
 
-    await this.firebaseTaskService.updateSubtaskInDatabase(taskId, subtaskId, updatedSubtask);
-  }
+  //   await this.firebaseTaskService.updateSubtaskInDatabase(taskId, subtaskId, updatedSubtask);
+  // }
 
   getContactNameById(id: string): string {
     let contact = this.firebaseTaskService.contactList.find(c => c.id === id);

@@ -84,8 +84,12 @@
     </div>
 </div>
 
-<div *ngIf="dialogOpen"></div>
+<!-- <div *ngIf="dialogOpen"></div> -->
 @if (dialogOpen && selectedTask) {
-<app-board-dialog [task]="selectedTask" [assignees]="selectedAssignees" (close)="closeDialog()">
-</app-board-dialog>
+    <app-board-dialog 
+    [task]="selectedTask" 
+    [assignees]="selectedAssignees" 
+    [contacts]="contacts"
+    (close)="closeDialog()">
+    </app-board-dialog>
 }
