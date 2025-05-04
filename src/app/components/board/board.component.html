@@ -1,34 +1,11 @@
-
-
-<p *ngIf="dialogOpen">Dialog should be open</p> 
-@if (dialogOpen && selectedTask) {
-  <app-task-dialog
-    [task]="selectedTask"
-    [assignees]="selectedAssignees"
-    (close)="closeDialog()">
-  </app-task-dialog>
-}
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="board-container">
     <div class="board-header-wrapper">
         <div class="board-header">
-            <!-- Title -->
+
             <div class="header-title">
                 Board
             </div>
 
-            <!-- Search + Add button -->
             <div class="header-controls">
                 <div class="search-bar">
                     <div class="search-input-wrapper">
@@ -46,13 +23,13 @@
             </div>
         </div>
     </div>
-    <!-- Card -->
+
     <div cdkDropListGroup class="content-container">
         @for (column of columns; track column.title) {
         <div class="example-container">
             <div class="column-header">
                 <h2>{{ column.title }}</h2>
-                @if (column.title !== 'Done') {<!-- Add task icon button -->
+                @if (column.title !== 'Done') {
                 <button class="add-column-btn">
                     <img src="/assets/img/board/add.svg" alt="Add Task" />
                 </button>
@@ -66,14 +43,15 @@
                 }
 
                 @for (task of column.tasks; track task.id) {
-                <div class="example-box" cdkDrag (click)="openDialog(task)">
+                <div class="example-box" cdkDrag (cdkDragStarted)="dragging = true" (cdkDragEnded)="dragging = false"
+                    (click)="openDialog(task)">
                     <div class="task-category" [ngClass]="{
                         'user-story':      task.category.toLowerCase() === 'user story',
                         'technical-task':  task.category.toLowerCase() === 'technical task'
                       }">{{ task.category }}</div>
                     <h3 class="task-title">{{ task.title }}</h3>
                     <p class="task-description">{{ task.description }}</p>
-                    <!-- Subtask -->
+
                     @if (task.subtasks.length > 0) {
                     <div class="subtasks-line">
                         <div class="subtasks-bar">
@@ -86,7 +64,7 @@
                         </span>
                     </div>
                     }
-                    <!-- Avatar + Initials -->
+
                     <div class="task-footer">
                         <div class="assignees">
                             @for (assigneeId of task.assignees; track assigneeId) {
@@ -95,7 +73,7 @@
                             </span>
                             }
                         </div>
-                        <!-- Priority -->
+
                         <span class="priority-badge {{task.priority}}">{{ task.priority }}</span>
                     </div>
                 </div>
@@ -105,8 +83,9 @@
         }
     </div>
 </div>
-<button (click)="showDialog = true">open test dialog</button>
 
-@if (showDialog) {
-<app-board-dialog (close)="showDialog = false"></app-board-dialog>
+<div *ngIf="dialogOpen"></div>
+@if (dialogOpen && selectedTask) {
+<app-board-dialog [task]="selectedTask" [assignees]="selectedAssignees" (close)="closeDialog()">
+</app-board-dialog>
 }
