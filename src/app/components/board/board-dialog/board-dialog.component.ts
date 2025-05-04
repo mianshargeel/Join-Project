@@ -1,6 +1,7 @@
 import { Component, inject, Input, Output, EventEmitter } from '@angular/core';
 import { Task } from '../../../interfaces/task';
 import { CommonModule } from '@angular/common';
+import { TaskService } from '../../../services/task.service';
 
 @Component({
   selector: 'app-board-dialog',
@@ -13,14 +14,15 @@ export class BoardDialogComponent {
   @Input() task!: Task;
   @Input() assignees: { id: string; name: string; initials: string; color: string }[] = [];
   @Output() close = new EventEmitter();
+  firebaseTaskService = inject(TaskService);
 
   onClose() {
     this.close.emit();
   }
 
   ngOnInit() {
-    console.log('Assigned IDs:', this.task.assignees);
-    console.log('TaskDialogComponent loaded with task:', this.task);
+    // console.log('Assigned IDs:', this.task.assignees);
+    // console.log('TaskDialogComponent loaded with task:', this.task);
   }
 
   priorityIcon(p: string) {
@@ -36,6 +38,12 @@ export class BoardDialogComponent {
       'user-story': key === 'user story',
       'technical-task': key === 'technical task'
     };
+  }
+
+  async onDelete() {
+    if (!this.task?.id) return;
+    await this.firebaseTaskService.deleteTaskByIdFromDatabase(this.task.id);
+    this.close.emit(); // close the dialog after deletion
   }
 
 }

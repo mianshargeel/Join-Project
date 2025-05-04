@@ -38,6 +38,7 @@ export class BoardComponent {
   closeDialog() {
     this.dialogOpen = false;
     this.selectedTask = null;
+    this.firebaseTaskService.loadAllTasks(); //reloading tasks
   }
 
   private avatarColorCache: { [id: string]: string } = {};
