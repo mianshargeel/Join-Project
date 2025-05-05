@@ -70,13 +70,20 @@
     <label>Due Date</label>
     <input type="date" [(ngModel)]="editableTask.duedate" name="dueDate" />
 
-   
-    <label class="section-label">Assigned to:</label>
+    <div class="form-group">
+    <label>Priority</label>
+      <div class="priority-buttons">
+        <button type="button" (click)="setPriority('urgent')" [class.active]="editableTask.priority === 'urgent'">Urgent </button>
+        <button type="button" (click)="setPriority('medium')" [class.active]="editableTask.priority === 'medium'">Medium </button>
+        <button type="button" (click)="setPriority('low')" [class.active]="editableTask.priority === 'low'">Low </button>
+      </div>
+    </div>
 
+
+    <label class="section-label">Assigned to:</label>
     <!-- Trigger to open dropdown -->
     <div class="dropdown-field" (click)="toggleDropdown()">
       <input type="text" readonly placeholder="Select contacts to assign" />
-      <!-- <img src="/assets/img/board/arrow-down.svg" class="dropdown-icon" /> -->
     </div>
 
     <!-- Dropdown with contact list -->

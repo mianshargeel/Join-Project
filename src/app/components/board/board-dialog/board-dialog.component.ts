@@ -108,7 +108,9 @@ export class BoardDialogComponent {
     return null;
   }
 
-
+  setPriority(level: 'urgent' | 'medium' | 'low') {
+    this.editableTask.priority = level;
+  }
 
   async submitEdit() {
     if (!this.task?.id) return;
@@ -126,7 +128,7 @@ export class BoardDialogComponent {
     duedate: dateValue,
     assignees: this.editableTask.assignees,
     status: this.task.status, 
-    priority: this.task.priority, 
+    priority: this.editableTask.priority, 
   };
 
     // Update the main task (without subtasks)
