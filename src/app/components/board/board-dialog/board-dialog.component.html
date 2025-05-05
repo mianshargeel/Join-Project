@@ -118,10 +118,78 @@
     </div>
 
 
-    <label>Subtasks</label>
-    @for (subtask of editableTask.subtasks; let i = $index; track subtask.id) {
-    <input [(ngModel)]="subtask.title" [name]="'subtask' + i" />
+    <div>
+  <label>Subtasks</label>
+
+  <!-- Subtask input field -->
+  <div style="position: relative; display: inline-block; width: 100%;">
+    <input
+      type="text"
+      name="editedSubtaskInput"
+      placeholder="Add new subtask"
+      [(ngModel)]="editedSubtaskInput"
+      [readonly]="!isTyping"
+      (click)="enableTyping()"
+      (keydown.enter)="confirmSubtask()"
+      style="width: 100%; padding-right: 70px; box-sizing: border-box; padding: 16px;"
+    />
+    @if (!isTyping) {
+      <span
+        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; color: purple;"
+        (click)="enableTyping()">＋</span>
     }
+    @if (isTyping) {
+      <span
+        style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"
+        (click)="cancelSubtask()">✕</span>
+      <span
+        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"
+        (click)="confirmSubtask()">✔</span>
+    }
+  </div>
+
+  <!-- Subtasks list -->
+  @if (editableTask.subtasks.length > 0) {
+    <ul style="margin-top: 10px; padding-left: 20px;">
+      @for (sub of editableTask.subtasks; let i = $index; track sub.id) {
+        <li
+          style="list-style: none; position: relative; padding: 6px 40px 6px 6px; background: #f5f5f5; border-radius: 6px; margin-bottom: 6px;"
+          (mouseenter)="hoveredSubtaskIndex = i"
+          (mouseleave)="hoveredSubtaskIndex = -1"
+        >
+          @if (subtaskEditIndex === i) {
+            <!-- Editable subtask -->
+            <div style="position: relative; display: flex; align-items: center;">
+              <input
+                name="editedSubtaskText"
+                [(ngModel)]="editedSubtaskText"
+                (keydown.enter)="saveEdit(i)" 
+                style="width: 100%; padding-right: 50px; padding-left: 10px; box-sizing: border-box; padding: 15px;"
+              />
+              <span
+                (click)="deleteSubtask(i)"
+                style="position: absolute; right: 30px; cursor: pointer; color: grey;"
+              >🗑️</span>
+              <span
+                (click)="saveEdit(i)"
+                style="position: absolute; right: 10px; cursor: pointer; color: purple;"
+              >✔</span>
+            </div>
+          } @else {
+            • {{ sub.title }}
+            @if (hoveredSubtaskIndex === i) {
+              <div style="position: absolute; top: 6px; right: 6px; display: flex; gap: 6px;">
+                <button (click)="startEdit(i)" style="border: none; background: transparent; cursor: pointer;">✏️</button>
+                <button (click)="deleteSubtask(i)" style="border: none; background: transparent; cursor: pointer;">🗑️</button>
+              </div>
+            }
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>
+
 
     <button type="submit">Save</button>
     <button type="button" (click)="disableEditMode()">Cancel</button>

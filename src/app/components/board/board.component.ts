@@ -27,6 +27,7 @@ export class BoardComponent {
   dragging = false;
   public selectedAssignees: { id: string, name: string, initials: string, color: string }[] = [];
   contacts: ContactInterface[] = [];
+  private avatarColorCache: { [id: string]: string } = {};
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -53,11 +54,8 @@ export class BoardComponent {
     }, 300);
   }
 
-
-  private avatarColorCache: { [id: string]: string } = {};
-
-
   constructor(public firebaseService: FirebaseService) { }
+
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
   ngOnInit() {
     this.firebaseTaskService.loadAllTasks();
@@ -72,25 +70,6 @@ export class BoardComponent {
   async deleteTask(taskId: string) {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
   }
-
-  // async updateTask(taskId: string) {
-  //   const updatedData = {
-  //     title: 'Database',
-  //     priority: 'low',
-  //     status: 'in progress',
-  //   };
-
-  //   await this.firebaseTaskService.updateTaskInDatabase(taskId, updatedData);
-  // }
-
-  // async updateSubtask(taskId: string, subtaskId: string) {
-  //   const updatedSubtask = {
-  //     title: 'Creating Database',
-  //     isdone: false,
-  //   };
-
-  //   await this.firebaseTaskService.updateSubtaskInDatabase(taskId, subtaskId, updatedSubtask);
-  // }
 
   getContactNameById(id: string): string {
     let contact = this.firebaseTaskService.contactList.find(c => c.id === id);
@@ -117,12 +96,13 @@ export class BoardComponent {
 
       const movedTask = event.container.data[event.currentIndex];
 
-      // // Persist the new status in Firebase
+      // Updating only the changed field
       this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
-        status: columnTitle
+        status: columnTitle.toLowerCase()
       });
     }
   }
+
 
   updateColumnsFromFirebase(): void {
     // Clear columns
