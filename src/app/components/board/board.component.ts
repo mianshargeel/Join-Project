@@ -29,6 +29,7 @@ export class BoardComponent {
   contacts: ContactInterface[] = [];
   searchTerm = ""; // Marian Search
   tasks = []; // Marian Search
+  private avatarColorCache: { [id: string]: string } = {};
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -42,66 +43,27 @@ export class BoardComponent {
   closeDialog() {
     this.dialogOpen = false;
     this.selectedTask = null;
-
-    this.firebaseTaskService.loadAllTasks();
-
-    // Wait briefly for Firebase to reload data
-    setTimeout(() => {
-      const updated = this.firebaseTaskService.allTasks.find(t => t.id === this.selectedTask?.id);
-      if (updated) {
-        this.selectedTask = updated;
-        this.dialogOpen = true; // reopen
-      }
-    }, 300);
   }
-
-
-  private avatarColorCache: { [id: string]: string } = {};
-
 
   constructor(public firebaseService: FirebaseService) { }
+
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
-  ngOnInit() {
-    this.firebaseTaskService.loadAllTasks();
-    this.contacts = this.firebaseTaskService.contactList;
+ ngOnInit() {
+  this.contacts = this.firebaseTaskService.contactList;
 
-    this.firebaseTaskService.tasks$.subscribe((tasks) => {
-        this.firebaseTaskService.allTasks = tasks;
-        this.updateColumnsFromFirebase(); // Group tasks when they are actually loaded
-    });
-  }
+  this.firebaseTaskService.tasks$.subscribe((tasks) => {
+    if (this.columns.every(col => col.tasks.length === 0)) {
+      this.firebaseTaskService.allTasks = tasks;
+      this.updateColumnsFromFirebase();
+    }
+  });
 
-  getFilteredTasks(){
-    let searchedTasks = [];
-    searchedTasks = this.firebaseTaskService.allTasks.filter(task =>
-      task.title.toLowerCase().includes(this.searchTerm) ||
-      task.description?.toLowerCase().includes(this.searchTerm));
-    console.log(searchedTasks);
-    
-  }
+  this.firebaseTaskService.loadAllTasks(); // set up realtime listener
+}
 
   async deleteTask(taskId: string) {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
   }
-
-  // async updateTask(taskId: string) {
-  //   const updatedData = {
-  //     title: 'Database',
-  //     priority: 'low',
-  //     status: 'in progress',
-  //   };
-
-  //   await this.firebaseTaskService.updateTaskInDatabase(taskId, updatedData);
-  // }
-
-  // async updateSubtask(taskId: string, subtaskId: string) {
-  //   const updatedSubtask = {
-  //     title: 'Creating Database',
-  //     isdone: false,
-  //   };
-
-  //   await this.firebaseTaskService.updateSubtaskInDatabase(taskId, subtaskId, updatedSubtask);
-  // }
 
   getContactNameById(id: string): string {
     let contact = this.firebaseTaskService.contactList.find(c => c.id === id);
@@ -128,12 +90,13 @@ export class BoardComponent {
 
       const movedTask = event.container.data[event.currentIndex];
 
-      // // Persist the new status in Firebase
+      // Updating only the changed field
       this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
-        status: columnTitle
+        status: columnTitle.toLowerCase()
       });
     }
   }
+
 
   updateColumnsFromFirebase(): void {
     // Clear columns
@@ -164,8 +127,12 @@ export class BoardComponent {
 
 
   getConnectedColumns() {
-    return this.columns.map(c => c.title);
-  }
+  return this.columns.map(c => this.normalizeId(c.title));
+}
+  //Taher for you: Fixed drag-and-drop error by assigning explicit id to each cdkDropList, ensuring they match the values returned by getConnectedColumns()
+  normalizeId(title: string) {
+  return title.toLowerCase().replace(/\s+/g, '-');
+}
 
   getCompletedSubtasksCount(task: Task): number {
     return task.subtasks.filter(sub => sub.isdone).length;
@@ -211,5 +178,41 @@ export class BoardComponent {
     }
   }
 
-}
+/**
+ * Updates a specific task within the board's columns when a subtask is modified (e.g., toggled complete).
+ * This ensures the task's visual representation (e.g., progress bar) is updated immediately in the UI.
+ *
+ * Steps:
+ * 1. Locates the task within its column using the task ID.
+ * 2. Deep clones the updated task to trigger Angular change detection.
+ * 3. Replaces the task in its column with the updated clone.
+ * 4. Replaces the entire column and columns array to force UI refresh.
+ *
+ * This method is triggered when the BoardDialogComponent emits a (taskUpdated) event.
+ */
 
+  handleTaskUpdate(updatedTask: Task) {
+    // console.log('Board received updated task:', updatedTask);
+    for (let colIndex = 0; colIndex < this.columns.length; colIndex++) { //looping through each column to find where this task currently exists (based on matching id).
+      const column = this.columns[colIndex];
+      const taskIndex = column.tasks.findIndex(t => t.id === updatedTask.id);
+
+      if (taskIndex !== -1) {
+        const clonedTask = JSON.parse(JSON.stringify(updatedTask));
+
+        const updatedTasks = [...column.tasks];
+        updatedTasks[taskIndex] = clonedTask;
+
+        this.columns[colIndex] = {
+          ...column,
+          tasks: updatedTasks
+        };
+
+        this.columns = [...this.columns];
+        break;
+      }
+    }
+  }
+
+
+}

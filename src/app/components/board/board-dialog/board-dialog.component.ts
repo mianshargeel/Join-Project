@@ -1,5 +1,5 @@
 import { Component, inject, Input, Output, EventEmitter } from '@angular/core';
-import { Task } from '../../../interfaces/task';
+import { Subtask, Task } from '../../../interfaces/task';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../services/task.service';
 import { ContactInterface } from '../../../interfaces/contact-interface';
@@ -27,6 +27,13 @@ export class BoardDialogComponent {
   generateInitials = generateInitials;
   generateRandomColor = generateRandomColor;
   dropdownOpen = false;
+  editedSubtaskInput = '';
+  editedSubtaskText = '';
+  subtaskEditIndex = -1;
+  hoveredSubtaskIndex = -1;
+  isTyping = false;
+  deletedSubtaskIds: string[] = [];
+  @Output() taskUpdated = new EventEmitter<Task>();
 
   onClose() {
     this.close.emit();
@@ -66,7 +73,7 @@ export class BoardDialogComponent {
     this.editableTask = structuredClone(this.task); // deep copy, This allows two-way binding in the edit form without affecting the original until saved.
     this.editableTask.assignees = this.editableTask.assignees ?? [];
     this.editMode = true;
-    console.log('edit mode clicked');
+    // console.log('edit mode clicked');
     
   }
 
@@ -135,20 +142,25 @@ export class BoardDialogComponent {
     await this.firebaseTaskService.updateTaskInDatabase(this.task.id, updatedTaskData);
 
     // Update subtasks individually in the subcollection
-    for (const subtask of  this.editableTask.subtasks) {
-      await this.firebaseTaskService.updateSubtaskInDatabase(this.task.id, subtask.id, {
-        title: subtask.title
-      });
-  }
+    for (const subtask of this.editableTask.subtasks) {
+      await this.firebaseTaskService.updateSubtaskInDatabase(
+        this.task.id,
+        subtask.id,
+        { title: subtask.title, isdone: subtask.isdone }
+      );
+    }
+    for (const subtaskId of this.deletedSubtaskIds) {
+      await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
+      // console.log('Subtask deleted:', subtaskId);
+    }
+
+    // Clear deleted list
+    this.deletedSubtaskIds = [];
 
   // Rebuild display-friendly assignee info for view mode
   this.assignees = this.getTaskAssignees({ ...this.editableTask, assignees: this.editableTask.assignees });
-
-  // Close edit mode
   this.disableEditMode();
-
-  // Let parent know to reload task list
-  this.close.emit();
+  this.close.emit();  // Let parent know to reload task list
 }
 
   onCheckboxChange(event: Event) {
@@ -188,6 +200,68 @@ export class BoardDialogComponent {
         color: this.getAvatarColor(id)
       };
     });
+  }
+// following functionality for edit-dialog subtasks
+  confirmSubtask() {
+    if (!this.editedSubtaskInput.trim()) return;
+
+    this.editableTask.subtasks.push({
+      id: '', // placeholder; Firestore will assign it later
+      title: this.editedSubtaskInput.trim(),
+      isdone: false
+    });
+
+    this.editedSubtaskInput = '';
+    this.isTyping = false;
+  }
+
+  cancelSubtask() {
+    this.editedSubtaskInput = '';
+    this.isTyping = false;
+  }
+
+  enableTyping() {
+    this.isTyping = true;
+  }
+
+  startEdit(index: number) {
+    this.subtaskEditIndex = index;
+    this.editedSubtaskText = this.editableTask.subtasks[index].title;
+  }
+
+  saveEdit(index: number) {
+    if (!this.editedSubtaskText.trim()) return;
+    
+    // console.log('Saving subtask at index', index, 'with new title:', this.editedSubtaskText);
+    this.editableTask.subtasks[index].title = this.editedSubtaskText.trim(); 
+    this.subtaskEditIndex = -1;
+    this.editedSubtaskText = '';
+  }
+
+  deleteSubtask(index: number) {
+    const deleted = this.editableTask.subtasks[index];
+
+    if (deleted.id) {
+      this.deletedSubtaskIds.push(deleted.id);
+    }
+    this.editableTask.subtasks.splice(index, 1); //UI update
+  }
+
+ async onSubtaskToggle(subtask: Subtask) {
+    if (!this.task) return;
+
+    try {
+      // Update in Firebase
+      await this.firebaseTaskService.updateSubtaskInDatabase(
+        this.task.id,
+        subtask.id,
+        { isdone: subtask.isdone }
+      );
+      // Emit updated task to parent
+      this.taskUpdated.emit({ ...this.task });
+    } catch (error) {
+      console.error('Error updating subtask in Firebase:', error);
+    }
   }
 
 }

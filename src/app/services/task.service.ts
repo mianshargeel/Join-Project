@@ -171,6 +171,17 @@ export class TaskService {
     await deleteDoc(doc(this.firestore, 'contacts', id));
   }
 
+  async deleteSubtaskFromDatabase(taskId: string, subtaskId: string) {
+    try {
+      const subtaskRef = doc(this.firestore, 'tasks', taskId, 'subtasks', subtaskId);
+      await deleteDoc(subtaskRef);
+      console.log('Subtask deleted from Firebase:', subtaskId);
+    } catch (error) {
+      console.error('Error deleting subtask:', error);
+    }
+  }
+
+
 
   ngOnDestroy() {
     if (this.unsubscribe) {
