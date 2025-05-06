@@ -169,5 +169,42 @@ export class BoardComponent {
     });
   }
 
+
+/**
+ * Updates a specific task within the board's columns when a subtask is modified (e.g., toggled complete).
+ * This ensures the task's visual representation (e.g., progress bar) is updated immediately in the UI.
+ *
+ * Steps:
+ * 1. Locates the task within its column using the task ID.
+ * 2. Deep clones the updated task to trigger Angular change detection.
+ * 3. Replaces the task in its column with the updated clone.
+ * 4. Replaces the entire column and columns array to force UI refresh.
+ *
+ * This method is triggered when the BoardDialogComponent emits a (taskUpdated) event.
+ */
+
+  handleTaskUpdate(updatedTask: Task) {
+    // console.log('Board received updated task:', updatedTask);
+    for (let colIndex = 0; colIndex < this.columns.length; colIndex++) { //looping through each column to find where this task currently exists (based on matching id).
+      const column = this.columns[colIndex];
+      const taskIndex = column.tasks.findIndex(t => t.id === updatedTask.id);
+
+      if (taskIndex !== -1) {
+        const clonedTask = JSON.parse(JSON.stringify(updatedTask));
+
+        const updatedTasks = [...column.tasks];
+        updatedTasks[taskIndex] = clonedTask;
+
+        this.columns[colIndex] = {
+          ...column,
+          tasks: updatedTasks
+        };
+
+        this.columns = [...this.columns];
+        break;
+      }
+    }
+  }
+
 }
 

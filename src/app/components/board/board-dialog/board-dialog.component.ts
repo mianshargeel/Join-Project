@@ -1,5 +1,5 @@
 import { Component, inject, Input, Output, EventEmitter } from '@angular/core';
-import { Task } from '../../../interfaces/task';
+import { Subtask, Task } from '../../../interfaces/task';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../services/task.service';
 import { ContactInterface } from '../../../interfaces/contact-interface';
@@ -33,6 +33,7 @@ export class BoardDialogComponent {
   hoveredSubtaskIndex = -1;
   isTyping = false;
   deletedSubtaskIds: string[] = [];
+  @Output() taskUpdated = new EventEmitter<Task>();
 
   onClose() {
     this.close.emit();
@@ -238,14 +239,29 @@ export class BoardDialogComponent {
   }
 
   deleteSubtask(index: number) {
-  const deleted = this.editableTask.subtasks[index];
+    const deleted = this.editableTask.subtasks[index];
 
-  if (deleted.id) {
-    this.deletedSubtaskIds.push(deleted.id);
+    if (deleted.id) {
+      this.deletedSubtaskIds.push(deleted.id);
+    }
+    this.editableTask.subtasks.splice(index, 1); //UI update
   }
 
-  this.editableTask.subtasks.splice(index, 1); // ✅ UI update
-}
+ async onSubtaskToggle(subtask: Subtask) {
+    if (!this.task) return;
 
+    try {
+      // Update in Firebase
+      await this.firebaseTaskService.updateSubtaskInDatabase(
+        this.task.id,
+        subtask.id,
+        { isdone: subtask.isdone }
+      );
+      // Emit updated task to parent
+      this.taskUpdated.emit({ ...this.task });
+    } catch (error) {
+      console.error('Error updating subtask in Firebase:', error);
+    }
+  }
 
 }

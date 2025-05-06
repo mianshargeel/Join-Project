@@ -89,6 +89,8 @@
     [task]="selectedTask" 
     [assignees]="selectedAssignees" 
     [contacts]="contacts"
-    (close)="closeDialog()">
+    (close)="closeDialog()"
+    (taskUpdated)="handleTaskUpdate($event)"
+    >
     </app-board-dialog>
 }

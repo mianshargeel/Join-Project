@@ -39,7 +39,12 @@
             <div class="subtasks-list">
                 @for (sub of task.subtasks; track sub.id) {
                 <label class="subtask">
-                    <input type="checkbox" [checked]="sub.isdone" disabled>
+                    <input
+                        type="checkbox"
+                        [(ngModel)]="sub.isdone"
+                        [ngModelOptions]="{ standalone: true }"
+                        (change)="onSubtaskToggle(sub)"
+                      >
                     <span>{{ sub.title }}</span>
                 </label>
                 }
