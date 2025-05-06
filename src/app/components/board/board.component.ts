@@ -48,18 +48,18 @@ export class BoardComponent {
   constructor(public firebaseService: FirebaseService) { }
 
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
- ngOnInit() {
-  this.contacts = this.firebaseTaskService.contactList;
+  ngOnInit() {
+    this.contacts = this.firebaseTaskService.contactList;
 
-  this.firebaseTaskService.tasks$.subscribe((tasks) => {
-    if (this.columns.every(col => col.tasks.length === 0)) {
-      this.firebaseTaskService.allTasks = tasks;
-      this.updateColumnsFromFirebase();
-    }
-  });
+    this.firebaseTaskService.tasks$.subscribe((tasks) => {
+      if (this.columns.every(col => col.tasks.length === 0)) {
+        this.firebaseTaskService.allTasks = tasks;
+        this.updateColumnsFromFirebase();
+      }
+    });
 
-  this.firebaseTaskService.loadAllTasks(); // set up realtime listener
-}
+    this.firebaseTaskService.loadAllTasks(); // set up realtime listener
+  }
 
   async deleteTask(taskId: string) {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
@@ -127,12 +127,12 @@ export class BoardComponent {
 
 
   getConnectedColumns() {
-  return this.columns.map(c => this.normalizeId(c.title));
-}
+    return this.columns.map(c => this.normalizeId(c.title));
+  }
   //Taher for you: Fixed drag-and-drop error by assigning explicit id to each cdkDropList, ensuring they match the values returned by getConnectedColumns()
   normalizeId(title: string) {
-  return title.toLowerCase().replace(/\s+/g, '-');
-}
+    return title.toLowerCase().replace(/\s+/g, '-');
+  }
 
   getCompletedSubtasksCount(task: Task): number {
     return task.subtasks.filter(sub => sub.isdone).length;
@@ -178,18 +178,18 @@ export class BoardComponent {
     }
   }
 
-/**
- * Updates a specific task within the board's columns when a subtask is modified (e.g., toggled complete).
- * This ensures the task's visual representation (e.g., progress bar) is updated immediately in the UI.
- *
- * Steps:
- * 1. Locates the task within its column using the task ID.
- * 2. Deep clones the updated task to trigger Angular change detection.
- * 3. Replaces the task in its column with the updated clone.
- * 4. Replaces the entire column and columns array to force UI refresh.
- *
- * This method is triggered when the BoardDialogComponent emits a (taskUpdated) event.
- */
+  /**
+   * Updates a specific task within the board's columns when a subtask is modified (e.g., toggled complete).
+   * This ensures the task's visual representation (e.g., progress bar) is updated immediately in the UI.
+   *
+   * Steps:
+   * 1. Locates the task within its column using the task ID.
+   * 2. Deep clones the updated task to trigger Angular change detection.
+   * 3. Replaces the task in its column with the updated clone.
+   * 4. Replaces the entire column and columns array to force UI refresh.
+   *
+   * This method is triggered when the BoardDialogComponent emits a (taskUpdated) event.
+   */
 
   handleTaskUpdate(updatedTask: Task) {
     // console.log('Board received updated task:', updatedTask);

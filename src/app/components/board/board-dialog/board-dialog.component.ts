@@ -45,8 +45,8 @@ export class BoardDialogComponent {
   }
 
   toggleDropdown() {
-  this.dropdownOpen = !this.dropdownOpen;
-}
+    this.dropdownOpen = !this.dropdownOpen;
+  }
 
   priorityIcon(p: string) {
     switch (p.toLowerCase()) {
@@ -74,7 +74,7 @@ export class BoardDialogComponent {
     this.editableTask.assignees = this.editableTask.assignees ?? [];
     this.editMode = true;
     // console.log('edit mode clicked');
-    
+
   }
 
   disableEditMode() {
@@ -130,13 +130,13 @@ export class BoardDialogComponent {
     }
 
     const updatedTaskData: Partial<Task> = {
-    title: this.editableTask.title,
-    description: this.editableTask.description,
-    duedate: dateValue,
-    assignees: this.editableTask.assignees,
-    status: this.task.status, 
-    priority: this.editableTask.priority, 
-  };
+      title: this.editableTask.title,
+      description: this.editableTask.description,
+      duedate: dateValue,
+      assignees: this.editableTask.assignees,
+      status: this.task.status,
+      priority: this.editableTask.priority,
+    };
 
     // Update the main task (without subtasks)
     await this.firebaseTaskService.updateTaskInDatabase(this.task.id, updatedTaskData);
@@ -157,11 +157,11 @@ export class BoardDialogComponent {
     // Clear deleted list
     this.deletedSubtaskIds = [];
 
-  // Rebuild display-friendly assignee info for view mode
-  this.assignees = this.getTaskAssignees({ ...this.editableTask, assignees: this.editableTask.assignees });
-  this.disableEditMode();
-  this.close.emit();  // Let parent know to reload task list
-}
+    // Rebuild display-friendly assignee info for view mode
+    this.assignees = this.getTaskAssignees({ ...this.editableTask, assignees: this.editableTask.assignees });
+    this.disableEditMode();
+    this.close.emit();  // Let parent know to reload task list
+  }
 
   onCheckboxChange(event: Event) {
     const checkbox = event.target as HTMLInputElement;
@@ -185,7 +185,7 @@ export class BoardDialogComponent {
     return this.avatarColors[contactId];
   }
 
-  getContactInitials(contactId: string): string { 
+  getContactInitials(contactId: string): string {
     const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
     return contact ? generateInitials(contact.name) : '?';
   }
@@ -201,7 +201,7 @@ export class BoardDialogComponent {
       };
     });
   }
-// following functionality for edit-dialog subtasks
+  // following functionality for edit-dialog subtasks
   confirmSubtask() {
     if (!this.editedSubtaskInput.trim()) return;
 
@@ -231,9 +231,9 @@ export class BoardDialogComponent {
 
   saveEdit(index: number) {
     if (!this.editedSubtaskText.trim()) return;
-    
+
     // console.log('Saving subtask at index', index, 'with new title:', this.editedSubtaskText);
-    this.editableTask.subtasks[index].title = this.editedSubtaskText.trim(); 
+    this.editableTask.subtasks[index].title = this.editedSubtaskText.trim();
     this.subtaskEditIndex = -1;
     this.editedSubtaskText = '';
   }
@@ -247,7 +247,7 @@ export class BoardDialogComponent {
     this.editableTask.subtasks.splice(index, 1); //UI update
   }
 
- async onSubtaskToggle(subtask: Subtask) {
+  async onSubtaskToggle(subtask: Subtask) {
     if (!this.task) return;
 
     try {

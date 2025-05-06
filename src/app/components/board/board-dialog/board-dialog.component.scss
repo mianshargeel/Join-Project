@@ -1,14 +1,3 @@
-.dropdown-content { //Taher you can rewrite these css, i used it just to work
-    border: 1px solid #ccc;
-    padding: 8px;
-    background: white;
-    z-index: 999;
-    position: absolute;
-    width: 300px;
-    max-height: 200px;
-    overflow-y: auto;
-}
-// ----------------------------------Taher's Scss Next---------------------
 .overlay {
     position: fixed;
     inset: 0;
@@ -22,7 +11,7 @@
     left: 50%;
     translate: -50% -50%;
     width: 530px;
-    height: 870px;
+    height: 90vh;
     background: white;
     border-radius: 24px;
     padding: 32px;
@@ -48,6 +37,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.dialog-body {
+    overflow-y: auto;
+    padding-right: 16px;
+    margin-right: -16px;
 }
 
 .close-btn {
@@ -83,29 +78,23 @@
 
 .task-title {
     max-width: 450px;
-    max-height: 220px;
     width: 100%;
-    overflow-y: hidden;
-    overflow-x: hidden;
     font-size: clamp(18px, 4vw, 48px);
     font-weight: 700;
     font-family: "Inter", sans-serif;
-    line-height: 1;
+    line-height: 1.1;
+    padding-bottom: 16px;
     word-break: break-word;
     hyphens: auto;
-    padding-bottom: 24px;
 }
 
 .task-description {
     width: 100%;
     max-width: 450px;
-    height: 120px;
-    max-height: 300px;
-    overflow-y: auto;
-    overflow-x: hidden;
     font: 400 20px/1 "Inter";
-    word-break: normal;
+    word-break: break-word;
     hyphens: auto;
+    padding-bottom: 20px;
 }
 
 .date-prio-section {
@@ -113,6 +102,7 @@
     gap: 25px;
     font: 400 20px "Inter";
     align-items: center;
+    padding-bottom: 20px;
 }
 
 .section-label {
@@ -156,6 +146,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding-bottom: 20px;
 }
 
 .assignees-list {
@@ -190,6 +181,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding-bottom: 16px;
 }
 
 .subtasks-list {
@@ -213,12 +205,17 @@
 input[type=checkbox] {
     width: 24px;
     height: 24px;
+    min-width: 24px;
+    min-height: 24px;
     accent-color: #2a3647;
-    cursor: default;
+    cursor: pointer;
 }
 
 .subtask span {
     font: 400 16px "Inter";
+    word-break: break-word;
+    hyphens: auto;
+    cursor: pointer;
 }
 
 .dialog-footer {
@@ -251,4 +248,213 @@ input[type=checkbox] {
     width: 1px;
     height: 18px;
     background: #a8a8a8;
+}
+
+// EDIT PART
+
+/* Edit Form Container */
+.edit-dialog {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Labels */
+.edit-dialog label {
+    font: 400 20px "Inter";
+    color: #2a3647;
+}
+
+/* Input Fields */
+.edit-dialog input[type="text"],
+.edit-dialog input[type="date"],
+.edit-dialog textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font: 400 16px "Inter";
+    background: #f6f6f6;
+
+    &:focus {
+        outline: none;
+        border-color: var(--light-blue);
+    }
+}
+
+.edit-dialog textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Priority Buttons */
+.priority-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+
+    button {
+        flex: 1;
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        background: white;
+        font: 400 16px "Inter";
+        cursor: pointer;
+        transition: all 0.2s ease;
+        gap: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .prio-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        &:hover {
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+
+        &.active {
+            color: #FFF;
+
+            .prio-icon {
+                filter: brightness(0) invert(1);
+            }
+        }
+
+        &.active[data-priority='urgent'] {
+            background: #FF3D00;
+        }
+
+        &.active[data-priority='medium'] {
+            background: #FFA800;
+        }
+
+        &.active[data-priority='low'] {
+            background: #7AE229;
+        }
+    }
+}
+
+
+/* Assignee Dropdown */
+.dropdown-field {
+    position: relative;
+    cursor: pointer;
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font: 400 16px "Inter";
+        background: #f6f6f6;
+        cursor: pointer;
+    }
+}
+
+.dropdown-content {
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 4px;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &:hover {
+        background: #f6f6f6;
+    }
+}
+
+.contact-name {
+    flex: 1;
+    font: 400 16px "Inter";
+}
+
+/* Selected Assignees */
+.selected-assignees {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+
+    .avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+}
+
+/* Subtasks */
+.edit-dialog .subtask-input {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    input {
+        flex: 1;
+    }
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.form-actions button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font: 400 16px "Inter";
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &[type="submit"] {
+        background: #2a3647;
+        color: white;
+        border: none;
+
+        &:hover {
+            background: darken(#2a3647, 10%);
+        }
+    }
+
+    &[type="button"] {
+        background: white;
+        border: 1px solid #2a3647;
+        color: #2a3647;
+
+        &:hover {
+            background: #f6f6f6;
+        }
+    }
 }
