@@ -9,12 +9,14 @@ import { FormsModule } from '@angular/forms';
 import { generateRandomColor } from '../../models/contact.model';
 import { BoardDialogComponent } from './board-dialog/board-dialog.component';
 import { ContactInterface } from '../../interfaces/contact-interface';
+import { AddTaskComponent } from '../add-task/add-task.component';
+import { TaskDialogComponent } from './task-dialog/task-dialog.component';
 
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule, BoardDialogComponent],
+  imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule, BoardDialogComponent, AddTaskComponent],
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss', './board.responsive.scss']
 })
@@ -30,6 +32,8 @@ export class BoardComponent {
   searchTerm = ""; // Marian Search
   tasks = []; // Marian Search
   private avatarColorCache: { [id: string]: string } = {};
+  showAddTaskDialog: boolean = false;
+  dialogTaskStatus: string = 'To do';
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -214,5 +218,17 @@ export class BoardComponent {
     }
   }
 
+  //Marian: Add Task Dialog
+  openAddTaskDialog(status: string) {
+    this.showAddTaskDialog = true;
+    document.body.classList.add('modal-open');
+    this.dialogTaskStatus = status;
+    console.log(status);
+  }
+
+  closeAddTaskDialog() {
+    this.showAddTaskDialog = false;
+    document.body.classList.remove('modal-open');
+  }
 
 }

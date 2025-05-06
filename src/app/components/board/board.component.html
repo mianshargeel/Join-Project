@@ -16,13 +16,23 @@
                         <img src="/assets/img/board/search.svg" alt="Search" />
                     </button>
                 </div>
-                <button class="add-task-btn">
+                <button class="add-task-btn" (click)="openAddTaskDialog('To do')">
                     <span class="add-task-text">Add task +</span>
                     <span class="add-task-text-mobile">&#65291;</span>
                 </button>
             </div>
         </div>
     </div>
+
+    @if (showAddTaskDialog) {
+        <div class="overlay">
+            <div class="dialog">
+                <button (click)="closeAddTaskDialog()">Close</button>
+                <app-add-task [status]="dialogTaskStatus" class="add-task-in-dialog"></app-add-task>
+            </div>
+            
+        </div>
+        }
       
     <div cdkDropListGroup class="content-container">
         @for (column of columns; track column.title) {
@@ -30,7 +40,7 @@
             <div class="column-header">
                 <h2>{{ column.title }}</h2>
                 @if (column.title !== 'Done') {
-                <button class="add-column-btn">
+                <button class="add-column-btn" (click)="openAddTaskDialog(column.title)">
                     <img src="/assets/img/board/add.svg" alt="Add Task" />
                 </button>
                 }

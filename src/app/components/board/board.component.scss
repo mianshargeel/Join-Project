@@ -421,3 +421,49 @@ $header: 96px;
         content: attr(data-msg);
     }
 }
+
+//Marian Add task
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2); /* Leichteres Overlay, damit man die Seite besser sieht */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem; /* Abstand zum Rand oben, unten, links, rechts */
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  
+  .dialog {
+    max-width: 1116px;
+    max-height: 90vh;
+    width: 100%;
+    overflow: auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .add-task-in-dialog {
+    max-height: 100%;
+    overflow-y: auto;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .scaled-dialog {
+    transform: scale(0.7);
+    transform-origin: center;
+  }
+
+  body.modal-open {
+    overflow: hidden;
+    padding-right: 17px; /* Breite der Scrollbar kompensieren (ggf. anpassen) */
+  }

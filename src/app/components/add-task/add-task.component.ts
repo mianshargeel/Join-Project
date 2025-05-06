@@ -1,6 +1,6 @@
 import { Timestamp } from '@angular/fire/firestore';
 import { TaskService } from '../../services/task.service';
-import { Component,inject, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component,inject, ElementRef, ViewChild, AfterViewInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { generateInitials, generateRandomColor } from '../../models/contact.model';
@@ -27,6 +27,7 @@ export class AddTaskComponent implements AfterViewInit {
   hoveredIndex = -1;
   editIndex: number | null = null;
   editedSubtaskText = '';
+  @Input() status: string = 'To do';
 
   title = '';
   description = '';
@@ -44,7 +45,7 @@ export class AddTaskComponent implements AfterViewInit {
       description: this.description,
       category: this.category,
       priority: this.priority,
-      status: 'To do',
+      status: this.status,
       duedate: Timestamp.fromDate(new Date(this.duedate)),
       assignees: this.selectedAssignees,
     };
