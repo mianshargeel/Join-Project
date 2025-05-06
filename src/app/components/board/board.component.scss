@@ -99,7 +99,8 @@
                 height: 100%;
                 background: #4589FF;
                 border-radius: 16px;
-                transition: none !important;
+                transition: 0.4s linear;  
+                transition-property: width, background-color;
             }
         }
 
