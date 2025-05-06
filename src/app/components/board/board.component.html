@@ -9,7 +9,7 @@
             <div class="header-controls">
                 <div class="search-bar">
                     <div class="search-input-wrapper">
-                        <input id="searchInput" type="text" placeholder="Find Task" />
+                        <input id="searchInput" type="text" [(ngModel)]="searchTerm" (keyup)="this.updateColumnsFromFirebase()" placeholder="Suchen..." />
                         <span class="divider"></span>
                     </div>
                     <button class="search-icon">
@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-
+      
     <div cdkDropListGroup class="content-container">
         @for (column of columns; track column.title) {
         <div class="example-container">
@@ -41,7 +41,7 @@
                 <div class="empty-placeholder" [attr.data-msg]="emptyLabel(column.title)">
                 </div>
                 }
-
+                
                 @for (task of column.tasks; track task.id) {
                 <div class="example-box" cdkDrag (cdkDragStarted)="dragging = true" (cdkDragEnded)="dragging = false"
                     (click)="openDialog(task)">
@@ -83,6 +83,7 @@
         }
     </div>
 </div>
+
 
 @if (dialogOpen && selectedTask) {
     <app-board-dialog 

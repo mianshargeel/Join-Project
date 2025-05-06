@@ -27,6 +27,8 @@ export class BoardComponent {
   dragging = false;
   public selectedAssignees: { id: string, name: string, initials: string, color: string }[] = [];
   contacts: ContactInterface[] = [];
+  searchTerm = ""; // Marian Search
+  tasks = []; // Marian Search
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -64,9 +66,18 @@ export class BoardComponent {
     this.contacts = this.firebaseTaskService.contactList;
 
     this.firebaseTaskService.tasks$.subscribe((tasks) => {
-      this.firebaseTaskService.allTasks = tasks;
-      this.updateColumnsFromFirebase(); // Group tasks when they are actually loaded
+        this.firebaseTaskService.allTasks = tasks;
+        this.updateColumnsFromFirebase(); // Group tasks when they are actually loaded
     });
+  }
+
+  getFilteredTasks(){
+    let searchedTasks = [];
+    searchedTasks = this.firebaseTaskService.allTasks.filter(task =>
+      task.title.toLowerCase().includes(this.searchTerm) ||
+      task.description?.toLowerCase().includes(this.searchTerm));
+    console.log(searchedTasks);
+    
   }
 
   async deleteTask(taskId: string) {
@@ -128,7 +139,7 @@ export class BoardComponent {
     // Clear columns
     this.columns.forEach(col => col.tasks = []);
 
-    for (const task of this.firebaseTaskService.allTasks) {
+    for (const task of this.filteredTasks) {
       const status = task.status?.toLowerCase();
 
       const column = this.columns.find(col =>
@@ -187,6 +198,17 @@ export class BoardComponent {
         color: this.getAvatarColor(id)
       };
     });
+  }
+
+  get filteredTasks(): Task[] {
+    if (this.searchTerm) {
+      let term = this.searchTerm.toLowerCase();
+      return this.firebaseTaskService.allTasks.filter(task =>
+        task.title.toLowerCase().includes(term) ||
+        task.description?.toLowerCase().includes(term));
+    } else {
+      return this.firebaseTaskService.allTasks;
+    }
   }
 
 }
