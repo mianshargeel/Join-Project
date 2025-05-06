@@ -135,11 +135,10 @@
         </div>
       </div>
 
-      <div>
+      <div class="form-group">
         <label>Subtasks</label>
 
-        <!-- Subtask input field -->
-        <div style="position: relative; display: inline-block; width: 100%;">
+        <div class="subtask-input">
           <input type="text" name="editedSubtaskInput" placeholder="Add new subtask" [(ngModel)]="editedSubtaskInput"
             [readonly]="!isTyping" (click)="enableTyping()" (keydown.enter)="confirmSubtask()"
             style="width: 100%; padding-right: 70px; box-sizing: border-box; padding: 16px;" />
