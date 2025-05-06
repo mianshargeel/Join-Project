@@ -41,31 +41,25 @@ export class BoardComponent {
   closeDialog() {
     this.dialogOpen = false;
     this.selectedTask = null;
-
-    this.firebaseTaskService.loadAllTasks();
-
-    // Wait briefly for Firebase to reload data
-    setTimeout(() => {
-      const updated = this.firebaseTaskService.allTasks.find(t => t.id === this.selectedTask?.id);
-      if (updated) {
-        this.selectedTask = updated;
-        this.dialogOpen = true; // reopen
-      }
-    }, 300);
   }
 
   constructor(public firebaseService: FirebaseService) { }
 
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
-  ngOnInit() {
-    this.firebaseTaskService.loadAllTasks();
-    this.contacts = this.firebaseTaskService.contactList;
+ ngOnInit() {
+  this.contacts = this.firebaseTaskService.contactList;
 
-    this.firebaseTaskService.tasks$.subscribe((tasks) => {
+  this.firebaseTaskService.tasks$.subscribe((tasks) => {
+    if (this.columns.every(col => col.tasks.length === 0)) {
       this.firebaseTaskService.allTasks = tasks;
-      this.updateColumnsFromFirebase(); // Group tasks when they are actually loaded
-    });
-  }
+      this.updateColumnsFromFirebase();
+    }
+  });
+
+  this.firebaseTaskService.loadAllTasks(); // set up realtime listener
+}
+
+
 
   async deleteTask(taskId: string) {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
