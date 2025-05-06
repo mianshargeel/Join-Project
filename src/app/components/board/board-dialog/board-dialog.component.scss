@@ -197,6 +197,7 @@
     gap: 10px;
     padding: 4px;
     border-radius: 4px;
+    cursor: pointer;
 }
 
 .subtask:hover {
@@ -236,7 +237,6 @@ input[type=checkbox] {
     font: 400 16px "Inter";
     word-break: break-word;
     hyphens: auto;
-    cursor: pointer;
 }
 
 .dialog-footer {

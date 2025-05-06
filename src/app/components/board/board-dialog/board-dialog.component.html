@@ -89,17 +89,20 @@
       <div class="form-group">
         <label>Priority</label>
         <div class="priority-buttons">
-          <button type="button" (click)="setPriority('urgent')" [class.active]="editableTask.priority === 'urgent'">
+          <button type="button" (click)="setPriority('urgent')" [class.active]="editableTask.priority === 'urgent'"
+            data-priority="urgent">
             Urgent
             <img class="prio-icon" src="assets/img/board/urgent.svg" alt="Urgent Priority">
           </button>
 
-          <button type="button" (click)="setPriority('medium')" [class.active]="editableTask.priority === 'medium'">
+          <button type="button" (click)="setPriority('medium')" [class.active]="editableTask.priority === 'medium'"
+            data-priority="medium">
             Medium
             <img class="prio-icon" src="assets/img/board/medium.svg" alt="Medium Priority">
           </button>
 
-          <button type="button" (click)="setPriority('low')" [class.active]="editableTask.priority === 'low'">
+          <button type="button" (click)="setPriority('low')" [class.active]="editableTask.priority === 'low'"
+            data-priority="low">
             Low
             <img class="prio-icon" src="assets/img/board/low.svg" alt="Low Priority">
           </button>
