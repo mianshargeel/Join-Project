@@ -113,6 +113,8 @@
         <label>Assigned to:</label>
         <div class="dropdown-field" (click)="toggleDropdown()">
           <input type="text" readonly placeholder="Select contacts to assign" />
+          <img class="dropdown-arrow" src="assets/img/board/menu-up-down.svg" [class.rotated]="dropdownOpen"
+            alt="DropDown Arrow" />
         </div>
 
         @if (dropdownOpen) {

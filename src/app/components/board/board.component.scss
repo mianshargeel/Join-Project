@@ -16,14 +16,15 @@
     min-height: 48px;
     background: transparent;
     border: none;
-    overflow: hidden;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    padding-right: 10px;
+    padding: 10px;
+    padding-right: 18px;
     scrollbar-gutter: stable both-edges;
+    margin: -10px;
 }
 
 .example-box {
@@ -35,6 +36,11 @@
     border-radius: 24px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: move;
+    
+    &:hover {
+        // rotate: 5deg;
+        box-shadow: 2px 2px 2px 2px rgba(33, 111, 221, 0.7);
+    }
 
     .task-category {
         padding: 0 10px;
