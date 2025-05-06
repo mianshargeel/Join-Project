@@ -133,8 +133,12 @@ export class BoardComponent {
 
 
   getConnectedColumns() {
-    return this.columns.map(c => c.title);
-  }
+  return this.columns.map(c => this.normalizeId(c.title));
+}
+  //Taher for you: Fixed drag-and-drop error by assigning explicit id to each cdkDropList, ensuring they match the values returned by getConnectedColumns()
+  normalizeId(title: string) {
+  return title.toLowerCase().replace(/\s+/g, '-');
+}
 
   getCompletedSubtasksCount(task: Task): number {
     return task.subtasks.filter(sub => sub.isdone).length;

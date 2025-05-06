@@ -35,8 +35,11 @@
                 </button>
                 }
             </div>
-            <div class="example-list" cdkDropList [cdkDropListData]="column.tasks"
-                [cdkDropListConnectedTo]="getConnectedColumns()" (cdkDropListDropped)="drop($event, column.title)">
+            <div class="example-list" cdkDropList 
+                [id]="normalizeId(column.title)"
+                [cdkDropListData]="column.tasks"
+                [cdkDropListConnectedTo]="getConnectedColumns()" 
+                (cdkDropListDropped)="drop($event, column.title)">
                 @if (column.tasks.length === 0) {
                 <div class="empty-placeholder" [attr.data-msg]="emptyLabel(column.title)">
                 </div>
