@@ -142,24 +142,27 @@
 
       <div class="form-group">
         <label>Subtasks</label>
+        <div class="subtask-input-wrapper">
+          <input type="text" class="subtask-input" name="editedSubtaskInput" placeholder="Add new subtask"
+            [(ngModel)]="editedSubtaskInput" [readonly]="!isTyping" (click)="enableTyping()"
+            (keydown.enter)="confirmSubtask()" />
 
-        <div class="subtask-input">
-          <input type="text" name="editedSubtaskInput" placeholder="Add new subtask" [(ngModel)]="editedSubtaskInput"
-            [readonly]="!isTyping" (click)="enableTyping()" (keydown.enter)="confirmSubtask()"
-            style="width: 100%; padding-right: 70px; box-sizing: border-box; padding: 16px;" />
-          @if (!isTyping) {
-          <span
-            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; color: purple;"
-            (click)="enableTyping()">＋</span>
-          }
-          @if (isTyping) {
-          <span
-            style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"
-            (click)="cancelSubtask()">✕</span>
-          <span
-            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"
-            (click)="confirmSubtask()">✔</span>
-          }
+          <div class="subtask-actions">
+            @if (!isTyping) {
+            <button class="subtask-action-btn" (click)="enableTyping()">
+              <span class="subtask-add-icon">＋</span>
+            </button>
+            }
+            @if (isTyping) {
+            <button class="subtask-action-btn" (click)="cancelSubtask()">
+              <span class="subtask-cancel-icon">✕</span>
+            </button>
+            <span class="vert-divider"></span>
+            <button class="subtask-action-btn" (click)="confirmSubtask()">
+              <span class="subtask-confirm-icon">✔</span>
+            </button>
+            }
+          </div>
         </div>
 
         <!-- Subtasks list -->
