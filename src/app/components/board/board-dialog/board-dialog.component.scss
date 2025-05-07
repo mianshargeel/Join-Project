@@ -15,7 +15,7 @@
     background: white;
     border-radius: 24px;
     padding: 32px;
-    padding-bottom: 60px;
+    padding-bottom: 80px;
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -531,36 +531,41 @@ input[type=checkbox] {
 
 /* Form Actions */
 .form-actions {
+    position: fixed;
+    bottom: 26px;
+    right: 38px;
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    margin-top: 24px;
-}
+    margin-top: 0;
+    z-index: 1;
 
-.form-actions button {
-    padding: 12px 24px;
-    border-radius: 8px;
-    font: 400 16px "Inter";
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    button.action {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font: 400 16px "Inter";
+        cursor: pointer;
+        transition: all 0.2s ease;
 
-    &[type="submit"] {
-        background: #2a3647;
-        color: white;
-        border: none;
+        &[type="button"] {
+            background: white;
+            border: 1px solid #ddd;
+            color: var(--darkblue);
 
-        &:hover {
-            background: darken(#2a3647, 10%);
+            &:hover {
+                background: var(--light-blue);
+                color: white;
+            }
         }
-    }
 
-    &[type="button"] {
-        background: white;
-        border: 1px solid #2a3647;
-        color: #2a3647;
+        &[type="submit"] {
+            background: var(--darkblue);
+            color: white;
+            border: none;
 
-        &:hover {
-            background: #f6f6f6;
+            &:hover {
+                background: var(--light-blue);
+            }
         }
     }
 }
