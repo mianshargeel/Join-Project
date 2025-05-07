@@ -119,11 +119,10 @@ export class BoardDialogComponent {
     this.editableTask.priority = level;
   }
 
-  async submitEdit() {
+ async submitEdit() {
     if (!this.task?.id) return;
 
     const dateValue = this.safeConvertToTimestamp(this.editableTask.duedate);
-
     if (!dateValue) {
       console.error('Invalid date format:', this.editableTask.duedate);
       return;
@@ -138,29 +137,41 @@ export class BoardDialogComponent {
       priority: this.editableTask.priority,
     };
 
-    // Update the main task (without subtasks)
-    await this.firebaseTaskService.updateTaskInDatabase(this.task.id, updatedTaskData);
+    try {
+      //Update main task
+      await this.firebaseTaskService.updateTaskInDatabase(this.task.id, updatedTaskData);
 
-    // Update subtasks individually in the subcollection
-    for (const subtask of this.editableTask.subtasks) {
-      await this.firebaseTaskService.updateSubtaskInDatabase(
-        this.task.id,
-        subtask.id,
-        { title: subtask.title, isdone: subtask.isdone }
-      );
+      //Handle each subtask (add or update)
+      for (const subtask of this.editableTask.subtasks) {
+        if (subtask.id) {
+          // Update existing subtask
+          await this.firebaseTaskService.updateSubtaskInDatabase(
+            this.task.id,
+            subtask.id,
+            { title: subtask.title, isdone: subtask.isdone }
+          );
+        } else {
+          // Add new subtask
+          const docRef = await this.firebaseTaskService.addSubtaskToDatabase(this.task.id, 
+            { title: subtask.title, isdone: subtask.isdone });
+          subtask.id = docRef.id; // Set the ID locally to keep list consistent
+        }
+      }
+
+      //Delete removed subtasks
+      for (const subtaskId of this.deletedSubtaskIds) {
+        await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
+      }
+      this.deletedSubtaskIds = [];
+
+      //Refresh UI
+      this.assignees = this.getTaskAssignees({...this.editableTask, assignees: this.editableTask.assignees});
+      this.disableEditMode();
+      this.close.emit(); // Tell parent to refresh the board
+
+    } catch (error) {
+      console.error('Error during submitEdit:', error);
     }
-    for (const subtaskId of this.deletedSubtaskIds) {
-      await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
-      // console.log('Subtask deleted:', subtaskId);
-    }
-
-    // Clear deleted list
-    this.deletedSubtaskIds = [];
-
-    // Rebuild display-friendly assignee info for view mode
-    this.assignees = this.getTaskAssignees({ ...this.editableTask, assignees: this.editableTask.assignees });
-    this.disableEditMode();
-    this.close.emit();  // Let parent know to reload task list
   }
 
   onCheckboxChange(event: Event) {
@@ -178,7 +189,7 @@ export class BoardDialogComponent {
     }
   }
 
-  getAvatarColor(id: string): string {
+   getAvatarColor(id: string): string {
     const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
     return contact?.color ?? "#000000";
   }
