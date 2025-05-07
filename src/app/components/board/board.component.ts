@@ -56,10 +56,8 @@ export class BoardComponent {
     this.contacts = this.firebaseTaskService.contactList;
 
     this.firebaseTaskService.tasks$.subscribe((tasks) => {
-      if (this.columns.every(col => col.tasks.length === 0)) {
-        this.firebaseTaskService.allTasks = tasks;
-        this.updateColumnsFromFirebase();
-      }
+      this.firebaseTaskService.allTasks = tasks;
+      this.updateColumnsFromFirebase();
     });
 
     this.firebaseTaskService.loadAllTasks(); // set up realtime listener
