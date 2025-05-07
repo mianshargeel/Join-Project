@@ -180,7 +180,7 @@ export class BoardDialogComponent {
 
   getAvatarColor(id: string): string {
     const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
-    return contact?.color ?? generateRandomColor();
+    return contact?.color ?? "#000000";
   }
 
   getContactInitials(contactId: string): string {
