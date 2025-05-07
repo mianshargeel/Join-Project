@@ -108,6 +108,11 @@ export class TaskService {
     }
     
   }
+  //using this function to add new subtask's title through edit-dialog
+  async addSubtaskToDatabase(taskId: string, subtaskData: Omit<Subtask, 'id'>) {
+    const subtaskCollection = collection(this.firestore, 'tasks', taskId, 'subtasks');
+    return await addDoc(subtaskCollection, subtaskData);
+  }
 
   async deleteTaskByIdFromDatabase(taskId: string) {
     try {
