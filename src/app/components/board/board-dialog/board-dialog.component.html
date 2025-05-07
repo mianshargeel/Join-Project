@@ -14,7 +14,7 @@
     <div class="date-prio-section">
       <span class="section-label">Due date:</span>
       <span class="task-value">
-        {{ task.duedate.toDate() | date: 'dd/MM/yyyy' }}
+        {{ formattedDueDate }}
       </span>
     </div>
     <div class="date-prio-section">
@@ -83,7 +83,12 @@
 
       <div class="form-group">
         <label>Due Date</label>
-        <input type="date" [(ngModel)]="editableTask.duedate" name="dueDate" />
+        <input
+  type="date"
+  [(ngModel)]="dueDateInput"
+  name="dueDate"
+/>
+
       </div>
 
       <div class="form-group">

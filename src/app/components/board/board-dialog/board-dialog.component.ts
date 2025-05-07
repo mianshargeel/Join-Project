@@ -34,15 +34,39 @@ export class BoardDialogComponent {
   isTyping = false;
   deletedSubtaskIds: string[] = [];
   @Output() taskUpdated = new EventEmitter<Task>();
+  dueDateInput!: string;
 
   onClose() {
     this.close.emit();
   }
 
   ngOnInit() {
-    // console.log('Assigned IDs:', this.task.assignees);
-    // console.log('TaskDialogComponent loaded with task:', this.task);
+  const raw: any = this.task.duedate;
+
+  let dateObj: Date;
+
+  try {
+    if (raw?.toDate && typeof raw.toDate === 'function') {
+      dateObj = raw.toDate();
+    } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
+      // It's a plain object from Firestore that looks like a Timestamp
+      const ts = new Timestamp(raw.seconds, raw.nanoseconds);
+      dateObj = ts.toDate();
+    } else if (typeof raw === 'string' || raw instanceof Date) {
+      dateObj = new Date(raw);
+    } else {
+      throw new Error('Invalid date format in task:');
+    }
+
+    this.dueDateInput = dateObj.toISOString().split('T')[0];
+  } catch (err) {
+    console.warn('Invalid date format in task:', raw);
+    this.dueDateInput = '';
   }
+
+  this.editableTask = { ...this.task };
+}
+
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
@@ -81,98 +105,102 @@ export class BoardDialogComponent {
     this.editMode = false;
   }
 
-  /**
- * Converts a given value to a valid Firestore Timestamp.
- *
- * This function ensures the input is safely converted to a Firestore-compatible Timestamp object,
- * regardless of whether it's:
- *   - already a Timestamp,
- *   - a plain object that looks like { seconds, nanoseconds },
- *   - a valid Date string or JavaScript Date object.
- *
- * This avoids runtime errors like "Invalid time value" when editing tasks
- * where the date input might come from form fields, Firestore snapshots, or intermediate states.
- *
- * @param value - The input value to convert (can be string, Date, Timestamp, or object).
- * @returns A valid Firestore Timestamp if conversion is possible, otherwise null.
- */
-  safeConvertToTimestamp(value: any): Timestamp | null {
-    if (value instanceof Timestamp) return value;
-
-    if (
-      typeof value === 'object' &&
-      typeof value.seconds === 'number' &&
-      typeof value.nanoseconds === 'number'
-    ) {
-      return new Timestamp(value.seconds, value.nanoseconds);
-    }
-
-    const parsed = new Date(value);
-    if (!isNaN(parsed.getTime())) {
-      return Timestamp.fromDate(parsed);
-    }
-
-    return null;
-  }
-
   setPriority(level: 'urgent' | 'medium' | 'low') {
     this.editableTask.priority = level;
   }
 
- async submitEdit() {
+  async submitEdit() {
     if (!this.task?.id) return;
 
-    const dateValue = this.safeConvertToTimestamp(this.editableTask.duedate);
-    if (!dateValue) {
-      console.error('Invalid date format:', this.editableTask.duedate);
-      return;
-    }
-
-    const updatedTaskData: Partial<Task> = {
-      title: this.editableTask.title,
-      description: this.editableTask.description,
-      duedate: dateValue,
-      assignees: this.editableTask.assignees,
-      status: this.task.status,
-      priority: this.editableTask.priority,
-    };
+    this.prepareDueDate();
+    const updatedTaskData = this.buildUpdatedTaskData();
 
     try {
-      //Update main task
-      await this.firebaseTaskService.updateTaskInDatabase(this.task.id, updatedTaskData);
-
-      //Handle each subtask (add or update)
-      for (const subtask of this.editableTask.subtasks) {
-        if (subtask.id) {
-          // Update existing subtask
-          await this.firebaseTaskService.updateSubtaskInDatabase(
-            this.task.id,
-            subtask.id,
-            { title: subtask.title, isdone: subtask.isdone }
-          );
-        } else {
-          // Add new subtask
-          const docRef = await this.firebaseTaskService.addSubtaskToDatabase(this.task.id, 
-            { title: subtask.title, isdone: subtask.isdone });
-          subtask.id = docRef.id; // Set the ID locally to keep list consistent
-        }
-      }
-
-      //Delete removed subtasks
-      for (const subtaskId of this.deletedSubtaskIds) {
-        await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
-      }
-      this.deletedSubtaskIds = [];
-
-      //Refresh UI
-      this.assignees = this.getTaskAssignees({...this.editableTask, assignees: this.editableTask.assignees});
-      this.disableEditMode();
-      this.close.emit(); // Tell parent to refresh the board
-
+      await this.updateMainTask(updatedTaskData);
+      await this.syncSubtasks();
+      await this.removeDeletedSubtasks();
+      this.finalizeViewState();
     } catch (error) {
       console.error('Error during submitEdit:', error);
     }
   }
+
+  private prepareDueDate(): void {
+    this.editableTask.duedate = Timestamp.fromDate(new Date(this.dueDateInput));
+  }
+
+  private buildUpdatedTaskData(): Partial<Task> {
+    return {
+      title: this.editableTask.title,
+      description: this.editableTask.description,
+      duedate: this.editableTask.duedate,
+      assignees: this.editableTask.assignees,
+      status: this.task.status,
+      priority: this.editableTask.priority,
+    };
+  }
+
+  private async updateMainTask(data: Partial<Task>): Promise<void> {
+    await this.firebaseTaskService.updateTaskInDatabase(this.task.id, data);
+  }
+
+  private async syncSubtasks(): Promise<void> {
+    for (const subtask of this.editableTask.subtasks) {
+      if (subtask.id) {
+        await this.firebaseTaskService.updateSubtaskInDatabase(
+          this.task.id,
+          subtask.id,
+          { title: subtask.title, isdone: subtask.isdone }
+        );
+      } else {
+        const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
+          this.task.id,
+          { title: subtask.title, isdone: subtask.isdone }
+        );
+        subtask.id = docRef.id;
+      }
+    }
+  }
+
+  private async removeDeletedSubtasks(): Promise<void> {
+    for (const subtaskId of this.deletedSubtaskIds) {
+      await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
+    }
+    this.deletedSubtaskIds = [];
+  }
+
+  private finalizeViewState(): void {
+    this.assignees = this.getTaskAssignees({ ...this.editableTask });
+    this.task = {
+      ...this.editableTask,
+      subtasks: [...this.editableTask.subtasks],
+    };
+    this.disableEditMode();
+    this.close.emit();
+  }
+  /**
+ * Returns a user-friendly due date string (dd/MM/yyyy) for display in the view dialog.
+ * Safely handles Firestore Timestamp, string, or Date formats to prevent runtime errors.
+ * Used as a read-only computed property for clean binding in the template.
+ */
+  get formattedDueDate(): string {
+  const raw: any = this.task.duedate;
+
+  try {
+    if (raw?.toDate && typeof raw.toDate === 'function') {
+      // Firestore Timestamp
+      return raw.toDate().toLocaleDateString('en-GB');
+    } else if (typeof raw === 'string' || raw instanceof Date) {
+      // String or native Date
+      return new Date(raw).toLocaleDateString('en-GB');
+    } else {
+      return 'Invalid date';
+    }
+  } catch {
+    return 'Invalid date';
+  }
+}
+
 
   onCheckboxChange(event: Event) {
     const checkbox = event.target as HTMLInputElement;
