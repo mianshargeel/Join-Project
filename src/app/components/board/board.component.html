@@ -26,9 +26,9 @@
 
     @if (showAddTaskDialog) {
         <div class="overlay">
-            <div class="dialog">
-                <button (click)="closeAddTaskDialog()">Close</button>
-                <app-add-task [status]="dialogTaskStatus" class="add-task-in-dialog"></app-add-task>
+            <div class="dialog scaled-dialog">
+                <p class="closing-p" (click)="closeAddTaskDialog()">X</p>
+                <app-add-task [status]="dialogTaskStatus"></app-add-task>
             </div>
             
         </div>

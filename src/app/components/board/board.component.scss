@@ -440,28 +440,34 @@ $header: 96px;
   }
   
   .dialog {
-    max-width: 1116px;
-    max-height: 90vh;
+    max-width: 1560px;
+    max-height: 1200px;
     width: 100%;
-    overflow: auto;
+    overflow: hidden;
     background: white;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
-  }
-
-  .add-task-in-dialog {
-    max-height: 100%;
-    overflow-y: auto;
-    width: 100%;
-    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    position: relative;
   }
 
   .scaled-dialog {
     transform: scale(0.7);
     transform-origin: center;
+  }
+
+  .closing-p {
+    position: absolute;
+    top: 5%;
+    left: 92%;
+    z-index: 10;
+    font-weight: bold;
+    font-size: xx-large;
+    cursor: pointer;
   }
 
   body.modal-open {
