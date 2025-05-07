@@ -121,12 +121,9 @@ export class BoardComponent {
   }
 
   getAvatarColor(id: string): string {
-    if (!this.avatarColorCache[id]) {
-      this.avatarColorCache[id] = generateRandomColor();
-    }
-    return this.avatarColorCache[id];
+    const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
+    return contact?.color ?? generateRandomColor();
   } //This guarantees that each assigneeId always gets the same color every time Angular runs change detection.
-
 
   getConnectedColumns() {
     return this.columns.map(c => this.normalizeId(c.title));

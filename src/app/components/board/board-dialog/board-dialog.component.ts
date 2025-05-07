@@ -178,11 +178,9 @@ export class BoardDialogComponent {
     }
   }
 
-  getAvatarColor(contactId: string): string {
-    if (!this.avatarColors[contactId]) {
-      this.avatarColors[contactId] = this.generateRandomColor();
-    }
-    return this.avatarColors[contactId];
+  getAvatarColor(id: string): string {
+    const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
+    return contact?.color ?? generateRandomColor();
   }
 
   getContactInitials(contactId: string): string {
