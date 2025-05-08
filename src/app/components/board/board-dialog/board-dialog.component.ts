@@ -40,32 +40,39 @@ export class BoardDialogComponent {
     this.close.emit();
   }
 
-  ngOnInit() {
-  const raw: any = this.task.duedate;
+ ngOnInit() {
+  this.dueDateInput = this.extractDueDate(this.task.duedate);
 
-  let dateObj: Date;
-
-  try {
-    if (raw?.toDate && typeof raw.toDate === 'function') {
-      dateObj = raw.toDate();
-    } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
-      // It's a plain object from Firestore that looks like a Timestamp
-      const ts = new Timestamp(raw.seconds, raw.nanoseconds);
-      dateObj = ts.toDate();
-    } else if (typeof raw === 'string' || raw instanceof Date) {
-      dateObj = new Date(raw);
-    } else {
-      throw new Error('Invalid date format in task:');
-    }
-
-    this.dueDateInput = dateObj.toISOString().split('T')[0];
-  } catch (err) {
-    console.warn('Invalid date format in task:', raw);
-    this.dueDateInput = '';
+  this.editableTask = {
+    ...this.task,
+    subtasks: this.task.subtasks.map(sub => this.ensureSubtaskHasId(sub))
+  };
   }
-
-  this.editableTask = { ...this.task };
+  
+private extractDueDate(raw: any): string {
+  try {
+    let date: Date;
+    if (raw?.toDate instanceof Function) {
+      date = raw.toDate();
+    } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
+      date = new Timestamp(raw.seconds, raw.nanoseconds).toDate();
+    } else {
+      date = new Date(raw);
+    }
+    return date.toISOString().split('T')[0];
+  } catch {
+    console.warn('Invalid date format in task:', raw);
+    return '';
+  }
 }
+
+private ensureSubtaskHasId(sub: Subtask): Subtask {
+  return {
+    ...sub,
+    id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+  };
+}
+
 
 
   toggleDropdown() {
@@ -145,22 +152,25 @@ export class BoardDialogComponent {
   }
 
   private async syncSubtasks(): Promise<void> {
-    for (const subtask of this.editableTask.subtasks) {
-      if (subtask.id) {
-        await this.firebaseTaskService.updateSubtaskInDatabase(
-          this.task.id,
-          subtask.id,
-          { title: subtask.title, isdone: subtask.isdone }
-        );
-      } else {
-        const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
-          this.task.id,
-          { title: subtask.title, isdone: subtask.isdone }
-        );
-        subtask.id = docRef.id;
-      }
+  for (const subtask of this.editableTask.subtasks) {
+    if (subtask.id.startsWith('local-')) {
+      // NEW subtask: add to Firebase
+      const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
+        this.task.id,
+        { title: subtask.title, isdone: subtask.isdone }
+      );
+      subtask.id = docRef.id; // replace local ID with real Firestore ID
+    } else {
+      // EXISTING subtask: update in Firebase
+      await this.firebaseTaskService.updateSubtaskInDatabase(
+        this.task.id,
+        subtask.id,
+        { title: subtask.title, isdone: subtask.isdone }
+      );
     }
   }
+}
+
 
   private async removeDeletedSubtasks(): Promise<void> {
     for (const subtaskId of this.deletedSubtaskIds) {
@@ -240,17 +250,19 @@ export class BoardDialogComponent {
   }
   // following functionality for edit-dialog subtasks
   confirmSubtask() {
-    if (!this.editedSubtaskInput.trim()) return;
+  const trimmed = this.editedSubtaskInput.trim();
+  if (!trimmed) return;
 
-    this.editableTask.subtasks.push({
-      id: '', // placeholder; Firestore will assign it later
-      title: this.editedSubtaskInput.trim(),
-      isdone: false
-    });
+  this.editableTask.subtasks.push({
+    id: 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2),//generating random id to store new title 
+    title: trimmed,
+    isdone: false
+  });
+  console.log('Subtasks:', this.editableTask.subtasks.map(s => s.id));
+  this.editedSubtaskInput = '';
+  this.isTyping = false;
+}
 
-    this.editedSubtaskInput = '';
-    this.isTyping = false;
-  }
 
   cancelSubtask() {
     this.editedSubtaskInput = '';
@@ -261,28 +273,39 @@ export class BoardDialogComponent {
     this.isTyping = true;
   }
 
-  startEdit(index: number) {
+  startEdit(subtaskId: string) {
+  const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
+  if (index !== -1) {
     this.subtaskEditIndex = index;
     this.editedSubtaskText = this.editableTask.subtasks[index].title;
   }
+}
 
-  saveEdit(index: number) {
-    if (!this.editedSubtaskText.trim()) return;
 
-    // console.log('Saving subtask at index', index, 'with new title:', this.editedSubtaskText);
+  saveEdit(subtaskId: string) {
+  if (!this.editedSubtaskText.trim()) return;
+
+  const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
+  if (index !== -1) {
     this.editableTask.subtasks[index].title = this.editedSubtaskText.trim();
-    this.subtaskEditIndex = -1;
-    this.editedSubtaskText = '';
   }
+  this.subtaskEditIndex = -1;
+  this.editedSubtaskText = '';
+}
 
-  deleteSubtask(index: number) {
+  deleteSubtask(subtaskId: string) {
+  const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
+  if (index !== -1) {
     const deleted = this.editableTask.subtasks[index];
-
-    if (deleted.id) {
+    if (deleted.id && !deleted.id.startsWith('local-')) {
       this.deletedSubtaskIds.push(deleted.id);
     }
-    this.editableTask.subtasks.splice(index, 1); //UI update
+    this.editableTask.subtasks.splice(index, 1);
   }
+  // Exit edit mode if it was the edited one
+  this.subtaskEditIndex = -1;
+  this.editedSubtaskText = '';
+}
 
   async onSubtaskToggle(subtask: Subtask) {
     if (!this.task) return;

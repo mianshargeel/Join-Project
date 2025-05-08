@@ -60,7 +60,7 @@
 
   }
   @else {
-  <!-- Full edit form layout goes here -->
+  <!-- Full edit form layout goes here ------------------------------------------------------------->
 
   <div class="dialog-header">
     <span class="task-category" [ngClass]="categoryClass(task.category)">
@@ -166,34 +166,40 @@
         </div>
 
         <!-- Subtasks list -->
-        @if (editableTask.subtasks.length > 0) {
+      @if (editableTask.subtasks.length > 0) {
         <ul class="edit-subtasks-list">
           @for (sub of editableTask.subtasks; let i = $index; track sub.id) {
-          <li class="subtask-item" (mouseenter)="hoveredSubtaskIndex = i" (mouseleave)="hoveredSubtaskIndex = -1">
-            @if (subtaskEditIndex === i) {
-            <!-- Editable subtask -->
-            <div class="subtask-edit-row">
-              <input class="subtask-edit-input" name="editedSubtaskText" [(ngModel)]="editedSubtaskText"
-                (keydown.enter)="saveEdit(i)" />
-              <span class="subtask-btn delete" (click)="deleteSubtask(i)">🗑️</span>
-              <span class="subtask-btn save" (click)="saveEdit(i)">✔</span>
-            </div>
-            } @else {
-            • {{ sub.title }}
-            @if (hoveredSubtaskIndex === i) {
-            <div class="subtask-hover-btns">
-              <button class="subtask-btn delete" (click)="deleteSubtask(i)">
-                <img src="/assets/img/board/delete.svg" /></button>
-              <span class="vert-divider-bottom"></span>
-              <button class="subtask-btn edit" (click)="startEdit(i)">
-                <img src="/assets/img/board/edit.svg" /></button>
-            </div>
-            }
-            }
-          </li>
+            <li class="subtask-item" (mouseenter)="hoveredSubtaskIndex = i" (mouseleave)="hoveredSubtaskIndex = -1">
+              @if (subtaskEditIndex === i) {
+              <!-- Editable subtask -->
+              <div class="subtask-edit-row">
+                <input
+                  class="subtask-edit-input"
+                  name="editedSubtaskText"
+                  [(ngModel)]="editedSubtaskText"
+                  (keydown.enter)="saveEdit(sub.id)" />
+                <span class="subtask-btn delete" (click)="deleteSubtask(editableTask.subtasks[subtaskEditIndex].id)">🗑️</span>
+                <span class="subtask-btn save" (click)="saveEdit(sub.id)">✔</span>
+              </div>
+              } @else {
+              • {{ sub.title }}
+              @if (hoveredSubtaskIndex === i) {
+              <div class="subtask-hover-btns">
+                <button class="subtask-btn delete" (click)="deleteSubtask(sub.id)">
+                  <img src="/assets/img/board/delete.svg" />
+                </button>
+                <span class="vert-divider-bottom"></span>
+                <button class="subtask-btn edit" (click)="startEdit(sub.id)">
+                  <img src="/assets/img/board/edit.svg" />
+                </button>
+              </div>
+              }
+              }
+            </li>
           }
         </ul>
-        }
+      }
+
       </div>
 
       <div class="form-actions">
