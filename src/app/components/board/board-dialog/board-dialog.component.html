@@ -110,42 +110,61 @@
         </div>
       </div>
 
-      <div class="form-group">
+     <div class="form-group">
         <label>Assigned to:</label>
         <div class="dropdown-field" (click)="toggleDropdown()">
-          <input type="text" readonly placeholder="Select contacts to assign" />
-          <img class="dropdown-arrow" src="assets/img/board/menu-up-down.svg" [class.rotated]="dropdownOpen"
-            alt="DropDown Arrow" />
+          <input
+            type="text"
+            name="contactSearch"
+            [(ngModel)]="contactSearchTerm"
+            [ngModelOptions]="{standalone: true}"
+            placeholder="Search contacts..."
+          />
+          <img
+            class="dropdown-arrow"
+            src="assets/img/board/menu-up-down.svg"
+            [class.rotated]="dropdownOpen"
+            alt="DropDown Arrow"
+          />
         </div>
 
         @if (dropdownOpen) {
-        <div class="dropdown-content">
-          @for (contact of firebaseTaskService.contactList; track contact.id) {
-          <div class="dropdown-item">
-            <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
-              {{ generateInitials(contact.name) }}
-            </span>
-            <span class="contact-name">{{ contact.name }}</span>
-            <input type="checkbox" [value]="contact.id" [checked]="editableTask.assignees.includes(contact.id ?? '')"
-              (change)="onCheckboxChange($event)" />
-          </div>
-          }
-        </div>
-        }
-        <div class="selected-assignees"> 
-            @for (id of editableTask.assignees; track id) {
-              <span
-                class="avatar"
-                [style.backgroundColor]="getAvatarColor(id)"
-                (click)="removeAssignee(id)"
-                title="Click to remove"
-                style="cursor: pointer;"
-              >
-                {{ getContactInitials(id) }}
-              </span>
+          <div class="dropdown-content">
+            @for (contact of filteredContacts; track contact.id) {
+              <div class="dropdown-item">
+                <span
+                  class="avatar"
+                  [style.backgroundColor]="getAvatarColor(contact.id ?? '')"
+                >
+                  {{ generateInitials(contact.name) }}
+                </span>
+                <span class="contact-name">{{ contact.name }}</span>
+                <input
+                  type="checkbox"
+                  [value]="contact.id"
+                  [checked]="editableTask.assignees.includes(contact.id ?? '')"
+                  (change)="onCheckboxChange($event)"
+                />
+              </div>
             }
           </div>
+        }
+
+        <div class="selected-assignees">
+          @for (id of editableTask.assignees; track id) {
+            <span
+              class="avatar"
+              [style.backgroundColor]="getAvatarColor(id)"
+              (click)="removeAssignee(id)"
+              title="Click to remove"
+              style="cursor: pointer;"
+            >
+              {{ getContactInitials(id) }}
+            </span>
+          }
+        </div>
       </div>
+
 
       <div class="form-group">
         <label>Subtasks</label>

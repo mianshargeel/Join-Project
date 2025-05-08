@@ -35,6 +35,7 @@ export class BoardDialogComponent implements AfterViewInit {
   deletedSubtaskIds: string[] = [];
   @Output() taskUpdated = new EventEmitter<Task>();
   dueDateInput!: string;
+  contactSearchTerm: string = '';
 
   @ViewChild('editDueDateInput') editDueDateInput!: ElementRef<HTMLInputElement>;
   todayString = new Date().toISOString().split('T')[0];
@@ -72,8 +73,6 @@ export class BoardDialogComponent implements AfterViewInit {
     }))
   };
 }
-
-
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
@@ -171,7 +170,6 @@ export class BoardDialogComponent implements AfterViewInit {
   }
 }
 
-
   private async removeDeletedSubtasks(): Promise<void> {
     for (const subtaskId of this.deletedSubtaskIds) {
       await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
@@ -210,7 +208,6 @@ export class BoardDialogComponent implements AfterViewInit {
       return 'Invalid date';
     }
   }
-
 
   onCheckboxChange(event: Event) {
     const checkbox = event.target as HTMLInputElement;
@@ -263,7 +260,6 @@ export class BoardDialogComponent implements AfterViewInit {
   this.isTyping = false;
 }
 
-
   cancelSubtask() {
     this.editedSubtaskInput = '';
     this.isTyping = false;
@@ -280,7 +276,6 @@ export class BoardDialogComponent implements AfterViewInit {
     this.editedSubtaskText = this.editableTask.subtasks[index].title;
   }
 }
-
 
   saveEdit(subtaskId: string) {
   if (!this.editedSubtaskText.trim()) return;
@@ -330,7 +325,6 @@ export class BoardDialogComponent implements AfterViewInit {
     }
   }
 
-
   validateDueDateEdit(): void {
     const inputEl = this.editDueDateInput?.nativeElement;
     if (!inputEl) { return; }
@@ -354,6 +348,12 @@ export class BoardDialogComponent implements AfterViewInit {
     this.editableTask.assignees = this.editableTask.assignees.filter(aid => aid !== id);
   }
 
+  get filteredContacts(): ContactInterface[] {
+  const term = this.contactSearchTerm.toLowerCase();
+  return this.firebaseTaskService.contactList.filter(contact =>
+    contact.name.toLowerCase().includes(term)
+  );
+}
 
 
 }
