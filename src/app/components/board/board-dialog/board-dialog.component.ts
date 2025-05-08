@@ -1,4 +1,4 @@
-import { Component, inject, Input, Output, EventEmitter } from '@angular/core';
+import { Component, inject, Input, Output, EventEmitter, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { Subtask, Task } from '../../../interfaces/task';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../services/task.service';
@@ -14,7 +14,7 @@ import { Timestamp } from '@angular/fire/firestore';
   templateUrl: './board-dialog.component.html',
   styleUrl: './board-dialog.component.scss'
 })
-export class BoardDialogComponent {
+export class BoardDialogComponent implements AfterViewInit {
   @Input() task!: Task;
   @Input() contacts?: ContactInterface[];
   @Input() assignees: { id: string; name: string; initials: string; color: string }[] = [];
@@ -36,40 +36,40 @@ export class BoardDialogComponent {
   @Output() taskUpdated = new EventEmitter<Task>();
   dueDateInput!: string;
 
+  @ViewChild('editDueDateInput') editDueDateInput!: ElementRef<HTMLInputElement>;
+  todayString = new Date().toISOString().split('T')[0];
+
   onClose() {
     this.close.emit();
   }
 
- ngOnInit() {
-  this.dueDateInput = this.extractDueDate(this.task.duedate);
+  ngOnInit() {
+  const raw: any = this.task.duedate;
+  let dateObj: Date;
+
+  try {
+    if (raw?.toDate && typeof raw.toDate === 'function') {
+      dateObj = raw.toDate();
+    } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
+      const ts = new Timestamp(raw.seconds, raw.nanoseconds);
+      dateObj = ts.toDate();
+    } else if (typeof raw === 'string' || raw instanceof Date) {
+      dateObj = new Date(raw);
+    } else {
+      throw new Error('Invalid date format in task');
+    }
+
+    this.dueDateInput = dateObj.toISOString().split('T')[0];
+  } catch {
+    this.dueDateInput = '';
+  }
 
   this.editableTask = {
     ...this.task,
-    subtasks: this.task.subtasks.map(sub => this.ensureSubtaskHasId(sub))
-  };
-  }
-  
-private extractDueDate(raw: any): string {
-  try {
-    let date: Date;
-    if (raw?.toDate instanceof Function) {
-      date = raw.toDate();
-    } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
-      date = new Timestamp(raw.seconds, raw.nanoseconds).toDate();
-    } else {
-      date = new Date(raw);
-    }
-    return date.toISOString().split('T')[0];
-  } catch {
-    console.warn('Invalid date format in task:', raw);
-    return '';
-  }
-}
-
-private ensureSubtaskHasId(sub: Subtask): Subtask {
-  return {
-    ...sub,
-    id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    subtasks: this.task.subtasks.map(sub => ({
+      ...sub,
+      id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    }))
   };
 }
 
@@ -194,22 +194,22 @@ private ensureSubtaskHasId(sub: Subtask): Subtask {
  * Used as a read-only computed property for clean binding in the template.
  */
   get formattedDueDate(): string {
-  const raw: any = this.task.duedate;
+    const raw: any = this.task.duedate;
 
-  try {
-    if (raw?.toDate && typeof raw.toDate === 'function') {
-      // Firestore Timestamp
-      return raw.toDate().toLocaleDateString('en-GB');
-    } else if (typeof raw === 'string' || raw instanceof Date) {
-      // String or native Date
-      return new Date(raw).toLocaleDateString('en-GB');
-    } else {
+    try {
+      if (raw?.toDate && typeof raw.toDate === 'function') {
+        // Firestore Timestamp
+        return raw.toDate().toLocaleDateString('en-GB');
+      } else if (typeof raw === 'string' || raw instanceof Date) {
+        // String or native Date
+        return new Date(raw).toLocaleDateString('en-GB');
+      } else {
+        return 'Invalid date';
+      }
+    } catch {
       return 'Invalid date';
     }
-  } catch {
-    return 'Invalid date';
   }
-}
 
 
   onCheckboxChange(event: Event) {
@@ -227,7 +227,7 @@ private ensureSubtaskHasId(sub: Subtask): Subtask {
     }
   }
 
-   getAvatarColor(id: string): string {
+  getAvatarColor(id: string): string {
     const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
     return contact?.color ?? "#000000";
   }
@@ -323,5 +323,33 @@ private ensureSubtaskHasId(sub: Subtask): Subtask {
       console.error('Error updating subtask in Firebase:', error);
     }
   }
+
+  ngAfterViewInit(): void {
+    if (this.editDueDateInput?.nativeElement) {
+      this.editDueDateInput.nativeElement.min = this.todayString;
+    }
+  }
+
+
+  validateDueDateEdit(): void {
+    const inputEl = this.editDueDateInput?.nativeElement;
+    if (!inputEl) { return; }
+
+    const value = inputEl.value;
+    if (!value) { return; }
+
+    const chosen = new Date(value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (chosen < today) {
+      const todayISO = this.todayString;
+      inputEl.value = todayISO;
+      this.dueDateInput = todayISO;
+      console.warn('Selected date was in the past – resetting to today.');
+    }
+  }
+
+
 
 }

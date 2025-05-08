@@ -12,7 +12,7 @@
     <h1 class="task-title">{{ task.title }}</h1>
     <p class="task-description">{{ task.description }}</p>
     <div class="date-prio-section">
-      <span class="section-label">Due date:</span>
+      <span class="section-label">Due Date:</span>
       <span class="task-value">
         {{ formattedDueDate }}
       </span>
@@ -83,7 +83,8 @@
 
       <div class="form-group">
         <label>Due Date</label>
-        <input type="date" [(ngModel)]="dueDateInput" name="dueDate" />
+        <input #editDueDateInput [min]="todayString" (change)="validateDueDateEdit()" type="date"
+          [(ngModel)]="dueDateInput" name="dueDate" />
       </div>
 
       <div class="form-group">
