@@ -132,13 +132,19 @@
           }
         </div>
         }
-        <div class="selected-assignees">
-          @for (id of editableTask.assignees; track id) {
-          <span class="avatar" [style.backgroundColor]="getAvatarColor(id)">
-            {{ getContactInitials(id) }}
-          </span>
-          }
-        </div>
+        <div class="selected-assignees"> 
+            @for (id of editableTask.assignees; track id) {
+              <span
+                class="avatar"
+                [style.backgroundColor]="getAvatarColor(id)"
+                (click)="removeAssignee(id)"
+                title="Click to remove"
+                style="cursor: pointer;"
+              >
+                {{ getContactInitials(id) }}
+              </span>
+            }
+          </div>
       </div>
 
       <div class="form-group">

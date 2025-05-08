@@ -350,6 +350,10 @@ export class BoardDialogComponent implements AfterViewInit {
     }
   }
 
+    removeAssignee(id: string) { //in edit-dialog uset can remove selected Initial just by click
+    this.editableTask.assignees = this.editableTask.assignees.filter(aid => aid !== id);
+  }
+
 
 
 }
