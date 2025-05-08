@@ -78,18 +78,19 @@
 
         <label>
           <p class="layoutLeftName">Category <span class="requred">*</span></p>
-          <select required class="enterTitle selectCategory" [(ngModel)]="category">
+          <select required class="enterTitle selectCategory" [(ngModel)]="category" placeholder="select task category">
+            <option value="" disabled selected hidden>Select task category</option>
             <option value="Technical Task">Technical Task</option>
             <option value="User Story">User Story</option>
           </select>
         </label><br />
         <!-- ----------------------------- -->
 
-   <div>
-  <label>Subtasks</label>
+  <div>
+  <label class="subtask-label">Subtasks</label>
 
   <!-- Subtask input field -->
-  <div style="position: relative; display: inline-block; width: 100%;">
+  <div class="subtask-input-wrapper">
     <input
       type="text"
       placeholder="Add new subtask"
@@ -97,63 +98,64 @@
       [readonly]="!isTyping"
       (click)="enableTyping()"
       (keydown.enter)="confirmSubtask()"
-      style="width: 100%; padding-right: 70px; box-sizing: border-box; padding: 16px;"
+      class="subtask-input"
     />
     @if (!isTyping) {
       <span
-        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; color: purple;"
+        class="input-icon add"
         (click)="enableTyping()">＋</span>
     }
     @if (isTyping) {
       <span
-        style="position: absolute; right: 40px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"
+        class="input-icon cancel"
         (click)="cancelSubtask()">✕</span>
       <span
-        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px;"
+        class="input-icon confirm"
         (click)="confirmSubtask()">✔</span>
     }
   </div>
 
   <!-- Subtasks list -->
-      @if (addedSubtasks.length > 0) {
-      <ul style="margin-top: 10px; padding-left: 20px;">
-          @for (sub of addedSubtasks; track $index) {
-            <li
-              style="list-style: none; position: relative; padding: 6px 40px 6px 6px; background: #f5f5f5; border-radius: 6px; margin-bottom: 6px;"
-              (mouseenter)="hoveredIndex = $index"
-              (mouseleave)="hoveredIndex = -1"
-            >
-              @if (editIndex === $index) {
-                <!-- Editable subtask with inline icons -->
-                <div style="position: relative; display: flex; align-items: center;">
-                  <input
-                    [(ngModel)]="editedSubtaskText"
-                    (keydown.enter)="saveEdit($index)" 
-                    style="width: 100%; padding-right: 50px; padding-left: 10px; box-sizing: border-box; padding: 15px;"
-                  />
-                  <span
-                    (click)="deleteSubtask($index)"
-                    style="position: absolute; right: 30px; cursor: pointer; color: grey;"
-                  >🗑️</span>
-                  <span
-                    (click)="saveEdit($index)"
-                    style="position: absolute; right: 10px; cursor: pointer; color: purple;"
-                  >✔</span>
-                </div>
-              } @else {
-                • {{ sub }}
-                @if (hoveredIndex === $index) {
-                  <div style="position: absolute; top: 6px; right: 6px; display: flex; gap: 6px;">
-                    <button (click)="startEdit($index)" style="border: none; background: transparent; cursor: pointer;">✏️</button>
-                    <button (click)="deleteSubtask($index)" style="border: none; background: transparent; cursor: pointer;">🗑️</button>
-                  </div>
-                }
-              }
-            </li>
+  @if (addedSubtasks.length > 0) {
+    <ul class="subtask-list">
+      @for (sub of addedSubtasks; track $index) {
+        <li
+          class="subtask-item"
+          (mouseenter)="hoveredIndex = $index"
+          (mouseleave)="hoveredIndex = -1"
+        >
+          @if (editIndex === $index) {
+            <!-- Editable subtask with inline icons -->
+            <div class="subtask-edit-wrapper">
+              <input
+                [(ngModel)]="editedSubtaskText"
+                (keydown.enter)="saveEdit($index)" 
+                class="subtask-edit-input"
+              />
+              <span
+                (click)="deleteSubtask($index)"
+                class="input-icon cancel"
+              >🗑️</span>
+              <span
+                (click)="saveEdit($index)"
+                class="input-icon confirm"
+              >✔</span>
+            </div>
+          } @else {
+            • {{ sub }}
+            @if (hoveredIndex === $index) {
+              <div class="subtask-actions">
+                <button (click)="startEdit($index)">✏️</button>
+                <button (click)="deleteSubtask($index)">🗑️</button>
+              </div>
+            }
           }
-        </ul>
+        </li>
       }
-    </div>
+    </ul>
+  }
+</div>
+
 
 
   <!-- --------------------------------------------- -->
