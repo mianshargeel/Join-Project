@@ -373,7 +373,6 @@ input[type=checkbox] {
     }
 }
 
-
 /* Assignee Dropdown */
 .dropdown-field {
     position: relative;
@@ -396,8 +395,8 @@ input[type=checkbox] {
     right: 15px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     transition: transform 0.2s ease;
 
     &.rotated {
@@ -414,6 +413,10 @@ input[type=checkbox] {
     border-radius: 8px;
     margin-top: -6px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    .avatar {
+        cursor: pointer;
+    }
 }
 
 .dropdown-item {
@@ -423,13 +426,37 @@ input[type=checkbox] {
     gap: 12px;
     border-bottom: 1px solid #eee;
     margin-right: 8px;
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    cursor: pointer;
 
     &:last-child {
         border-bottom: none;
     }
 
-    &:hover {
-        background: #f6f6f6;
+    &[aria-selected="true"] {
+        background-color: var(--darkblue);
+        color: white;
+
+        .avatar {
+            border-color: white;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            &::before {
+                filter: brightness(0) invert(1);
+                pointer-events: none;
+            }
+        }
+
+        &:hover {
+            background-color: var(--light-blue);
+        }
+    }
+
+    &:not([aria-selected="true"]):hover {
+        background-color: #f6f6f6;
     }
 }
 
@@ -584,7 +611,7 @@ input[type=checkbox] {
     font: 400 16px "Inter", sans-serif;
     color: black;
     cursor: pointer;
-    word-break: break-all;
+    word-break: break-word;
     hyphens: auto;
 
     &:hover {
@@ -594,30 +621,34 @@ input[type=checkbox] {
 
 .subtask-edit-row {
     position: relative;
-    display: flex;
-    align-items: center;
+    width: 100%;
 }
 
 .subtask-edit-input {
     flex: 1;
-    padding: 15px 50px 15px 10px;
+    padding: 6px 0px 6px 0;
     box-sizing: border-box;
-    font: 400 20px "Inter", sans-serif;
+    font: 400 16px "Inter", sans-serif;
     color: black;
     border: none;
+    width: 100%;
+    background: transparent;
+    border-bottom: 1px solid var(--light-blue);
 
     &:focus {
         outline: none;
     }
 }
 
-.subtask-btn.delete,
-.subtask-btn.save {
+.subtask-edit-btns {
     position: absolute;
+    right: -70px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 16px;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding-right: 6px;
 }
 
 .subtask-btn.delete {
@@ -668,4 +699,47 @@ input[type=checkbox] {
     height: 24px;
     background: #a8a8a8;
     margin: 0 3px !important;
+}
+
+.subtask-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.delete img {
+        width: 18px;
+        height: 18px;
+        filter: brightness(0) saturate(100%) invert(15%) sepia(23%) saturate(2000%) hue-rotate(200deg) brightness(90%) contrast(90%);
+
+        &:hover {
+            filter: brightness(0) saturate(100%) invert(55%) sepia(64%) saturate(415%) hue-rotate(176deg) brightness(100%) contrast(102%);
+        }
+    }
+
+    &.save {
+        color: var(--darkblue);
+        font-size: 18px;
+
+        &:hover {
+            color: var(--light-blue);
+        }
+    }
+}
+
+.vert-divider-edit-bottom {
+    width: 1px;
+    height: 24px;
+    background: #a8a8a8;
+    margin: 0 3px;
+}
+
+.vert-divider-edit-bottom {
+    width: 1px;
+    height: 24px;
+    background: #a8a8a8;
+    margin: 0 4px;
 }

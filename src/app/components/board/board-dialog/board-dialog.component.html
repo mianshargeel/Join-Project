@@ -73,12 +73,14 @@
     <form class="edit-dialog" (ngSubmit)="submitEdit()" #editForm="ngForm">
       <div class="form-group">
         <label>Title</label>
-        <input type="text" [(ngModel)]="editableTask.title" name="title" required />
+        <input type="text" [(ngModel)]="editableTask.title" name="title" required
+          [placeholder]="!editableTask.title ? 'Enter a title...' : ''" />
       </div>
 
       <div class="form-group">
         <label>Description</label>
-        <textarea [(ngModel)]="editableTask.description" name="description"></textarea>
+        <textarea [(ngModel)]="editableTask.description" name="description"
+          [placeholder]="!editableTask.description ? 'Enter a description...' : ''"></textarea>
       </div>
 
       <div class="form-group">
@@ -110,57 +112,37 @@
         </div>
       </div>
 
-     <div class="form-group">
+      <div class="form-group">
         <label>Assigned to:</label>
         <div class="dropdown-field" (click)="toggleDropdown()">
-          <input
-            type="text"
-            name="contactSearch"
-            [(ngModel)]="contactSearchTerm"
-            [ngModelOptions]="{standalone: true}"
-            placeholder="Search contacts..."
-          />
-          <img
-            class="dropdown-arrow"
-            src="assets/img/board/menu-up-down.svg"
-            [class.rotated]="dropdownOpen"
-            alt="DropDown Arrow"
-          />
+          <input type="text" name="contactSearch" [(ngModel)]="contactSearchTerm" [ngModelOptions]="{standalone: true}"
+            placeholder="Search contacts..." />
+          <img class="dropdown-arrow" src="assets/img/board/menu-up-down.svg" [class.rotated]="dropdownOpen"
+            alt="DropDown Arrow" />
         </div>
 
         @if (dropdownOpen) {
-          <div class="dropdown-content">
-            @for (contact of filteredContacts; track contact.id) {
-              <div class="dropdown-item">
-                <span
-                  class="avatar"
-                  [style.backgroundColor]="getAvatarColor(contact.id ?? '')"
-                >
-                  {{ generateInitials(contact.name) }}
-                </span>
-                <span class="contact-name">{{ contact.name }}</span>
-                <input
-                  type="checkbox"
-                  [value]="contact.id"
-                  [checked]="editableTask.assignees.includes(contact.id ?? '')"
-                  (change)="onCheckboxChange($event)"
-                />
-              </div>
-            }
+        <div class="dropdown-content">
+          @for (contact of filteredContacts; track contact.id) {
+          <div class="dropdown-item" [attr.aria-selected]="editableTask.assignees.includes(contact.id ?? '')"
+            (click)="toggleContactSelection(contact.id ?? '')">
+            <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
+              {{ generateInitials(contact.name) }}
+            </span>
+            <span class="contact-name">{{ contact.name }}</span>
+            <input type="checkbox" [value]="contact.id" [checked]="editableTask.assignees.includes(contact.id ?? '')"
+              (change)="onCheckboxChange($event)" />
           </div>
+          }
+        </div>
         }
 
         <div class="selected-assignees">
           @for (id of editableTask.assignees; track id) {
-            <span
-              class="avatar"
-              [style.backgroundColor]="getAvatarColor(id)"
-              (click)="removeAssignee(id)"
-              title="Click to remove"
-              style="cursor: pointer;"
-            >
-              {{ getContactInitials(id) }}
-            </span>
+          <span class="avatar" [style.backgroundColor]="getAvatarColor(id)" (click)="removeAssignee(id)"
+            title="Click to remove" style="cursor: pointer;">
+            {{ getContactInitials(id) }}
+          </span>
           }
         </div>
       </div>
@@ -192,39 +174,41 @@
         </div>
 
         <!-- Subtasks list -->
-      @if (editableTask.subtasks.length > 0) {
+        @if (editableTask.subtasks.length > 0) {
         <ul class="edit-subtasks-list">
           @for (sub of editableTask.subtasks; let i = $index; track sub.id) {
-            <li class="subtask-item" (mouseenter)="hoveredSubtaskIndex = i" (mouseleave)="hoveredSubtaskIndex = -1">
-              @if (subtaskEditIndex === i) {
-              <!-- Editable subtask -->
-              <div class="subtask-edit-row">
-                <input
-                  class="subtask-edit-input"
-                  name="editedSubtaskText"
-                  [(ngModel)]="editedSubtaskText"
-                  (keydown.enter)="saveEdit(sub.id)" />
-                <span class="subtask-btn delete" (click)="deleteSubtask(editableTask.subtasks[subtaskEditIndex].id)">🗑️</span>
-                <span class="subtask-btn save" (click)="saveEdit(sub.id)">✔</span>
+          <li class="subtask-item" (mouseenter)="hoveredSubtaskIndex = i" (mouseleave)="hoveredSubtaskIndex = -1">
+            @if (subtaskEditIndex === i) {
+            <!-- Editable subtask -->
+            <div class="subtask-edit-row">
+              <input class="subtask-edit-input" name="editedSubtaskText" [(ngModel)]="editedSubtaskText"
+                (keydown.enter)="saveEdit(sub.id)" />
+              <div class="subtask-edit-btns">
+                <button class="subtask-btn delete"
+                  (click)="deleteSubtask(editableTask.subtasks[subtaskEditIndex].id)"><img
+                    src="/assets/img/board/delete.svg" /></button>
+                <span class="vert-divider-edit-bottom"></span>
+                <button class="subtask-btn save" (click)="saveEdit(sub.id)">✔</button>
               </div>
-              } @else {
-              • {{ sub.title }}
-              @if (hoveredSubtaskIndex === i) {
-              <div class="subtask-hover-btns">
-                <button class="subtask-btn delete" (click)="deleteSubtask(sub.id)">
-                  <img src="/assets/img/board/delete.svg" />
-                </button>
-                <span class="vert-divider-bottom"></span>
-                <button class="subtask-btn edit" (click)="startEdit(sub.id)">
-                  <img src="/assets/img/board/edit.svg" />
-                </button>
-              </div>
-              }
-              }
-            </li>
+            </div>
+            } @else {
+            • {{ sub.title }}
+            @if (hoveredSubtaskIndex === i) {
+            <div class="subtask-hover-btns">
+              <button class="subtask-btn delete" (click)="deleteSubtask(sub.id)">
+                <img src="/assets/img/board/delete.svg" />
+              </button>
+              <span class="vert-divider-bottom"></span>
+              <button class="subtask-btn edit" (click)="startEdit(sub.id)">
+                <img src="/assets/img/board/edit.svg" />
+              </button>
+            </div>
+            }
+            }
+          </li>
           }
         </ul>
-      }
+        }
 
       </div>
 
