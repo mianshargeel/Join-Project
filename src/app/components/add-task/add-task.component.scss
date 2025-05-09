@@ -321,25 +321,27 @@
 
  /* Input Field */
  .assignee-input {
-      border: none;
-      outline: none;
-      width: 100%;
-      font-size: 16px;
-      background-color: transparent;
-      pointer-events: none;
-      color: #333;
-      height: 64px;
-      border-radius: 12px;
-}
+   border: none;
+   outline: none;
+   width: 100%;
+   font-size: 16px;
+   background-color: transparent;
+   color: #333;
+   height: 64px;
+   border-radius: 12px;
+ }
 
  .dropdown-arrow {
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 8px solid #555;
-    pointer-events: none;
-    margin-left: auto;
+   width: 0;
+   height: 0;
+   border-left: 6px solid transparent;
+   border-right: 6px solid transparent;
+   border-top: 8px solid #555;
+   cursor: pointer;
+   margin-left: auto;
+ }
+ .dropdown-arrow:hover {
+   border-top-color: #333;
  }
 
  /* Dropdown Content */

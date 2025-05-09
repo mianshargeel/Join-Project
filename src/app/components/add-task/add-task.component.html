@@ -40,26 +40,39 @@
         </div>
 
         <!-- Assignees field -->
+       <div class="form-group" #assigneeDropdown>
+         <label for="">Assign to*</label>
         <div class="assignee-dropdown">
-          <label for="">Assigne to*</label>
-          <div class="assignee-input-wrapper" (click)="toggleDropdown()">
-            <input type="text" [readonly]="true" placeholder="Select contacts to assign" class="assignee-input" />
-            <span class="dropdown-arrow"></span>
+          <div class="assignee-input-wrapper" >
+            <input
+              type="text"
+              class="assignee-input"
+              placeholder="Search contacts..."
+              [(ngModel)]="contactSearchTerm"
+              name="contactSearchTerm"
+              [ngModelOptions]="{standalone: true}"
+              (focus)="dropdownOpen = true"
+            />
+            <span class="dropdown-arrow" (click)="toggleDropdown()"></span>
           </div>
-
+        
           @if (dropdownOpen) {
-          <div class="dropdown-content">
-            @for (contact of firebaseTaskService.contactList; track contact.id) {
-            <div class="dropdown-item">
-              <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
-                {{ generateInitials(contact.name) }}
-              </span>
-              <span class="contact-name">{{ contact.name }}</span>
-              <input type="checkbox" [value]="contact.id"
-                [checked]="contact.id && selectedAssignees.includes(contact.id)" (change)="onCheckboxChange($event)" />
+            <div class="dropdown-content">
+              @for (contact of filteredContacts; track contact.id) {
+                <div class="dropdown-item">
+                  <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
+                    {{ generateInitials(contact.name) }}
+                  </span>
+                  <span class="contact-name">{{ contact.name }}</span>
+                  <input
+                    type="checkbox"
+                    [value]="contact.id"
+                    [checked]="selectedAssignees.includes(contact.id ?? '')"
+                    (change)="onCheckboxChange($event)"
+                  />
+                </div>
+              }
             </div>
-            }
-          </div>
           }
         </div>
         <!-- Showing selected assignees as colored bubbles -->
@@ -69,12 +82,16 @@
                 <span 
                   class="avatar-badge"
                   [style.backgroundColor]="getAvatarColor(id)"
+                  (click)="removeAssignee(id)"  
+                  title="Click to remove"
+                  style="cursor: pointer;"
                 >
                   {{ getContactInitials(id) }}
                 </span>
               }
             </div>
           }
+       </div>
 
         <label>
           <p class="layoutLeftName">Category <span class="requred">*</span></p>
