@@ -41,6 +41,7 @@ export class AddTaskComponent implements AfterViewInit {
   subtasksInput = '';
   selectedAssignees: string[] = [];
   dropdownOpen = false;
+  inputClicked = false;
 
    async createNewTask() {
     const taskData = {
@@ -130,9 +131,14 @@ confirmSubtask() {
     
   }
 
-  openDropdown() {
-    this.dropdownOpen = true;
-    console.log('Dropdown opened');
+  handleInputClick() {
+    if (this.inputClicked) {
+      this.dropdownOpen = false;
+      this.inputClicked = false;
+    } else {
+      this.dropdownOpen = true;
+      this.inputClicked = true;
+    }
   }
 
  getSelectedContactNames(): { initials: string; color: string }[] {

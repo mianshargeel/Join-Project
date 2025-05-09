@@ -51,7 +51,8 @@
               [(ngModel)]="contactSearchTerm"
               name="contactSearchTerm"
               [ngModelOptions]="{standalone: true}"
-              (focus)="dropdownOpen = true"
+              (focus)="handleInputClick()"
+              (click)="handleInputClick()"
             />
             <span class="dropdown-arrow" (click)="toggleDropdown()"></span>
           </div>
