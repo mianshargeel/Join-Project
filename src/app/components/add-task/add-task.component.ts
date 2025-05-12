@@ -223,10 +223,6 @@ confirmSubtask() {
     );
   }
   
-  // removeAssignee(id: string) { //in edit-dialog uset can remove selected Initial just by click
-  //   // this.editableTask.assignees = this.editableTask.assignees.filter(aid => aid !== id);
-  // }
-
   //when user click outside of dropdown in assignees-field, its automatically closes 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) { 

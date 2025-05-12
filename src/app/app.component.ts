@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './shared/header/header.component';
 import { NavbarComponent } from "./shared/navbar/navbar.component";
+import { TaskService } from './services/task.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,11 @@ import { NavbarComponent } from "./shared/navbar/navbar.component";
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
+  firebaseTaskService = inject(TaskService);
 
-  title = 'join_board';
+  constructor() {
+    this.firebaseTaskService.loadAllTasks();//will loads all Tasks from firebase,when App starts
+  }
+ 
 
 }

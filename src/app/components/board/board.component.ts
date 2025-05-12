@@ -23,6 +23,7 @@ import { TaskDialogComponent } from './task-dialog/task-dialog.component';
 
 export class BoardComponent {
   firebaseTaskService = inject(TaskService);
+  firebaseService = inject(FirebaseService); //in case if used somewhere in this file
   selectedTask: Task | null = null;
   dialogOpen = false;
   showDialog = false;
@@ -49,7 +50,7 @@ export class BoardComponent {
     this.selectedTask = null;
   }
 
-  constructor(public firebaseService: FirebaseService) { }
+  constructor() { }
 
   //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
   ngOnInit() {

@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FirebaseService } from '../../services/firebase.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TaskService } from '../../services/task.service';
+import { Timestamp } from '@angular/fire/firestore';
+import { Task } from '../../interfaces/task';
 
 
 
@@ -15,60 +18,55 @@ import { CommonModule } from '@angular/common';
 
 
 export class SummaryComponent {
-  contact = {};
+  taskService = inject(TaskService);
+  firebaseService = inject(FirebaseService);
+  tasks: Task[] = [];
 
-  name = "";
-  mail = "";
-  phone = "";
+  totalTasks = 0;
+  todoCount = 0;
+  doneCount = 0;
+  inProgressCount = 0;
+  awaitingFeedbackCount = 0;
+  urgentCount = 0;
+  upcomingDeadline: Date | null = null;
 
-  selectedContactIndex: number | null = null;
-  contactId?: string = '';
-  editedContact = {
-    name: '',
-    mail: '',
-    phone: '',
-  };
-
-
-  constructor(public firebaseService: FirebaseService){
-
+  constructor() { }
+  
+  ngOnInit(): void {
+    this.taskService.tasks$.subscribe((tasks: Task[]) => {
+      // console.log('SummaryComponent received tasks:', tasks); // debug log
+      this.calculateSummary(tasks);
+    });
   }
 
-  addContactFormToFirebase() {
-    let contact = {
-      name: this.name,
-      mail: this.mail,
-      phone: this.phone,
-    }
-    this.firebaseService.addContactToFirebase(contact);
+  normalizeStatus(status: string): string {
+    return status.toLowerCase().replace(/\s+/g, '-'); // e.g. "To do" → "to-do"
   }
 
-  saveEditedContactFormToFirebase(index: number) {
-      this.selectedContactIndex = index;
-      this.contactId = this.firebaseService.contacts[index].id;
-      this.editedContact = {
-        name: this.firebaseService.contacts[index].name,
-        mail: this.firebaseService.contacts[index].mail,
-        phone: this.firebaseService.contacts[index].phone,
-      };
-      if (this.contactId) {
-      this.firebaseService.updateContactInFirebase(this.contactId, this.editedContact);
-    }
+  calculateSummary(tasks: Task[]): void {
+    this.totalTasks = tasks.length;
+    this.todoCount = tasks.filter(t => this.normalizeStatus(t.status) === 'to-do').length;
+    this.doneCount = tasks.filter(t => this.normalizeStatus(t.status) === 'done').length;
+    this.inProgressCount = tasks.filter(t => this.normalizeStatus(t.status) === 'in-progress').length;
+    this.awaitingFeedbackCount = tasks.filter(t => this.normalizeStatus(t.status) === 'await-feedback').length;
+    this.urgentCount = tasks.filter(t => t.priority === 'urgent').length;
+  
+    const upcomingDates = tasks
+      .filter(t => t.duedate instanceof Timestamp)
+      .map(t => (t.duedate as Timestamp).toDate())
+      .filter(date => date > new Date())
+      .sort((a, b) => a.getTime() - b.getTime());
+  
+    this.upcomingDeadline = upcomingDates.length > 0 ? upcomingDates[0] : null;
+    // console.log('To Do:', tasks.filter(t => this.normalizeStatus(t.status) === 'to-do'));
   }
 
-  deleteContactFromFirebase(index: number) {
-    this.selectedContactIndex = index;
-    this.contactId = this.firebaseService.contacts[index].id;
-    if (this.contactId) {
-    this.firebaseService.deleteContactInFirebase(this.contactId);
+  getFormattedDate(date: Date | null): string {
+    if (!date) return 'No upcoming deadlines';
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
-}
- 
-  // Chat GPT
-  getContactNameById(id: string): string {
-    let contact = this.firebaseService.contacts.find(c => c.id === id);
-    return contact ? contact.name : 'Unbekannt';
-  }
-
-
 }

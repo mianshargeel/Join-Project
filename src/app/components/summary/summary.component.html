@@ -1,47 +1,11 @@
-<h2>Tasks anzeigen</h2>
+<!--Summary after sign-in, Taher you can change HTML structure as -->
 
-@for (item of firebaseService.tasks; track $index) {
-    <div class="contact-card">
-        <p>title: {{ item.title }}</p>
-        <p>description: {{ item.description }}</p>
-        <p>category: {{ item.category }}</p>
-        <p>priority: {{ item.priority }}</p>
-        <p>status: {{ item.status }}</p>
-        <p>due date: {{ item.duedate.toDate() | date: 'dd.MM.yy' }}</p>
-        <p>assignees:</p>
-        @for (item of item.assignees; track $index) {
-            <p class="sub-content">Assignee {{$index+1}}: {{ item }} -> {{ getContactNameById(item) }} </p>
-        }
-        <p>subtasks: {{ item.id }}</p>
-    </div>
-}
-
-<br>
-<br>
-
-<h2>Kontakte anzeigen und bearbeiten</h2>
-
-@for (item of firebaseService.contacts; track $index) {
-    <div>
-        <input class="contact-card" [(ngModel)]= "item.name" type="text" value="{{ item.name }}">
-        <input class="contact-card" [(ngModel)]= "item.mail" type="text" value="{{ item.mail }}">
-        <input class="contact-card" [(ngModel)]= "item.phone" type="text" value="{{ item.phone }}">
-        <button (click)="saveEditedContactFormToFirebase($index)">Save Contact</button>
-        <button (click)="deleteContactFromFirebase($index)">Delete Contact</button>
-    </div>
-}
-
-<br>
-<br>
-
-<h2>Kontakte hinzufügen</h2>
-
-<p>Name</p>
-<input [(ngModel)]= "name" type="text">
-<p>Mail</p>
-<input [(ngModel)]= "mail" type="text">
-<p>Phone</p>
-<input [(ngModel)]= "phone" type="text">
-<br>
-<br>
-<button (click)="addContactFormToFirebase()">Add Contact</button>
+<div class="metric">
+    <h3>To Do: {{todoCount}}</h3>
+    <h3>Done: {{doneCount}}</h3>
+    <h3>Urgent: {{urgentCount}}---{{ getFormattedDate(upcomingDeadline) }}--Upcoming Deadline</h3>
+    <h3>In Progress: {{inProgressCount}}</h3>
+    <h3>Await Feedback: {{awaitingFeedbackCount}}</h3>
+    <h3>Total Tasks in Board: {{totalTasks}} </h3>
+</div>
+  
