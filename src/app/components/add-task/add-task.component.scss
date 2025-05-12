@@ -10,8 +10,7 @@
 
   .addTaskMaxWidth {
     @include max-width();
-    padding: clamp(48px, 5.73vw, 110px) clamp(16px, 7.1vw, 135.75px) 0
-      clamp(16px, 5vw, 96px);
+    padding: clamp(48px, 5.73vw, 110px) clamp(16px, 7.1vw, 135.75px) 0 clamp(16px, 5vw, 96px);
 
     .addTaskHeader {
       width: 100%;
@@ -173,10 +172,7 @@
           }
 
           .ng-select ::ng-deep .ng-dropdown-panel .ng-option.ng-option-selected,
-          .ng-select
-            ::ng-deep
-            .ng-dropdown-panel
-            .ng-option.ng-option-selected.ng-option-marked {
+          .ng-select ::ng-deep .ng-dropdown-panel .ng-option.ng-option-selected.ng-option-marked {
             color: $secondary-font;
             background-color: $darkblue;
             border-radius: 12px;
@@ -187,19 +183,8 @@
             }
           }
 
-          .ng-select
-            ::ng-deep
-            .ng-dropdown-panel
-            .ng-option
-            .contactInfo
-            .contact-avatar,
-          .ng-select
-            ::ng-deep
-            .ng-select-container
-            .ng-value-container
-            .ng-value
-            .contactInfo
-            .contact-avatar {
+          .ng-select ::ng-deep .ng-dropdown-panel .ng-option .contactInfo .contact-avatar,
+          .ng-select ::ng-deep .ng-select-container .ng-value-container .ng-value .contactInfo .contact-avatar {
             width: 42px;
             height: 42px;
             border-radius: 50%;
@@ -289,25 +274,26 @@
       }
     }
   }
+
   // css from shardzhil------------------------------------------------------------------
- .assignee-dropdown {
-  width: 100%;
+  .assignee-dropdown {
+    width: 100%;
     font-family: sans-serif;
     position: relative;
     margin-bottom: 16px;
- }
+  }
 
- /* Label */
- .assignee-dropdown label {
-  font-size: 24px;
+  /* Label */
+  .assignee-dropdown label {
+    font-size: 24px;
     color: #4a4a4a;
     display: block;
     margin-bottom: 8px;
     padding-bottom: 0px !important;
- }
+  }
 
- /* Input Wrapper */
- .assignee-input-wrapper {
+  /* Input Wrapper */
+  .assignee-input-wrapper {
     width: 100%;
     display: flex;
     align-items: center;
@@ -317,33 +303,36 @@
     background-color: #fff;
     cursor: pointer;
     position: relative;
-}
+  }
 
- /* Input Field */
- .assignee-input {
-      border: none;
-      outline: none;
-      width: 100%;
-      font-size: 16px;
-      background-color: transparent;
-      pointer-events: none;
-      color: #333;
-      height: 64px;
-      border-radius: 12px;
-}
+  /* Input Field */
+  .assignee-input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+    background-color: transparent;
+    color: #333;
+    height: 64px;
+    border-radius: 12px;
+  }
 
- .dropdown-arrow {
+  .dropdown-arrow {
     width: 0;
     height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
     border-top: 8px solid #555;
-    pointer-events: none;
+    cursor: pointer;
     margin-left: auto;
- }
+  }
 
- /* Dropdown Content */
- .dropdown-content {
+  .dropdown-arrow:hover {
+    border-top-color: #333;
+  }
+
+  /* Dropdown Content */
+  .dropdown-content {
     width: 100%;
     position: absolute;
     top: 100%;
@@ -356,90 +345,91 @@
     overflow-y: auto;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
- }
+  }
 
- /* Dropdown Items */
- .dropdown-item {
-   display: flex;
-   align-items: center;
-   padding: 10px 12px;
-   cursor: pointer;
-   transition: background-color 0.2s;
- }
+  /* Dropdown Items */
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
 
- .dropdown-item:hover {
-   background-color: #f0f0f0;
- }
+  .dropdown-item:hover {
+    background-color: #f0f0f0;
+  }
 
- /* Avatar */
- .avatar {
-   width: 28px;
-   height: 28px;
-   border-radius: 50%;
-   background-color: #999;
-   color: white;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   font-size: 12px;
-   font-weight: bold;
-   margin-right: 10px;
- }
+  /* Avatar */
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #999;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
 
- /* Contact Name */
- .contact-name {
-   flex-grow: 1;
-   font-size: 14px;
-   color: #333;
- }
+  /* Contact Name */
+  .contact-name {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #333;
+  }
 
- /* Checkbox */
- .dropdown-item input[type="checkbox"] {
-   margin-left: auto;
+  /* Checkbox */
+  .dropdown-item input[type="checkbox"] {
+    margin-left: auto;
     width: 24px;
     height: 24px;
- }
- 
-    .selected-assignees {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-      padding-left: 2px;
-    }
-  
-    .avatar-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-color: #999;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-// subtasks--------------------------------------------------------------
-/* Label above subtasks */
-.subtask-label {
-  font-size: 24px;
-  font-weight: 500;
-  color: #4a4a4a;
-  margin-bottom: 8px;
-  padding-bottom: 0px !important;
-  display: inline-block;
-}
+  }
 
-/* Input wrapper and field */
-.subtask-input-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 12px;
-}
+  .selected-assignees {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding-left: 2px;
+  }
 
-.subtask-input {
+  .avatar-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #999;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  // subtasks--------------------------------------------------------------
+  /* Label above subtasks */
+  .subtask-label {
+    font-size: 24px;
+    font-weight: 500;
+    color: #4a4a4a;
+    margin-bottom: 8px;
+    padding-bottom: 0px !important;
+    display: inline-block;
+  }
+
+  /* Input wrapper and field */
+  .subtask-input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .subtask-input {
     width: 100%;
     padding: 12px 48px 12px 14px;
     box-sizing: border-box;
@@ -449,100 +439,101 @@
     transition: border-color 0.2s ease;
     height: 64px;
     border-radius: 12px;
-}
+  }
 
-.subtask-input:focus {
-  border-color: #7a5af8;
-}
+  .subtask-input:focus {
+    border-color: #7a5af8;
+  }
 
-/* Icons inside input */
-.input-icon {
-  position: absolute;
-  top: 43%;
-  transform: translateY(-50%);
-  font-size: 26px;
-  cursor: pointer;
-}
+  /* Icons inside input */
+  .input-icon {
+    position: absolute;
+    top: 43%;
+    transform: translateY(-50%);
+    font-size: 26px;
+    cursor: pointer;
+  }
 
-.input-icon.add {
-  right: 12px;
-  color: #7a5af8;
-}
+  .input-icon.add {
+    right: 12px;
+    color: #7a5af8;
+  }
 
-.input-icon.cancel {
-  right: 36px;
-  color: #999;
-}
+  .input-icon.cancel {
+    right: 36px;
+    color: #999;
+  }
 
-.input-icon.confirm {
-  right: 12px;
-  color: #7a5af8;
-}
+  .input-icon.confirm {
+    right: 12px;
+    color: #7a5af8;
+  }
 
-/* List and item container */
-.subtask-list {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
+  /* List and item container */
+  .subtask-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
 
-.subtask-item {
-  background-color: #f9f9f9;
-  border-radius: 6px;
-  padding: 10px 12px 10px 20px;
-  margin-bottom: 6px;
-  position: relative;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  transition: background-color 0.2s;
-}
+  .subtask-item {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    padding: 10px 12px 10px 20px;
+    margin-bottom: 6px;
+    position: relative;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+  }
 
-.subtask-item:hover {
-  background-color: #f0f0f0;
-}
+  .subtask-item:hover {
+    background-color: #f0f0f0;
+  }
 
-/* Edit input inside subtask */
-.subtask-edit-input {
-  width: 100%;
-  padding: 10px 48px 10px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  outline: none;
-  box-sizing: border-box;
-}
+  /* Edit input inside subtask */
+  .subtask-edit-input {
+    width: 100%;
+    padding: 10px 48px 10px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+  }
 
-/* Edit wrapper */
-.subtask-edit-wrapper {
-  width: 100%;
-  position: relative;
-}
+  /* Edit wrapper */
+  .subtask-edit-wrapper {
+    width: 100%;
+    position: relative;
+  }
 
-/* Edit/Delete/Confirm buttons */
-.subtask-actions {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  display: flex;
-  gap: 6px;
-}
+  /* Edit/Delete/Confirm buttons */
+  .subtask-actions {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 6px;
+  }
 
-.subtask-actions button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 0 4px;
-  color: #666;
-  transition: color 0.2s;
-}
+  .subtask-actions button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 4px;
+    color: #666;
+    transition: color 0.2s;
+  }
 
-.subtask-actions button:hover {
-  color: #7a5af8;
-}
-//-------------------------------------------------------------------------------------------------------------
+  .subtask-actions button:hover {
+    color: #7a5af8;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------
   @media (max-width: 936px) {
     width: 100%;
 

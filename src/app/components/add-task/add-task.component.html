@@ -40,41 +40,43 @@
         </div>
 
         <!-- Assignees field -->
-        <div class="assignee-dropdown">
-          <label for="">Assigne to*</label>
-          <div class="assignee-input-wrapper" (click)="toggleDropdown()">
-            <input type="text" [readonly]="true" placeholder="Select contacts to assign" class="assignee-input" />
-            <span class="dropdown-arrow"></span>
-          </div>
-
-          @if (dropdownOpen) {
-          <div class="dropdown-content">
-            @for (contact of firebaseTaskService.contactList; track contact.id) {
-            <div class="dropdown-item">
-              <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
-                {{ generateInitials(contact.name) }}
-              </span>
-              <span class="contact-name">{{ contact.name }}</span>
-              <input type="checkbox" [value]="contact.id"
-                [checked]="contact.id && selectedAssignees.includes(contact.id)" (change)="onCheckboxChange($event)" />
+        <div class="form-group" #assigneeDropdown>
+          <label for="">Assign to*</label>
+          <div class="assignee-dropdown">
+            <div class="assignee-input-wrapper">
+              <input type="text" class="assignee-input" placeholder="Search contacts..." [(ngModel)]="contactSearchTerm"
+                name="contactSearchTerm" [ngModelOptions]="{standalone: true}" (focus)="handleInputClick()"
+                (click)="handleInputClick()" />
+              <span class="dropdown-arrow" (click)="toggleDropdown()"></span>
             </div>
+
+            @if (dropdownOpen) {
+            <div class="dropdown-content">
+              @for (contact of filteredContacts; track contact.id) {
+              <div class="dropdown-item">
+                <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
+                  {{ generateInitials(contact.name) }}
+                </span>
+                <span class="contact-name">{{ contact.name }}</span>
+                <input type="checkbox" [value]="contact.id" [checked]="selectedAssignees.includes(contact.id ?? '')"
+                  (change)="onCheckboxChange($event)" />
+              </div>
+              }
+            </div>
+            }
+          </div>
+          <!-- Showing selected assignees as colored bubbles -->
+          @if (!dropdownOpen) {
+          <div class="selected-assignees">
+            @for (id of selectedAssignees; track id) {
+            <span class="avatar-badge" [style.backgroundColor]="getAvatarColor(id)" (click)="removeAssignee(id)"
+              title="Click to remove" style="cursor: pointer;">
+              {{ getContactInitials(id) }}
+            </span>
             }
           </div>
           }
         </div>
-        <!-- Showing selected assignees as colored bubbles -->
-        @if (!dropdownOpen) {
-            <div class="selected-assignees">
-              @for (id of selectedAssignees; track id) {
-                <span 
-                  class="avatar-badge"
-                  [style.backgroundColor]="getAvatarColor(id)"
-                >
-                  {{ getContactInitials(id) }}
-                </span>
-              }
-            </div>
-          }
 
         <label>
           <p class="layoutLeftName">Category <span class="requred">*</span></p>
@@ -86,79 +88,52 @@
         </label><br />
         <!-- ----------------------------- -->
 
-  <div>
-  <label class="subtask-label">Subtasks</label>
+        <div>
+          <label class="subtask-label">Subtasks</label>
 
-  <!-- Subtask input field -->
-  <div class="subtask-input-wrapper">
-    <input
-      type="text"
-      placeholder="Add new subtask"
-      [(ngModel)]="subtasksInput"
-      [readonly]="!isTyping"
-      (click)="enableTyping()"
-      (keydown.enter)="confirmSubtask()"
-      class="subtask-input"
-    />
-    @if (!isTyping) {
-      <span
-        class="input-icon add"
-        (click)="enableTyping()">＋</span>
-    }
-    @if (isTyping) {
-      <span
-        class="input-icon cancel"
-        (click)="cancelSubtask()">✕</span>
-      <span
-        class="input-icon confirm"
-        (click)="confirmSubtask()">✔</span>
-    }
-  </div>
+          <!-- Subtask input field -->
+          <div class="subtask-input-wrapper">
+            <input type="text" placeholder="Add new subtask" [(ngModel)]="subtasksInput" [readonly]="!isTyping"
+              (click)="enableTyping()" (keydown.enter)="confirmSubtask()" class="subtask-input" />
+            @if (!isTyping) {
+            <span class="input-icon add" (click)="enableTyping()">＋</span>
+            }
+            @if (isTyping) {
+            <span class="input-icon cancel" (click)="cancelSubtask()">✕</span>
+            <span class="input-icon confirm" (click)="confirmSubtask()">✔</span>
+            }
+          </div>
 
-  <!-- Subtasks list -->
-  @if (addedSubtasks.length > 0) {
-    <ul class="subtask-list">
-      @for (sub of addedSubtasks; track $index) {
-        <li
-          class="subtask-item"
-          (mouseenter)="hoveredIndex = $index"
-          (mouseleave)="hoveredIndex = -1"
-        >
-          @if (editIndex === $index) {
-            <!-- Editable subtask with inline icons -->
-            <div class="subtask-edit-wrapper">
-              <input
-                [(ngModel)]="editedSubtaskText"
-                (keydown.enter)="saveEdit($index)" 
-                class="subtask-edit-input"
-              />
-              <span
-                (click)="deleteSubtask($index)"
-                class="input-icon cancel"
-              >🗑️</span>
-              <span
-                (click)="saveEdit($index)"
-                class="input-icon confirm"
-              >✔</span>
-            </div>
-          } @else {
-            • {{ sub }}
-            @if (hoveredIndex === $index) {
+          <!-- Subtasks list -->
+          @if (addedSubtasks.length > 0) {
+          <ul class="subtask-list">
+            @for (sub of addedSubtasks; track $index) {
+            <li class="subtask-item" (mouseenter)="hoveredIndex = $index" (mouseleave)="hoveredIndex = -1">
+              @if (editIndex === $index) {
+              <!-- Editable subtask with inline icons -->
+              <div class="subtask-edit-wrapper">
+                <input [(ngModel)]="editedSubtaskText" (keydown.enter)="saveEdit($index)" class="subtask-edit-input" />
+                <span (click)="deleteSubtask($index)" class="input-icon cancel">🗑️</span>
+                <span (click)="saveEdit($index)" class="input-icon confirm">✔</span>
+              </div>
+              } @else {
+              • {{ sub }}
+              @if (hoveredIndex === $index) {
               <div class="subtask-actions">
                 <button (click)="startEdit($index)">✏️</button>
                 <button (click)="deleteSubtask($index)">🗑️</button>
               </div>
+              }
+              }
+            </li>
             }
+          </ul>
           }
-        </li>
-      }
-    </ul>
-  }
-</div>
+        </div>
 
 
 
-  <!-- --------------------------------------------- -->
+        <!-- --------------------------------------------- -->
       </div>
     </main>
 
@@ -171,165 +146,3 @@
     </footer>
   </div>
 </section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <section class="addTask">
-  <div class="addTaskMaxWidth">
-    <header class="addTaskHeader">
-      <h1 class="headingAddTask">Add Task</h1>
-    </header>
-
-
-    <main class="addTaskContent">
-
-      <div class="leftSide">
-        <label>
-          <p class="layoutLeftName">Title <span class="requred">*</span></p>
-          <input
-            class="enterTitle inputTitle"
-            type="text"
-            placeholder="Enter a title"
-            required
-             [(ngModel)]="title"
-          /> </label
-        ><br />
-
-        <label>
-          <p class="layoutLeftName">Description</p>
-          <textarea
-            class="enterTitle inputDescription"
-            type="text"
-            placeholder="Enter a Description"
-            [(ngModel)]="description"
-          ></textarea></label
-        ><br />
-
-        <label>
-          <p class="layoutLeftName">Due date <span class="requred">*</span></p>
-          <input
-            #dueDateInput
-            class="enterTitle inputData"
-            type="date"
-            (change)="validateDueDate()"
-            [attr.lang]="'en'"
-            required
-            [(ngModel)]="duedate"
-          />
-        </label>
-      </div>
-
-
-      <div class="rightSide">
-        <p class="layoutLeftName">Priority</p>
-        <div class="priority layoutLeftName">
-          <a class="prioTasks" (click)="priority = 'urgent'">Urgent
-            <img
-              src="../../../assets/imgs/imgs_story2/addTask/Urgent1.png"
-              alt="img Task"
-          /></a>
-          
-          <a class="prioTasks" (click)="priority = 'medium'">Medium
-            <img
-              src="../../../assets/imgs/imgs_story2/addTask/Medium1.png"
-              alt="img Task" /></a
-          >
-          <a class="prioTasks" (click)="priority = 'low'">Low
-            <img
-              src="../../../assets/imgs/imgs_story2/addTask/Low1.png"
-              alt="img Task" /></a>
-        </div>
-
-        <label class="assignedTo"> 
-          <p class="layoutLeftName">Assigned to</p>
-
-          <ng-select
-            class="selectCotacts"
-            [items]="firebaseTaskService.contactList"
-            [multiple]="true"
-            bindLabel="initials"
-            [closeOnSelect]="false"
-            bindValue="id"
-            [(ngModel)]="selectedAssignees">
-            <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
-              <div class="contactInfo">
-                <div class="contact-avatar" [style.background-color]="item.color">
-                  {{ item.initials }}
-                </div>
-                {{ item.name }} 
-              </div>
-              <input id="item-{{ index }}" type="checkbox" [ngModel]="item$.selected" /> 
-            </ng-template>
-            <ng-template ng-label-tmp let-item="item" let-item$="item$" let-index="index">
-              <div class="contactInfo">
-                <div class="contact-avatar" [style.background-color]="item.color">
-                  {{ item.initials }}
-                </div>
-              </div>
-            </ng-template>
-          </ng-select>
-        </label><br />
-
-        <label>
-          <p class="layoutLeftName">Category <span class="requred">*</span></p>
-          <select required class="enterTitle selectCategory" [(ngModel)]="category">
-            <option value="Technical Task">Technical Task</option>
-             <option value="User Story">User Story</option>
-          </select> </label
-        ><br />
-
-        <label>
-          <p class="layoutLeftName">Subtasks <span class="requred">*</span></p>
-           <select required class="enterTitle subtasks" [(ngModel)]="subtasksInput">
-            <option>Add new subask</option>
-          </select>
-   
-          </label>
-      </div>
-    </main>
-
-    <footer class="addTaskFooter">
-      <p class="layoutLeftName"><span class="requred">*</span>This field is required</p>
-      <div class="footerButtons">
-        <a type="reset" class="clear">Clear</a>
-       <a type="submit" class="create" (click)="createNewTask()">Create Tasks</a>
-      </div>
-    </footer>
-  </div>
-</section> -->

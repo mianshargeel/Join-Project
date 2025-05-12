@@ -1,10 +1,11 @@
 import { Timestamp } from '@angular/fire/firestore';
 import { TaskService } from '../../services/task.service';
-import { Component,inject, ElementRef, ViewChild, AfterViewInit, Input } from '@angular/core';
+import { Component, inject, ElementRef, ViewChild, AfterViewInit, Input, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { generateInitials, generateRandomColor } from '../../models/contact.model';
 import { Router } from '@angular/router';
+import { ContactInterface } from '../../interfaces/contact-interface';
 
 @Component({
   selector: 'app-add-task',
@@ -28,6 +29,8 @@ export class AddTaskComponent implements AfterViewInit {
   editIndex: number | null = null;
   editedSubtaskText = '';
   @Input() status: string = 'To do';
+  @ViewChild('assigneeDropdown') assigneeDropdownRef!: ElementRef;
+  contactSearchTerm = '';
 
   title = '';
   description = '';
@@ -38,8 +41,9 @@ export class AddTaskComponent implements AfterViewInit {
   subtasksInput = '';
   selectedAssignees: string[] = [];
   dropdownOpen = false;
+  inputClicked = false;
 
-   async createNewTask() {
+  async createNewTask() {
     const taskData = {
       title: this.title,
       description: this.description,
@@ -50,21 +54,21 @@ export class AddTaskComponent implements AfterViewInit {
       assignees: this.selectedAssignees,
     };
 
-        // Map the addedSubtasks into Subtask objects
-      const subtasks = this.addedSubtasks.map(title => ({
-        title,
-        isdone: false,
-      }));
+    // Map the addedSubtasks into Subtask objects
+    const subtasks = this.addedSubtasks.map(title => ({
+      title,
+      isdone: false,
+    }));
 
-     await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
-      this.firebaseTaskService.firestore, 
-      taskData, 
+    await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
+      this.firebaseTaskService.firestore,
+      taskData,
       subtasks
     );
 
-     console.log('Task and Subtasks added');
-     this.resetForm(); //to keep empty fields after submiting form
-     this.router.navigate(['/board']); //redirecting to board
+    console.log('Task and Subtasks added');
+    this.resetForm(); //to keep empty fields after submiting form
+    this.router.navigate(['/board']); //redirecting to board
   }
 
   async deleteTask(taskId: string) {
@@ -72,43 +76,43 @@ export class AddTaskComponent implements AfterViewInit {
   }
 
   enableTyping() {
-  this.isTyping = true;
-}
+    this.isTyping = true;
+  }
 
-cancelSubtask() {
-  this.subtasksInput = '';
-  this.isTyping = false;
-}
-
-confirmSubtask() {
-  const trimmed = this.subtasksInput.trim();
-  if (trimmed) {
-    this.addedSubtasks.push(trimmed);
+  cancelSubtask() {
     this.subtasksInput = '';
     this.isTyping = false;
   }
-}
-  
-  saveEdit(index: number) {
-  if (this.editedSubtaskText.trim()) {
-    this.addedSubtasks[index] = this.editedSubtaskText.trim();
-    this.editIndex = null;
-    this.editedSubtaskText = '';
+
+  confirmSubtask() {
+    const trimmed = this.subtasksInput.trim();
+    if (trimmed) {
+      this.addedSubtasks.push(trimmed);
+      this.subtasksInput = '';
+      this.isTyping = false;
+    }
   }
-}
+
+  saveEdit(index: number) {
+    if (this.editedSubtaskText.trim()) {
+      this.addedSubtasks[index] = this.editedSubtaskText.trim();
+      this.editIndex = null;
+      this.editedSubtaskText = '';
+    }
+  }
   startEdit(index: number) {
     this.editIndex = index;
     this.editedSubtaskText = this.addedSubtasks[index];
-}
+  }
   cancelEdit() {
-  this.editIndex = null;
-  this.editedSubtaskText = '';
-}
+    this.editIndex = null;
+    this.editedSubtaskText = '';
+  }
 
   deleteSubtask(index: number) {
-  this.addedSubtasks.splice(index, 1);
-}
-  
+    this.addedSubtasks.splice(index, 1);
+  }
+
   resetForm() {
     this.title = '';
     this.description = '';
@@ -122,17 +126,29 @@ confirmSubtask() {
   }
 
   toggleDropdown() {
-  this.dropdownOpen = !this.dropdownOpen;
+    this.dropdownOpen = !this.dropdownOpen;
+    console.log('toggle triggered');
+
   }
-  
- getSelectedContactNames(): { initials: string; color: string }[] {
-  return this.firebaseTaskService.contactList
-    .filter(contact => contact.id && this.selectedAssignees.includes(contact.id))
-    .map(contact => ({
-      initials: generateInitials(contact.name),
-      color: generateRandomColor()
-    }));
-}
+
+  handleInputClick() {
+    if (this.inputClicked) {
+      this.dropdownOpen = false;
+      this.inputClicked = false;
+    } else {
+      this.dropdownOpen = true;
+      this.inputClicked = true;
+    }
+  }
+
+  getSelectedContactNames(): { initials: string; color: string }[] {
+    return this.firebaseTaskService.contactList
+      .filter(contact => contact.id && this.selectedAssignees.includes(contact.id))
+      .map(contact => ({
+        initials: generateInitials(contact.name),
+        color: generateRandomColor()
+      }));
+  }
 
   onCheckboxChange(event: any) {
     const id = event.target.value;
@@ -146,15 +162,13 @@ confirmSubtask() {
     }
   }
 
-  getAvatarColor(contactId: string): string {
-    if (!this.avatarColors[contactId]) {
-      this.avatarColors[contactId] = this.generateRandomColor();
-    }
-    return this.avatarColors[contactId];
+  getAvatarColor(id: string): string {
+    const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
+    return contact?.color ?? "#000000";
   }
 
   //to get exact id of select name to assign creating following function
-  getContactInitials(contactId: string): string { 
+  getContactInitials(contactId: string): string {
     const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
     return contact ? generateInitials(contact.name) : '?';
   }
@@ -193,133 +207,36 @@ confirmSubtask() {
       }
     }
   }
+
+  get filteredContacts(): ContactInterface[] {
+    // Prevent error if contactList is not yet loaded
+    if (!this.firebaseTaskService.contactList) return [];
+
+    const term = this.contactSearchTerm.toLowerCase().trim();
+
+    // Return full list if search term is empty
+    if (!term) return this.firebaseTaskService.contactList;
+
+    // Filter by name (case-insensitive)
+    return this.firebaseTaskService.contactList.filter(contact =>
+      contact.name.toLowerCase().includes(term)
+    );
+  }
+
+  // removeAssignee(id: string) { //in edit-dialog uset can remove selected Initial just by click
+  //   // this.editableTask.assignees = this.editableTask.assignees.filter(aid => aid !== id);
+  // }
+
+  //when user click outside of dropdown in assignees-field, its automatically closes 
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = this.assigneeDropdownRef?.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.dropdownOpen = false;
+    }
+  }
+
+  removeAssignee(id: string) {
+    this.selectedAssignees = this.selectedAssignees.filter(a => a !== id);
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { Timestamp } from '@angular/fire/firestore';
-// import { TaskService } from '../../services/task.service';
-// import { Component,inject, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { FormsModule } from '@angular/forms';
-// import { NgSelectModule } from '@ng-select/ng-select';
-
-// @Component({
-//   selector: 'app-add-task',
-//   standalone: true,
-//   imports: [CommonModule, FormsModule, NgSelectModule],
-//   templateUrl: './add-task.component.html',
-//   styleUrl: './add-task.component.scss'
-// })
-// export class AddTaskComponent implements AfterViewInit {
-//   firebaseTaskService = inject(TaskService);
-//   @ViewChild('dueDateInput') dueDateInput!: ElementRef<HTMLInputElement>;
-
-//   title : string = '';
-//   description : string = '';
-//   duedate: string = '';
-//   priority : string = 'medium';
-//   category : string = '';
-//   subtasksInput : {
-//     title : string,
-//     isdone : boolean
-//   }[] = [];
-//   selectedAssignees: string[] = [];
-
-//    async createNewTask() {
-//     const taskData = {
-//       title: this.title,
-//       description: this.description,
-//       category: this.category,
-//       priority: this.priority,
-//       status: 'open',
-//       duedate: Timestamp.fromDate(new Date(this.duedate)),
-//       assignees: this.selectedAssignees,
-//     };
-
-//      await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
-//       this.firebaseTaskService.firestore, 
-//       taskData, 
-//       this.subtasksInput
-//     );
-
-//      console.log('Task and Subtasks added');
-//      this.resetForm();
-//   }
-  
-//   resetForm() {
-//     this.title = '';
-//     this.description = '';
-//     this.duedate = '';
-//     this.priority = 'medium';
-//     this.category = '';
-//     this.subtasksInput = [];
-//     this.selectedAssignees = [];
-//   }
-
-
-//   ngAfterViewInit(): void {
-//     this.setTodayAsMinDate();
-//   }
-
-//   private setTodayAsMinDate(): void {
-//     const today = new Date().toISOString().split('T')[0];
-//     if (this.dueDateInput?.nativeElement) {
-//       this.dueDateInput.nativeElement.min = today;
-//     }
-//   }
-
-//   validateDueDate(): void {
-//     const input = this.dueDateInput?.nativeElement;
-//     if (input) {
-//       const dateValue = input.value;
-//       if (dateValue) {
-//         const selectedDate = new Date(dateValue);
-//         const today = new Date();
-//         today.setHours(0, 0, 0, 0);
-
-
-//         if (selectedDate < today) {
-
-//           input.value = today.toISOString().split('T')[0];
-//           console.log('Selected date was in the past. Reset to today.');
-//         } else {
-
-//           const formattedDate = selectedDate.toLocaleDateString('en-US');
-//           console.log('Formatted Selected Date:', formattedDate);
-//         }
-//       }
-//     }
-//   }
-// }
