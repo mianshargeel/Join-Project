@@ -1,6 +1,6 @@
 import { Timestamp } from '@angular/fire/firestore';
 import { TaskService } from '../../services/task.service';
-import { Component,inject, ElementRef, ViewChild, AfterViewInit, Input, HostListener  } from '@angular/core';
+import { Component, inject, ElementRef, ViewChild, AfterViewInit, Input, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { generateInitials, generateRandomColor } from '../../models/contact.model';
@@ -43,7 +43,7 @@ export class AddTaskComponent implements AfterViewInit {
   dropdownOpen = false;
   inputClicked = false;
 
-   async createNewTask() {
+  async createNewTask() {
     const taskData = {
       title: this.title,
       description: this.description,
@@ -54,21 +54,21 @@ export class AddTaskComponent implements AfterViewInit {
       assignees: this.selectedAssignees,
     };
 
-        // Map the addedSubtasks into Subtask objects
-      const subtasks = this.addedSubtasks.map(title => ({
-        title,
-        isdone: false,
-      }));
+    // Map the addedSubtasks into Subtask objects
+    const subtasks = this.addedSubtasks.map(title => ({
+      title,
+      isdone: false,
+    }));
 
-     await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
-      this.firebaseTaskService.firestore, 
-      taskData, 
+    await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
+      this.firebaseTaskService.firestore,
+      taskData,
       subtasks
     );
 
-     console.log('Task and Subtasks added');
-     this.resetForm(); //to keep empty fields after submiting form
-     this.router.navigate(['/board']); //redirecting to board
+    console.log('Task and Subtasks added');
+    this.resetForm(); //to keep empty fields after submiting form
+    this.router.navigate(['/board']); //redirecting to board
   }
 
   async deleteTask(taskId: string) {
@@ -76,43 +76,43 @@ export class AddTaskComponent implements AfterViewInit {
   }
 
   enableTyping() {
-  this.isTyping = true;
-}
+    this.isTyping = true;
+  }
 
-cancelSubtask() {
-  this.subtasksInput = '';
-  this.isTyping = false;
-}
-
-confirmSubtask() {
-  const trimmed = this.subtasksInput.trim();
-  if (trimmed) {
-    this.addedSubtasks.push(trimmed);
+  cancelSubtask() {
     this.subtasksInput = '';
     this.isTyping = false;
   }
-}
-  
-  saveEdit(index: number) {
-  if (this.editedSubtaskText.trim()) {
-    this.addedSubtasks[index] = this.editedSubtaskText.trim();
-    this.editIndex = null;
-    this.editedSubtaskText = '';
+
+  confirmSubtask() {
+    const trimmed = this.subtasksInput.trim();
+    if (trimmed) {
+      this.addedSubtasks.push(trimmed);
+      this.subtasksInput = '';
+      this.isTyping = false;
+    }
   }
-}
+
+  saveEdit(index: number) {
+    if (this.editedSubtaskText.trim()) {
+      this.addedSubtasks[index] = this.editedSubtaskText.trim();
+      this.editIndex = null;
+      this.editedSubtaskText = '';
+    }
+  }
   startEdit(index: number) {
     this.editIndex = index;
     this.editedSubtaskText = this.addedSubtasks[index];
-}
+  }
   cancelEdit() {
-  this.editIndex = null;
-  this.editedSubtaskText = '';
-}
+    this.editIndex = null;
+    this.editedSubtaskText = '';
+  }
 
   deleteSubtask(index: number) {
-  this.addedSubtasks.splice(index, 1);
-}
-  
+    this.addedSubtasks.splice(index, 1);
+  }
+
   resetForm() {
     this.title = '';
     this.description = '';
@@ -128,7 +128,7 @@ confirmSubtask() {
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
     console.log('toggle triggered');
-    
+
   }
 
   handleInputClick() {
@@ -141,14 +141,14 @@ confirmSubtask() {
     }
   }
 
- getSelectedContactNames(): { initials: string; color: string }[] {
-  return this.firebaseTaskService.contactList
-    .filter(contact => contact.id && this.selectedAssignees.includes(contact.id))
-    .map(contact => ({
-      initials: generateInitials(contact.name),
-      color: generateRandomColor()
-    }));
-}
+  getSelectedContactNames(): { initials: string; color: string }[] {
+    return this.firebaseTaskService.contactList
+      .filter(contact => contact.id && this.selectedAssignees.includes(contact.id))
+      .map(contact => ({
+        initials: generateInitials(contact.name),
+        color: generateRandomColor()
+      }));
+  }
 
   onCheckboxChange(event: any) {
     const id = event.target.value;
@@ -168,7 +168,7 @@ confirmSubtask() {
   }
 
   //to get exact id of select name to assign creating following function
-  getContactInitials(contactId: string): string { 
+  getContactInitials(contactId: string): string {
     const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
     return contact ? generateInitials(contact.name) : '?';
   }
@@ -211,12 +211,12 @@ confirmSubtask() {
   get filteredContacts(): ContactInterface[] {
     // Prevent error if contactList is not yet loaded
     if (!this.firebaseTaskService.contactList) return [];
-  
+
     const term = this.contactSearchTerm.toLowerCase().trim();
-  
+
     // Return full list if search term is empty
     if (!term) return this.firebaseTaskService.contactList;
-  
+
     // Filter by name (case-insensitive)
     return this.firebaseTaskService.contactList.filter(contact =>
       contact.name.toLowerCase().includes(term)
@@ -225,7 +225,7 @@ confirmSubtask() {
   
   //when user click outside of dropdown in assignees-field, its automatically closes 
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) { 
+  onDocumentClick(event: MouseEvent) {
     const clickedInside = this.assigneeDropdownRef?.nativeElement.contains(event.target);
     if (!clickedInside) {
       this.dropdownOpen = false;

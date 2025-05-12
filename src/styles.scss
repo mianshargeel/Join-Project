@@ -69,6 +69,20 @@ $join_board-theme: mat.define-light-theme((color: (primary: $join_board-primary,
   /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
 }
 
+html,
+body {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  position: relative;
+  margin: 0;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -77,31 +91,27 @@ $join_board-theme: mat.define-light-theme((color: (primary: $join_board-primary,
   scroll-behavior: smooth;
 }
 
-body {
-  margin: 0;
-}
-
 button {
   cursor: pointer;
 }
 
-app-add-task {
-  height: 100%;
-  width: 100%;
-}
+// app-add-task {
+//   height: 100%;
+//   width: 100%;
+// }
 
-app-home, app-board {
-  width: 100%;
-}
+// app-home, app-board {
+//   width: 100%;
+// }
 
-html,
-body {
-  height: 100%;
-}
+// html,
+// body {
+//   height: 100%;
+// }
 
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// body {
+//   margin: 0;
+//   font-family: Roboto, "Helvetica Neue", sans-serif;
+// }
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

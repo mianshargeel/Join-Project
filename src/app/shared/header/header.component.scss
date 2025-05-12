@@ -9,7 +9,8 @@
   box-shadow: 0 8px 4px -4px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 2;
-  width: calc(100vw - clamp(180px, 16.1vw, 232px));
+  width: 100%;
+  flex-shrink: 0;
 
   .logoMedia {
     display: none;
@@ -20,9 +21,9 @@
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    max-width: calc(1920px - clamp(180px, 16.1vw, 232px));
+    max-width: 1730px;
     margin: 0;
-    padding: 0 40px 0 116px;
+    padding: 0 20px 0 62px;
   }
 
   .title {
