@@ -6,7 +6,10 @@ import { ContactService } from '../../services/contact.service';
 import { EditContactsComponent } from './edit-contacts/edit-contacts.component';
 import { IContact } from '../../interfaces/contact';
 import { FirebaseService } from '../../services/firebase.service';
-import { generateInitials } from '../../models/contact.model';
+import { generateInitials, generateRandomColor } from '../../models/contact.model';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
+import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+
 
 interface ContactGroup {
   letter: string;
@@ -32,6 +35,8 @@ export class ContactsListComponent implements OnInit {
   showSuccessMsgDialog: boolean = false;
   showSuccessMsg: string = '';
   dialogState: 'show' | 'hide' = 'show';
+  auth: Auth = inject(Auth);
+  firestore: Firestore = inject(Firestore);
 
   constructor(
     private contactService: ContactService,
@@ -108,32 +113,54 @@ export class ContactsListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadContacts();
+    onAuthStateChanged(this.auth, (user) => {
+      if (user) {
+        this.loadContacts(); // ✅ only load when user is known
+      }
+    });
   }
 
   loadContacts() {
-    this.contactService.getContacts().subscribe(contacts => {
-      this.contacts = contacts;
-      this.groupContactsByFirstLetter();
+    const contactsRef = collection(this.firestore, 'contacts');
+    console.log('collectionRef type:', contactsRef.constructor.name);
+  
+    collectionData(contactsRef, { idField: 'id' }).subscribe((data: any[]) => {
+      // console.log('FIRESTORE WORKS:', data);
+  
+      this.contacts = data.map(c => ({
+        ...c,
+        name: c.name ?? 'Unnamed',
+        mail: c.mail ?? '',
+        phone: c.phone ?? '',
+        color: c.color ?? generateRandomColor(),
+        initials: c.initials ?? generateInitials(c.name ?? 'U'),
+      }));
+  
+      this.groupContactsByFirstLetter(); // if you're grouping
     });
   }
-
+  
+  
   groupContactsByFirstLetter() {
     const groupsMap = new Map<string, Contact[]>();
-
+  
     this.contacts.forEach(contact => {
+      if (!contact.name || typeof contact.name !== 'string') return; //  skip invalid
+  
       const firstLetter = contact.name.charAt(0).toUpperCase();
+  
       if (!groupsMap.has(firstLetter)) {
         groupsMap.set(firstLetter, []);
       }
+  
       groupsMap.get(firstLetter)?.push(contact);
     });
-
+  
     this.contactGroups = Array.from(groupsMap.entries())
-      .sort(([letterA], [letterB]) => letterA.localeCompare(letterB))
+      .sort(([a], [b]) => a.localeCompare(b))
       .map(([letter, contacts]) => ({ letter, contacts }));
   }
-
+  
   toggleMobileOptionsMenu() {
     this.showMobileOptions = !this.showMobileOptions;
   }

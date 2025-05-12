@@ -13,7 +13,7 @@
           Notice</a>
         <a [routerLink]="['/privacy-policy']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Privacy
           Policy</a>
-        <a [routerLink]="['/logout']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Log out</a>
+        <a [routerLink]="['/logout']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()" (click)="logout()">Log out</a>
       </div>
     </div>
   </div>

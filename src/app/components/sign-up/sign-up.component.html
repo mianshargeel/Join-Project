@@ -1,0 +1,46 @@
+<h2>Sign Up</h2>
+
+<form (ngSubmit)="register()" #formRef="ngForm">
+  <input
+    type="text"
+    name="name"
+    placeholder="Name"
+    [(ngModel)]="name"
+    required
+  />
+
+  <input
+    type="email"
+    name="email"
+    placeholder="Email"
+    [(ngModel)]="email"
+    required
+  />
+
+  <input
+    type="password"
+    name="password"
+    placeholder="Password"
+    [(ngModel)]="password"
+    required
+  />
+
+  <input
+    type="password"
+    name="repeatPassword"
+    placeholder="Repeat Password"
+    [(ngModel)]="repeatPassword"
+    required
+  />
+
+  <button type="submit" [disabled]="formRef.invalid">Create Account</button>
+</form>
+
+@if (errorMessage) {
+  <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
+}
+
+@if (successMessage) {
+  <div style="color: green; margin-top: 10px;">{{ successMessage }}</div>
+}
+

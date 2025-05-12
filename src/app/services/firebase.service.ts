@@ -26,21 +26,22 @@ export class FirebaseService implements ContactService {
   }
 
   getContacts(): Observable<Contact[]> {
-    const coll = collection(this.firestore, 'contacts');
-    return collectionData(coll, { idField: 'id' }).pipe(
+    const contactsRef = collection(this.firestore, 'contacts'); // 🔒 Must be used *directly*
+    
+    return collectionData(contactsRef, { idField: 'id' }).pipe(
       map((docs: any[]) =>
-        docs.map(item => ({
-          id:       item.id,               
-          name:     item.name,
-          mail:     item.mail,
-          phone:    item.phone,
-          color:    item.color  ?? generateRandomColor(),
-          initials: item.initials ?? generateInitials(item.name)
+        docs.map(c => ({
+          ...c,
+          name: c.name ?? 'Unnamed',
+          mail: c.mail ?? '',
+          phone: c.phone ?? '',
+          color: c.color ?? generateRandomColor(),
+          initials: c.initials ?? generateInitials(c.name ?? 'U'),
         }))
       )
     );
   }
-
+  
   addContact(contact: Omit<Contact, 'id' | 'initials' | 'color'>): Observable<Contact> {
     const newContact: Contact = {
       ...contact,
@@ -56,7 +57,7 @@ export class FirebaseService implements ContactService {
   }
 
   getSingleContactRef(colId: string, docId: string) {
-    return doc(collection(this.firestore, colId), docId);
+    return doc(this.firestore, colId, docId);
   }
 
   setContactObject(contact: any, id: string): IContact {
