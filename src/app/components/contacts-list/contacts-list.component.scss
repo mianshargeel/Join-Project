@@ -1,6 +1,9 @@
 @import './responsive.scss';
-@import './contact-information.scss';
 
+:host {
+    height: calc(100vh - 96px);
+    display: block;
+}
 
 .contacts-container {
     display: flex;

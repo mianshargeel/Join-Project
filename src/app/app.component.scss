@@ -5,14 +5,16 @@ app-header {
 }
 
 .appContainer {
-    @include flex-center($align: flex-start, $justify: flex-start);
-    width: 100%;
-    max-width: 1920px;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
 }
 
-.headerContentContainer {
-    @include flex-center($direction: column, $justify: flex-start);
-    align-self: stretch;
-    width: 100%;
+.appContainer>div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: calc(100vw - 232px);
+    height: 100vh;
 }
-

@@ -36,7 +36,7 @@
     border-radius: 24px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: move;
-    
+
     &:hover {
         // rotate: 5deg;
         box-shadow: 2px 2px 2px 2px rgba(33, 111, 221, 0.7);
@@ -105,7 +105,7 @@
                 height: 100%;
                 background: #4589FF;
                 border-radius: 16px;
-                transition: 0.4s linear;  
+                transition: 0.4s linear;
                 transition-property: width, background-color;
             }
         }
@@ -231,7 +231,7 @@ $sidebar: clamp(180px, 16.1vw, 232px);
 $header: 96px;
 
 .board-container {
-    width: calc(100vw - clamp(180px, 16.1vw, 232px));
+    width: 100%;
     height: calc(100vh - 96px);
 
     background-color: var(--secondary-bg);
@@ -436,16 +436,18 @@ $header: 96px;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.2); /* Leichteres Overlay, damit man die Seite besser sieht */
+    background-color: rgba(0, 0, 0, 0.2);
+    /* Leichteres Overlay, damit man die Seite besser sieht */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2rem; /* Abstand zum Rand oben, unten, links, rechts */
+    padding: 2rem;
+    /* Abstand zum Rand oben, unten, links, rechts */
     z-index: 1000;
     box-sizing: border-box;
-  }
-  
-  .dialog {
+}
+
+.dialog {
     max-width: 1560px;
     max-height: 1200px;
     width: 100%;
@@ -459,14 +461,14 @@ $header: 96px;
     align-items: center;
     justify-content: center;
     position: relative;
-  }
+}
 
-  .scaled-dialog {
+.scaled-dialog {
     transform: scale(0.7);
     transform-origin: center;
-  }
+}
 
-  .closing-p {
+.closing-p {
     position: absolute;
     top: 5%;
     left: 92%;
@@ -474,9 +476,10 @@ $header: 96px;
     font-weight: bold;
     font-size: xx-large;
     cursor: pointer;
-  }
+}
 
-  body.modal-open {
+body.modal-open {
     overflow: hidden;
-    padding-right: 17px; /* Breite der Scrollbar kompensieren (ggf. anpassen) */
-  }
+    padding-right: 17px;
+    /* Breite der Scrollbar kompensieren (ggf. anpassen) */
+}
