@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -10,7 +11,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-  menuOpen:boolean = false;
+  menuOpen: boolean = false;
+  authServics = inject(AuthService);
 
   constructor(private router: Router) {}
 
@@ -21,5 +23,11 @@ export class HeaderComponent {
   navigateTo(route: string) {
     this.menuOpen = false;
     this.router.navigate([route]);
+  }
+
+  logout() {
+    this.authServics.logout();
+    console.log('You are Successfully Logout!');
+    
   }
 }
