@@ -12,7 +12,7 @@
         <!-- Row 1 -->
         <div class="info-row">
             <!-- To‑do -->
-            <div class="info-box todo">
+            <div class="info-box todo" [routerLink]="['/board']">
                 <div class="box-left">
                     <img class="icon default" src="assets/img/summary/todo-default.svg" alt="to-do">
                     <img class="icon hover" src="assets/img/summary/todo-hover.svg" alt="" aria-hidden="true">
@@ -23,7 +23,7 @@
                 </div>
             </div>
             <!-- Done -->
-            <div class="info-box done">
+            <div class="info-box done" [routerLink]="['/board']">
                 <div class="box-left">
                     <img class="icon default" src="assets/img/summary/done-default.svg" alt="done">
                     <img class="icon hover" src="assets/img/summary/done-hover.svg" alt="" aria-hidden="true">
@@ -36,7 +36,7 @@
         </div>
         <!-- Row 2 -->
         <div class="info-row">
-            <div class="info-box deadline">
+            <div class="info-box deadline" [routerLink]="['/board']">
                 <div class="deadline-left">
                     <div class="box-left">
                         <img class="icon default" src="assets/img/summary/urgent-deadline.svg" alt="urgent">
@@ -56,15 +56,15 @@
         </div>
         <!-- Row 3 -->
         <div class="info-row">
-            <div class="info-box board">
+            <div class="info-box board" [routerLink]="['/board']">
                 <span class="count">{{ totalTasks }}</span>
                 <span class="label">Tasks in<br>Board</span>
             </div>
-            <div class="info-box progress">
+            <div class="info-box progress" [routerLink]="['/board']">
                 <span class="count">{{ inProgressCount }}</span>
                 <span class="label">Tasks in<br>Progress</span>
             </div>
-            <div class="info-box feedback">
+            <div class="info-box feedback" [routerLink]="['/board']">
                 <span class="count">{{ awaitingFeedbackCount }}</span>
                 <span class="label">Awaiting<br>Feedback</span>
             </div>

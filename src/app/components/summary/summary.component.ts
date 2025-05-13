@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { Task } from '../../interfaces/task';
+import { RouterLink } from '@angular/router';
 
 
 
 @Component({
   selector: 'app-summary',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, RouterLink],
   templateUrl: './summary.component.html',
   styleUrl: './summary.component.scss'
 })
