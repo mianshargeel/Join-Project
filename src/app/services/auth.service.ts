@@ -36,7 +36,8 @@ export class AuthService {
       initials: generateInitials(name),
       createdAt: serverTimestamp()
     });
-
+    //Store name in memory,so it's available immediately after sign-up in summary
+    this.setUserName(name);
     return {
       uid,
       email

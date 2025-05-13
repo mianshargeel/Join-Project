@@ -9,7 +9,7 @@
     required
     #nameRef="ngModel"
     minlength="2"
-  />
+  /><br><br>
   @if (nameRef.invalid && nameRef.touched) {
     <div>
       <span style="color: red;"> Valid Name is required</span>  
@@ -22,7 +22,7 @@
     [(ngModel)]="email"
     required
     #emailRef="ngModel"
-  />
+  /><br><br>
   @if (emailRef.invalid && emailRef.touched) {
     <div>
       <span style="color: red;"> Email is required.</span>  
@@ -36,7 +36,7 @@
     [(ngModel)]="password"
     required
     #passRef="ngModel"
-  />
+  /><br><br>
   @if (passRef.invalid && passRef.touched){
     <div>
       <span style="color: red;"> Password is required.</span>  
@@ -49,7 +49,7 @@
     [(ngModel)]="repeatPassword"
     required
     #repeatPassRef="ngModel"
-  />
+  /><br><br>
   @if (repeatPassRef.touched && repeatPassword !== password) {
     <div>
       <span style="color: red;">  Passwords do not match.</span>  
@@ -58,7 +58,10 @@
   @if (errorMessage) {
     <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
   }
-  <button type="submit" [disabled]="formRef.invalid">Create Account</button>
+  <input type="checkbox" [(ngModel)]="acceptedTerms" required name="acceptedTerms" required  />
+  <label> I accept the <a routerLink="/privacy-policy">Privacy Policy</a></label><br>
+
+  <button type="submit" [disabled]="formRef.invalid || password !== repeatPassword || !acceptedTerms">>Create Account</button>
 </form>
 
 

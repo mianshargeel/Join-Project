@@ -4,11 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { SignUpCredentials } from '../../interfaces/auth-interface';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
@@ -20,6 +22,7 @@ export class SignUpComponent {
   password = '';
   repeatPassword = '';
   errorMessage = '';
+  acceptedTerms = false;
 
   async register() {
     if (this.password !== this.repeatPassword) {
@@ -35,6 +38,8 @@ export class SignUpComponent {
 
     try {
       await this.authService.signUp(credentials);
+      // const userName = this.authService.getUserName(); //using only to debug
+      // console.log('Registered user:', userName);
       this.router.navigate(['/summary']);
       this.errorMessage = '';
       console.log('You are successfully Registered');
