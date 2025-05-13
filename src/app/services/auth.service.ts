@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from '@angular/fire/auth';
 import { SignUpCredentials, SignInCredentials, AuthResponse } from '../interfaces/auth-interface';
-import { Firestore, doc, setDoc, serverTimestamp, deleteDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, serverTimestamp, deleteDoc, getDoc } from '@angular/fire/firestore';
 import { generateRandomColor, generateInitials } from '../models/contact.model';
 
 @Injectable({
@@ -10,8 +10,17 @@ import { generateRandomColor, generateInitials } from '../models/contact.model';
 export class AuthService {
   private auth: Auth = inject(Auth);//It refers to the Firebase Authentication instance.
   private firestore: Firestore = inject(Firestore);
+  private userName: string = '';
 
   constructor() { }
+
+  setUserName(name: string) {
+    this.userName = name;
+  }
+
+  getUserName(): string {
+    return this.userName;
+  }
 
   async signUp({ name, email, password }: SignUpCredentials): Promise<AuthResponse> {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
@@ -40,11 +49,23 @@ export class AuthService {
       credentials.email,
       credentials.password
     );
+  
+    const uid = result.user.uid;
+  
+    // Fetch user name from Firestore
+    const contactRef = doc(this.firestore, 'contacts', uid);
+    const contactSnap = await getDoc(contactRef);
+    const name = contactSnap.exists() ? contactSnap.data()?.['name'] || '' : '';
+  
+    // Store the name for later use
+    this.setUserName(name);
+  
     return {
-      uid: result.user.uid,
+      uid: uid,
       email: result.user.email,
     };
   }
+  
 
    async logout() {
     const user = this.auth.currentUser;

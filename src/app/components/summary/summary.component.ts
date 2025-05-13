@@ -6,6 +6,7 @@ import { TaskService } from '../../services/task.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { Task } from '../../interfaces/task';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 
 
@@ -21,6 +22,7 @@ import { RouterLink } from '@angular/router';
 export class SummaryComponent {
   taskService = inject(TaskService);
   firebaseService = inject(FirebaseService);
+  authService = inject(AuthService);
   tasks: Task[] = [];
 
   totalTasks = 0;
@@ -30,6 +32,8 @@ export class SummaryComponent {
   awaitingFeedbackCount = 0;
   urgentCount = 0;
   upcomingDeadline: Date | null = null;
+  userName: string = '';
+  greeting: string = '';
 
   constructor() { }
 
@@ -38,6 +42,25 @@ export class SummaryComponent {
       // console.log('SummaryComponent received tasks:', tasks); // debug log
       this.calculateSummary(tasks);
     });
+    this.setGreeting();
+    this.loadUserName();
+  }
+
+  setGreeting() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      this.greeting = 'Good morning';
+    } else if (hour >= 12 && hour < 17) {
+      this.greeting = 'Good afternoon';
+    } else if (hour >= 17 && hour < 21) {
+      this.greeting = 'Good evening';
+    } else {
+      this.greeting = 'Good night';
+    }
+  }
+
+  loadUserName() {
+    this.userName = this.authService.getUserName() || 'Guest';
   }
 
   normalizeStatus(status: string): string {
