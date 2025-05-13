@@ -20,12 +20,10 @@ export class SignUpComponent {
   password = '';
   repeatPassword = '';
   errorMessage = '';
-  successMessage = '';
 
   async register() {
     if (this.password !== this.repeatPassword) {
       this.errorMessage = "Passwords do not match.";
-      this.successMessage = '';
       return;
     }
 
@@ -42,8 +40,19 @@ export class SignUpComponent {
       console.log('You are successfully Registered');
       this.clearForm();
     } catch (error: any) {
-      this.errorMessage = error.message || 'Sign-up failed.';
-      this.successMessage = '';
+      switch (error.code) {
+        case 'auth/email-already-in-use':
+          this.errorMessage = 'This email is already registered.';
+          break;
+        case 'auth/invalid-email':
+          this.errorMessage = 'Invalid email address.';
+          break;
+        case 'auth/weak-password':
+          this.errorMessage = 'Password is too weak.';
+          break;
+        default:
+          this.errorMessage = 'Sign-up failed. Please try again.';
+      }
     }
   }
 

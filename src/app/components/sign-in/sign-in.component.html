@@ -8,7 +8,13 @@
     placeholder="Email"
     required
     (input)="saveCredentials()"
+    #emailRef="ngModel"
   />
+  @if (emailRef.invalid && emailRef.touched) {
+    <div>
+      <span style="color: red;"> Email is required.</span>  
+    </div>
+  }
 
   <input
     type="password"
@@ -17,7 +23,16 @@
     placeholder="Password"
     required
     (input)="saveCredentials()"
+    #passRef="ngModel"
   /><br>
+  @if (passRef.invalid && passRef.touched){
+    <div>
+      <span style="color: red;"> Password is required.</span>  
+    </div>
+  }
+  @if (errorMessage) {
+    <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
+  }
   <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
   <label>Remember Me</label><br>
 
@@ -30,9 +45,7 @@
   </button>
 </form>
 
-@if (errorMessage) {
-  <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
-}
+
 
 <p>
   Don't have an account?

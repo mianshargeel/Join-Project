@@ -7,15 +7,27 @@
     placeholder="Name"
     [(ngModel)]="name"
     required
+    #nameRef="ngModel"
+    minlength="2"
   />
-
+  @if (nameRef.invalid && nameRef.touched) {
+    <div>
+      <span style="color: red;"> Valid Name is required</span>  
+    </div>
+  }
   <input
     type="email"
     name="email"
     placeholder="Email"
     [(ngModel)]="email"
     required
+    #emailRef="ngModel"
   />
+  @if (emailRef.invalid && emailRef.touched) {
+    <div>
+      <span style="color: red;"> Email is required.</span>  
+    </div>
+  }
 
   <input
     type="password"
@@ -23,24 +35,30 @@
     placeholder="Password"
     [(ngModel)]="password"
     required
+    #passRef="ngModel"
   />
-
+  @if (passRef.invalid && passRef.touched){
+    <div>
+      <span style="color: red;"> Password is required.</span>  
+    </div>
+  }
   <input
     type="password"
     name="repeatPassword"
     placeholder="Repeat Password"
     [(ngModel)]="repeatPassword"
     required
+    #repeatPassRef="ngModel"
   />
-
+  @if (repeatPassRef.touched && repeatPassword !== password) {
+    <div>
+      <span style="color: red;">  Passwords do not match.</span>  
+    </div>
+  }
+  @if (errorMessage) {
+    <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
+  }
   <button type="submit" [disabled]="formRef.invalid">Create Account</button>
 </form>
 
-@if (errorMessage) {
-  <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
-}
-
-@if (successMessage) {
-  <div style="color: green; margin-top: 10px;">{{ successMessage }}</div>
-}
 

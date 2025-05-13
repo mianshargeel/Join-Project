@@ -64,7 +64,22 @@ export class SignInComponent {
       await this.authService.signIn(credentials);
       this.router.navigate(['/summary']); // redirect on success
     } catch (error: any) {
-      this.errorMessage = error.message || 'Login failed.';
+      switch (error.code) {
+        case 'auth/invalid-credential':
+          this.errorMessage = 'Invalid email or password.';
+          break;
+        case 'auth/user-not-found':
+          this.errorMessage = 'No account found with this email.';
+          break;
+        case 'auth/wrong-password':
+          this.errorMessage = 'Incorrect password.';
+          break;
+        case 'auth/too-many-requests':
+          this.errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        default:
+          this.errorMessage = 'Login failed. Please try again.';
+      }
     } finally {
       this.loading = false;
     }
