@@ -2,6 +2,9 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
+import { generateInitials } from '../../models/contact.model';
 
 @Component({
   selector: 'app-header',
@@ -13,8 +16,32 @@ import { AuthService } from '../../services/auth.service';
 export class HeaderComponent {
   menuOpen: boolean = false;
   authServics = inject(AuthService);
+  private firestore = inject(Firestore);
+  private auth = inject(Auth);
+  initials: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
+  
+  ngOnInit() {
+    onAuthStateChanged(this.auth, async (user: User | null) => {
+      if (!user) return;
+
+      const uid = user.uid;
+
+      // Check Firestore for user contact
+      const docRef = doc(this.firestore, 'contacts', uid);
+      const snap = await getDoc(docRef);
+
+      if (snap.exists()) {
+        const data = snap.data();
+        this.initials = generateInitials(data?.['name'] ?? '');
+      } else if (user.isAnonymous) {
+        this.initials = 'GU';
+      } else {
+        this.initials = '??';
+      }
+    });
+  }
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
