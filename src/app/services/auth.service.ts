@@ -36,8 +36,7 @@ export class AuthService {
       initials: generateInitials(name),
       createdAt: serverTimestamp()
     });
-    //Store name in memory,so it's available immediately after sign-up in summary
-    this.setUserName(name);
+  
     return {
       uid,
       email
@@ -53,21 +52,19 @@ export class AuthService {
   
     const uid = result.user.uid;
   
-    // Fetch user name from Firestore
-    const contactRef = doc(this.firestore, 'contacts', uid);
-    const contactSnap = await getDoc(contactRef);
-    const name = contactSnap.exists() ? contactSnap.data()?.['name'] || '' : '';
-  
-    // Store the name for later use
-    this.setUserName(name);
-  
     return {
       uid: uid,
       email: result.user.email,
     };
   }
+ //getting name from firebase to show in summary
+  async loadUserNameFromFirestore(uid: string) {
+    const contactRef = doc(this.firestore, 'contacts', uid);
+    const contactSnap = await getDoc(contactRef);
+    const name = contactSnap.exists() ? contactSnap.data()?.['name'] || '' : '';
+    this.setUserName(name);
+  }
   
-
    async logout() {
     const user = this.auth.currentUser;
     if (user && user.isAnonymous) { // only guest as Anonymous user

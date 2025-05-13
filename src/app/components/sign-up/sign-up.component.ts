@@ -38,8 +38,6 @@ export class SignUpComponent {
 
     try {
       await this.authService.signUp(credentials);
-      // const userName = this.authService.getUserName(); //using only to debug
-      // console.log('Registered user:', userName);
       this.router.navigate(['/summary']);
       this.errorMessage = '';
       console.log('You are successfully Registered');

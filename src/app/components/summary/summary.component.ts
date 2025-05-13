@@ -7,6 +7,7 @@ import { Timestamp } from '@angular/fire/firestore';
 import { Task } from '../../interfaces/task';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { Auth } from '@angular/fire/auth';
 
 
 
@@ -24,6 +25,7 @@ export class SummaryComponent {
   firebaseService = inject(FirebaseService);
   authService = inject(AuthService);
   tasks: Task[] = [];
+  private auth: Auth = inject(Auth);
 
   totalTasks = 0;
   todoCount = 0;
@@ -59,8 +61,14 @@ export class SummaryComponent {
     }
   }
 
-  loadUserName() {
-    this.userName = this.authService.getUserName() || 'Guest';
+  async loadUserName() {
+    const user = this.auth.currentUser;
+    if (user?.uid) {
+      await this.authService.loadUserNameFromFirestore(user.uid);
+      this.userName = this.authService.getUserName();
+    } else {
+      this.userName = 'Guest';
+    }
   }
 
   normalizeStatus(status: string): string {
