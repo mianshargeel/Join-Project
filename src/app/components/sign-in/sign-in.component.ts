@@ -24,8 +24,32 @@ export class SignInComponent {
   password = '';
   errorMessage = '';
   loading = false;
+  rememberMe = false;
 
   constructor(private authService: AuthService, private router: Router) { }
+
+  ngOnInit(): void {
+    // Load credentials if they exist
+    const savedEmail = localStorage.getItem('savedEmail');
+    const savedPassword = localStorage.getItem('savedPassword');
+
+    if (savedEmail) this.email = savedEmail;
+    if (savedPassword) this.password = savedPassword;
+  }
+
+  saveCredentials() {
+    localStorage.setItem('savedEmail', this.email);
+    localStorage.setItem('savedPassword', this.password);
+  }
+  
+  toggleRemember() {
+    if (!this.rememberMe) {
+      localStorage.removeItem('savedEmail');
+      localStorage.removeItem('savedPassword');
+    } else {
+      this.saveCredentials();
+    }
+  }
   
   async login() {
     this.errorMessage = '';

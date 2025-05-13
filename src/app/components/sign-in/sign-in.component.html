@@ -7,6 +7,7 @@
     [(ngModel)]="email"
     placeholder="Email"
     required
+    (input)="saveCredentials()"
   />
 
   <input
@@ -15,7 +16,10 @@
     [(ngModel)]="password"
     placeholder="Password"
     required
-  />
+    (input)="saveCredentials()"
+  /><br>
+  <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
+  <label>Remember Me</label><br>
 
   <button type="submit" [disabled]="formRef.invalid || loading">
     @if (loading) {
