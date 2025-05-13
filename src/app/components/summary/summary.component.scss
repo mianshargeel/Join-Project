@@ -8,8 +8,9 @@
 
 .summary-wrapper {
     width: 100%;
-    max-width: 1120px;
-    margin: 0 auto;
+    max-width: 1960px;
+    margin-left: 0;
+    margin-right: auto;
     padding: 60px 20px 0 60px;
     font-family: "Inter", sans-serif;
 }
@@ -39,8 +40,10 @@
 }
 
 .summary-infos {
-    width: 560px;
-    height: 560px;
+    // width: 560px;
+    // height: 560px;
+    width: 420px;
+    height: 420px;
     margin-top: 60px;
     display: flex;
     flex-direction: column;
@@ -70,24 +73,34 @@
 }
 
 .info-row:nth-child(1) .info-box {
-    width: 264px;
-    height: 168px;
+    // width: 264px;
+    // height: 168px;
+    width: 198px;
+    height: 126px;
     flex-direction: row;
 }
 
 .info-row:nth-child(2) .info-box {
-    width: 560px;
-    height: 168px;
+    // width: 560px;
+    // height: 168px;
+    width: 420px;
+    height: 126px;
     flex-direction: row;
 }
 
 .info-row:nth-child(3) .info-box {
-    width: 168px;
-    height: 168px;
+    // width: 168px;
+    // height: 168px;
+    width: 126px;
+    height: 126px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 4px;
+
+    .label {
+        text-align: center;
+    }
 }
 
 .box-left {
@@ -103,12 +116,12 @@
 }
 
 .count {
-    font: 600 64px/1.2 "Inter", sans-serif;
+    font: 600 58px/1 "Inter", sans-serif;
     color: black;
 }
 
 .label {
-    font: 400 20px/1.2 "Inter", sans-serif;
+    font: 400 18px/1.2 "Inter", sans-serif;
     color: var(--darkblue);
 }
 
@@ -116,6 +129,11 @@
     display: flex;
     align-items: center;
     gap: 18px;
+
+    .box-right {
+        align-items: center;
+        text-align: center;
+    }
 }
 
 .deadline-divider {
@@ -132,7 +150,7 @@
 }
 
 .deadline-date {
-    font: 700 21px/1.2 "Inter", sans-serif;
+    font: 700 21px/2 "Inter", sans-serif;
     color: var(--darkblue);
 }
 

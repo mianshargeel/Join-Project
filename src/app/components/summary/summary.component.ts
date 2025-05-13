@@ -31,7 +31,7 @@ export class SummaryComponent {
   upcomingDeadline: Date | null = null;
 
   constructor() { }
-  
+
   ngOnInit(): void {
     this.taskService.tasks$.subscribe((tasks: Task[]) => {
       // console.log('SummaryComponent received tasks:', tasks); // debug log
@@ -50,13 +50,13 @@ export class SummaryComponent {
     this.inProgressCount = tasks.filter(t => this.normalizeStatus(t.status) === 'in-progress').length;
     this.awaitingFeedbackCount = tasks.filter(t => this.normalizeStatus(t.status) === 'await-feedback').length;
     this.urgentCount = tasks.filter(t => t.priority === 'urgent').length;
-  
+
     const upcomingDates = tasks
       .filter(t => t.duedate instanceof Timestamp)
       .map(t => (t.duedate as Timestamp).toDate())
       .filter(date => date > new Date())
       .sort((a, b) => a.getTime() - b.getTime());
-  
+
     this.upcomingDeadline = upcomingDates.length > 0 ? upcomingDates[0] : null;
     // console.log('To Do:', tasks.filter(t => this.normalizeStatus(t.status) === 'to-do'));
   }
