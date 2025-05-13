@@ -1,55 +1,40 @@
-<h2>Sign In</h2>
+<img src="assets/img/sign-in/logo.svg" class="logo-intro" />
+<div class="signin-content">
+  <h2>Sign In</h2>
 
-<form (ngSubmit)="login()" #formRef="ngForm">
-  <input
-    type="email"
-    name="email"
-    [(ngModel)]="email"
-    placeholder="Email"
-    required
-    (input)="saveCredentials()"
-    #emailRef="ngModel"
-  />
-  @if (emailRef.invalid && emailRef.touched) {
+  <form (ngSubmit)="login()" #formRef="ngForm">
+    <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required (input)="saveCredentials()"
+      #emailRef="ngModel" />
+    @if (emailRef.invalid && emailRef.touched) {
     <div>
-      <span style="color: red;"> Email is required.</span>  
+      <span style="color: red;"> Email is required.</span>
     </div>
-  }
-
-  <input
-    type="password"
-    name="password"
-    [(ngModel)]="password"
-    placeholder="Password"
-    required
-    (input)="saveCredentials()"
-    #passRef="ngModel"
-  /><br>
-  @if (passRef.invalid && passRef.touched){
-    <div>
-      <span style="color: red;"> Password is required.</span>  
-    </div>
-  }
-  @if (errorMessage) {
-    <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
-  }
-  <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
-  <label>Remember Me</label><br>
-
-  <button type="submit" [disabled]="formRef.invalid || loading">
-    @if (loading) {
-      Logging in...
-    } @else {
-      Login
     }
-  </button>
-</form>
 
+    <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
+      (input)="saveCredentials()" #passRef="ngModel" /><br>
+    @if (passRef.invalid && passRef.touched){
+    <div>
+      <span style="color: red;"> Password is required.</span>
+    </div>
+    }
+    @if (errorMessage) {
+    <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
+    }
+    <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
+    <label>Remember Me</label><br>
 
-
-<p>
-  Don't have an account?
-  <a routerLink="/sign-up">Sign up here</a><br>
-  <a routerLink="/board" (click)="loginAsGuest()">Guest User</a>
-</p>
-
+    <button type="submit" [disabled]="formRef.invalid || loading">
+      @if (loading) {
+      Logging in...
+      } @else {
+      Login
+      }
+    </button>
+  </form>
+  <p>
+    Don't have an account?
+    <a routerLink="/sign-up">Sign up here</a><br>
+    <a routerLink="/board" (click)="loginAsGuest()">Guest User</a>
+  </p>
+</div>

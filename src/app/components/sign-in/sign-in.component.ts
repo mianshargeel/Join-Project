@@ -35,13 +35,20 @@ export class SignInComponent {
 
     if (savedEmail) this.email = savedEmail;
     if (savedPassword) this.password = savedPassword;
+
+    document.body.classList.add('sign-in');
+
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('sign-in');
   }
 
   saveCredentials() {
     localStorage.setItem('savedEmail', this.email);
     localStorage.setItem('savedPassword', this.password);
   }
-  
+
   toggleRemember() {
     if (!this.rememberMe) {
       localStorage.removeItem('savedEmail');
@@ -50,7 +57,7 @@ export class SignInComponent {
       this.saveCredentials();
     }
   }
-  
+
   async login() {
     this.errorMessage = '';
     this.loading = true;

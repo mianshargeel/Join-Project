@@ -95,6 +95,12 @@ button {
   cursor: pointer;
 }
 
+
+body.sign-in app-header,
+body.sign-in app-navbar {
+  display: none !important;
+}
+
 // app-add-task {
 //   height: 100%;
 //   width: 100%;
