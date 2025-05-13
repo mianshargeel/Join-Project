@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SignInCredentials } from '../../interfaces/auth-interface';
 import { RouterModule } from '@angular/router';
+import { Auth, signInAnonymously } from '@angular/fire/auth';
+import { Firestore, doc, setDoc, serverTimestamp } from '@angular/fire/firestore';
+
 
 @Component({
   selector: 'app-sign-in',
@@ -14,6 +17,9 @@ import { RouterModule } from '@angular/router';
   styleUrl: './sign-in.component.scss'
 })
 export class SignInComponent {
+  private auth = inject(Auth);
+  private firestore = inject(Firestore);
+
   email = '';
   password = '';
   errorMessage = '';
@@ -37,6 +43,29 @@ export class SignInComponent {
       this.errorMessage = error.message || 'Login failed.';
     } finally {
       this.loading = false;
+    }
+  }
+
+  async loginAsGuest() {
+    try {
+      const credential = await signInAnonymously(this.auth);
+      const uid = credential.user.uid;
+
+      //store guest contact in Firestore if not already there
+      const contactRef = doc(this.firestore, 'contacts', uid);
+      await setDoc(contactRef, {
+        id: uid,
+        name: 'Guest User',
+        email: '',
+        telephone: '',
+        createdAt: serverTimestamp(),
+        isGuest: true
+      });
+
+      // Redirect to summary or home
+      this.router.navigate(['/board']);
+    } catch (error) {
+      console.error('Guest login failed', error);
     }
   }
 }

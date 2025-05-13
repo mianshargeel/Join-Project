@@ -122,7 +122,7 @@ export class ContactsListComponent implements OnInit {
 
   loadContacts() {
     const contactsRef = collection(this.firestore, 'contacts');
-    console.log('collectionRef type:', contactsRef.constructor.name);
+    // console.log('collectionRef type:', contactsRef.constructor.name);
   
     collectionData(contactsRef, { idField: 'id' }).subscribe((data: any[]) => {
       // console.log('FIRESTORE WORKS:', data);

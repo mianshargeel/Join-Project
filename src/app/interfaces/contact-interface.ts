@@ -4,5 +4,6 @@ export interface ContactInterface {
   mail: string;
   phone: string;
   color?: string;
+  isGuest?: boolean; //optional field to mark guest users
 }
 

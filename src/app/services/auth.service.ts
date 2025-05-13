@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, User } from '@angular/fire/auth';
 import { SignUpCredentials, SignInCredentials, AuthResponse } from '../interfaces/auth-interface';
-import { Firestore, doc, setDoc, serverTimestamp, collection } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, serverTimestamp, deleteDoc } from '@angular/fire/firestore';
 import { generateRandomColor, generateInitials } from '../models/contact.model';
 
 @Injectable({
@@ -46,9 +46,14 @@ export class AuthService {
     };
   }
 
-  logout(): Promise<void> {
+   async logout() {
+    const user = this.auth.currentUser;
+    if (user && user.isAnonymous) { // only guest as Anonymous user
+      await deleteDoc(doc(this.firestore, 'contacts', user.uid));
+    }
     return signOut(this.auth);
   }
+  
 
   getCurrentUser(callback: (user: User | null) => void): void {
     onAuthStateChanged(this.auth, callback);
