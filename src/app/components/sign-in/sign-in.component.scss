@@ -4,7 +4,11 @@
     height: 100vh;
     background: var(--secondary-bg);
     box-sizing: border-box;
+    position: relative;
+    justify-content: center;
+    align-items: center;
 }
+
 // Animation part
 .logo-intro {
     position: absolute;
@@ -21,6 +25,11 @@
     opacity: 0;
     animation: content-fade 1000ms ease forwards;
     animation-delay: 200ms;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
 }
 
 @keyframes content-fade {
@@ -50,4 +59,213 @@
         transform: translate(0, 0);
     }
 }
+
 // Animation end
+
+.signup-teaser {
+    position: fixed;
+    top: 60px;
+    right: 80px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .teaser-text {
+        font: 400 20px/1.2 "Inter", sans-serif;
+        color: black;
+    }
+
+    .signup-btn {
+        width: 90px;
+        height: 50px;
+        border-radius: 8px;
+        border: none;
+        background: var(--darkblue);
+        color: white;
+        font: 700 16px/1.2 "Inter", sans-serif;
+        cursor: pointer;
+    }
+
+    .signup-btn:hover {
+        background: var(--light-blue);
+    }
+}
+
+.login-box {
+    width: 800px;
+    height: 480px;
+    background: white;
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding-top: 20px;
+}
+
+.login-title {
+    margin: 0;
+    font: 700 91px/1.2 "Inter", sans-serif;
+    color: black;
+    text-align: center;
+}
+
+.title-underline {
+    width: 150px;
+    height: 3px;
+    margin-top: -15px;
+    background: var(--light-blue);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+
+    .input-icon {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 440px;
+    height: 50px;
+    padding: 12px 48px 12px 21px;
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    font: 400 18px/1.2 "Inter", sans-serif;
+    color: black;
+
+    &::placeholder {
+        color: #d1d1d1;
+    }
+
+    &:focus {
+        border-color: var(--light-blue);
+        outline: none;
+    }
+}
+
+.input-icon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    filter: grayscale(100%) brightness(50%);
+}
+
+.error-text {
+    margin: 0;
+    font: 400 14px/1.2 "Inter", sans-serif;
+    color: red;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    margin: 0;
+}
+
+.remember-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: 400 16px/1.2 "Inter", sans-serif;
+    color: black;
+    padding-top: 12px;
+}
+
+.btn-row {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 24px;
+}
+
+.primary-btn,
+.secondary-btn {
+    height: 50px;
+    border-radius: 8px;
+    font: 700 21px/1.2 "Inter", sans-serif;
+    cursor: pointer;
+}
+
+.primary-btn {
+    width: 110px;
+    border: none;
+    background: var(--darkblue);
+    color: white;
+}
+
+.primary-btn:hover:not(:disabled) {
+    background: var(--light-blue);
+}
+
+.primary-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.secondary-btn {
+    width: 177px;
+    background: white;
+    border: 1px solid var(--darkblue);
+    color: var(--darkblue);
+}
+
+.secondary-btn:hover {
+    border-color: var(--light-blue);
+    color: var(--light-blue);
+}
+
+.legal-links {
+    font: 400 16px/1.2 "Inter", sans-serif;
+    display: flex;
+    position: fixed;
+    left: 50%;
+    bottom: 80px;
+    gap: 40px;
+    transform: translateX(-50%);
+
+
+    a {
+        color: #a8a8a8;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--light-blue);
+    }
+}
+
+.remember-line input[type="checkbox"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    background: url('/assets/img/board/unchecked.svg') center/contain no-repeat;
+}
+
+.remember-line input[type="checkbox"]:checked {
+    background: url('/assets/img/board/checked.svg') center/contain no-repeat;
+}

@@ -1,40 +1,59 @@
 <img src="assets/img/sign-in/logo.svg" class="logo-intro" />
 <div class="signin-content">
-  <h2>Sign In</h2>
-
-  <form (ngSubmit)="login()" #formRef="ngForm">
-    <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required (input)="saveCredentials()"
-      #emailRef="ngModel" />
-    @if (emailRef.invalid && emailRef.touched) {
-    <div>
-      <span style="color: red;"> Email is required.</span>
-    </div>
-    }
-
-    <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
-      (input)="saveCredentials()" #passRef="ngModel" /><br>
-    @if (passRef.invalid && passRef.touched){
-    <div>
-      <span style="color: red;"> Password is required.</span>
-    </div>
-    }
-    @if (errorMessage) {
-    <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
-    }
-    <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
-    <label>Remember Me</label><br>
-
-    <button type="submit" [disabled]="formRef.invalid || loading">
-      @if (loading) {
-      Logging in...
-      } @else {
-      Login
-      }
-    </button>
-  </form>
-  <p>
-    Don't have an account?
-    <a routerLink="/sign-up">Sign up here</a><br>
-    <a routerLink="/board" (click)="loginAsGuest()">Guest User</a>
-  </p>
+  <div class="signup-teaser">
+    <span class="teaser-text">Not a Join user?</span>
+    <button class="signup-btn" routerLink="/sign-up">Sign up</button>
+  </div>
+  <section class="login-box">
+    <h1 class="login-title">Log in</h1>
+    <div class="title-underline"></div>
+    <form class="login-form" (ngSubmit)="login()" #formRef="ngForm">
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required (input)="saveCredentials()"
+            #emailRef="ngModel" />
+          <img src="assets/img/sign-in/mail.svg" alt="" class="input-icon" />
+        </div>
+        @if (emailRef.invalid && emailRef.touched) {
+        <p class="error-text">Email is required.</p>
+        }
+      </div>
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
+            (input)="saveCredentials()" #passRef="ngModel" />
+          <img src="assets/img/sign-in/pass.svg" alt="" class="input-icon" />
+        </div>
+        @if (passRef.invalid && passRef.touched) {
+        <p class="error-text">Password is required.</p>
+        }
+        @if (errorMessage) {
+        <p class="error-text">{{ errorMessage }}</p>
+        }
+      </div>
+      <label class="remember-line">
+        <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
+        Remember Me
+      </label>
+      <div class="btn-row">
+        <button type="submit" class="primary-btn" [disabled]="formRef.invalid || loading">
+          @if (loading) { Logging in… } @else { Log in }
+        </button>
+        <button type="button" class="secondary-btn" (click)="loginAsGuest()">
+          Guest Log in
+        </button>
+      </div>
+    </form>
+  </section>
+  <div class="legal-links">
+    <a routerLink="/privacy-policy">Privacy Policy</a>
+    <a routerLink="/legal-notice">Legal notice</a>
+  </div>
 </div>
+
+
+@if(showSuccessMsgDialog) {
+<div class="success-dialog show">
+  <p>{{ showSuccessMsg }}</p>
+</div>
+}
