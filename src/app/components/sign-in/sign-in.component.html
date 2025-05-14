@@ -38,3 +38,9 @@
     <a routerLink="/board" (click)="loginAsGuest()">Guest User</a>
   </p>
 </div>
+
+@if(showSuccessMsgDialog) {
+  <div class="success-dialog show">
+    <p>{{ showSuccessMsg }}</p>
+  </div>
+}

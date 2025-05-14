@@ -61,7 +61,6 @@
   <input type="checkbox" [(ngModel)]="acceptedTerms" required name="acceptedTerms" required  />
   <label> I accept the <a routerLink="/privacy-policy">Privacy Policy</a></label><br>
 
-  <button type="submit" [disabled]="formRef.invalid || password !== repeatPassword || !acceptedTerms">>Create Account</button>
+  <button type="submit" [disabled]="formRef.invalid || password !== repeatPassword || !acceptedTerms">Create Account</button>
 </form>
-
 

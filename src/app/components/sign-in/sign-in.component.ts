@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SignInCredentials } from '../../interfaces/auth-interface';
 import { RouterModule } from '@angular/router';
@@ -16,15 +16,18 @@ import { Firestore, doc, setDoc, serverTimestamp } from '@angular/fire/firestore
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  route = inject(ActivatedRoute);
 
   email = '';
   password = '';
   errorMessage = '';
   loading = false;
   rememberMe = false;
+  showSuccessMsgDialog: boolean = false;
+  showSuccessMsg: string = '';
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -38,10 +41,16 @@ export class SignInComponent {
 
     document.body.classList.add('sign-in');
 
-  }
+    this.route.queryParams.subscribe(params => {
+      if (params['registered'] === 'true') {
+        this.showSuccessMsg = 'You have Successfully Registered';
+        this.showSuccessMsgDialog = true;
+  
+        // Optional auto-hide after delay
+        setTimeout(() => this.showSuccessMsgDialog = false, 2000);
+      }
+    });
 
-  ngOnDestroy(): void {
-    document.body.classList.remove('sign-in');
   }
 
   saveCredentials() {
