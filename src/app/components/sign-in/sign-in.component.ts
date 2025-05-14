@@ -1,4 +1,4 @@
-import { Component, inject, OnInit  } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -16,7 +16,7 @@ import { Firestore, doc, setDoc, serverTimestamp } from '@angular/fire/firestore
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.scss'
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent implements OnInit, OnDestroy {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
   route = inject(ActivatedRoute);
@@ -39,18 +39,22 @@ export class SignInComponent implements OnInit {
     if (savedEmail) this.email = savedEmail;
     if (savedPassword) this.password = savedPassword;
 
-    document.body.classList.add('sign-in');
+    document.body.classList.add('auth-hidden');
 
     this.route.queryParams.subscribe(params => {
       if (params['registered'] === 'true') {
         this.showSuccessMsg = 'You have Successfully Registered';
         this.showSuccessMsgDialog = true;
-  
+
         // Optional auto-hide after delay
         setTimeout(() => this.showSuccessMsgDialog = false, 2000);
       }
     });
 
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('auth-hidden');
   }
 
   saveCredentials() {

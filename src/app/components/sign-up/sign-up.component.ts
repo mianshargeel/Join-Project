@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
 })
-export class SignUpComponent {
+export class SignUpComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   router = inject(Router);
   name = '';
@@ -23,6 +23,14 @@ export class SignUpComponent {
   repeatPassword = '';
   errorMessage = '';
   acceptedTerms = false;
+
+  ngOnInit(): void {
+    document.body.classList.add('auth-hidden');
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove('auth-hidden');
+  }
 
   async register() {
     if (this.password !== this.repeatPassword) {
