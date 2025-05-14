@@ -1,13 +1,18 @@
 <img src="assets/img/sign-in/logo.svg" class="logo-intro" />
+
 <div class="signin-content">
+
   <div class="signup-teaser">
     <span class="teaser-text">Not a Join user?</span>
     <button class="signup-btn" routerLink="/sign-up">Sign up</button>
   </div>
+
   <section class="login-box">
     <h1 class="login-title">Log in</h1>
     <div class="title-underline"></div>
+
     <form class="login-form" (ngSubmit)="login()" #formRef="ngForm">
+
       <div class="input-container">
         <div class="input-wrapper">
           <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required (input)="saveCredentials()"
@@ -18,6 +23,7 @@
         <p class="error-text">Email is required.</p>
         }
       </div>
+
       <div class="input-container">
         <div class="input-wrapper">
           <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
@@ -31,10 +37,12 @@
         <p class="error-text">{{ errorMessage }}</p>
         }
       </div>
+
       <label class="remember-line">
         <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
         Remember Me
       </label>
+
       <div class="btn-row">
         <button type="submit" class="primary-btn" [disabled]="formRef.invalid || loading">
           @if (loading) { Logging in… } @else { Log in }
@@ -43,14 +51,17 @@
           Guest Log in
         </button>
       </div>
+
     </form>
+
   </section>
+
   <div class="legal-links">
     <a routerLink="/privacy-policy">Privacy Policy</a>
     <a routerLink="/legal-notice">Legal notice</a>
   </div>
-</div>
 
+</div>
 
 @if(showSuccessMsgDialog) {
 <div class="success-dialog show">

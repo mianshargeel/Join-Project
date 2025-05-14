@@ -1,66 +1,81 @@
-<h2>Sign Up</h2>
+<img src="assets/img/sign-in/logo.svg" class="logo-fixed" />
 
-<form (ngSubmit)="register()" #formRef="ngForm">
-  <input
-    type="text"
-    name="name"
-    placeholder="Name"
-    [(ngModel)]="name"
-    required
-    #nameRef="ngModel"
-    minlength="2"
-  /><br><br>
-  @if (nameRef.invalid && nameRef.touched) {
-    <div>
-      <span style="color: red;"> Valid Name is required</span>  
-    </div>
-  }
-  <input
-    type="email"
-    name="email"
-    placeholder="Email"
-    [(ngModel)]="email"
-    required
-    #emailRef="ngModel"
-  /><br><br>
-  @if (emailRef.invalid && emailRef.touched) {
-    <div>
-      <span style="color: red;"> Email is required.</span>  
-    </div>
-  }
+<div class="signup-content">
 
-  <input
-    type="password"
-    name="password"
-    placeholder="Password"
-    [(ngModel)]="password"
-    required
-    #passRef="ngModel"
-  /><br><br>
-  @if (passRef.invalid && passRef.touched){
-    <div>
-      <span style="color: red;"> Password is required.</span>  
-    </div>
-  }
-  <input
-    type="password"
-    name="repeatPassword"
-    placeholder="Repeat Password"
-    [(ngModel)]="repeatPassword"
-    required
-    #repeatPassRef="ngModel"
-  /><br><br>
-  @if (repeatPassRef.touched && repeatPassword !== password) {
-    <div>
-      <span style="color: red;">  Passwords do not match.</span>  
-    </div>
-  }
-  @if (errorMessage) {
-    <div style="color: red; margin-top: 10px;">{{ errorMessage }}</div>
-  }
-  <input type="checkbox" [(ngModel)]="acceptedTerms" required name="acceptedTerms" required  />
-  <label> I accept the <a routerLink="/privacy-policy">Privacy Policy</a></label><br>
+  <section class="signup-box">
+    <div class="box-header">
+      <button class="back-btn" routerLink="/sign-in">
+        <img src="assets/img/sign-up/back-arrow.svg" alt="back" />
+      </button>
 
-  <button type="submit" [disabled]="formRef.invalid || password !== repeatPassword || !acceptedTerms">Create Account</button>
-</form>
+      <h1 class="signup-title">Sign up</h1>
+    </div>
+    <div class="title-underline"></div>
 
+    <form class="signup-form" (ngSubmit)="register()" #formRef="ngForm">
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input type="text" name="name" placeholder="Name" [(ngModel)]="name" required minlength="2"
+            #nameRef="ngModel" />
+          <img src="assets/img/sign-up/username.svg" class="input-icon" alt="" />
+        </div>
+        @if (nameRef.invalid && nameRef.touched) {
+        <p class="error-text">Valid name is required.</p>
+        }
+      </div>
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input type="email" name="email" placeholder="Email" [(ngModel)]="email" required #emailRef="ngModel" />
+          <img src="assets/img/sign-in/mail.svg" class="input-icon" alt="" />
+        </div>
+        @if (emailRef.invalid && emailRef.touched) {
+        <p class="error-text">Email is required.</p>
+        }
+      </div>
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input type="password" name="password" placeholder="Password" [(ngModel)]="password" required
+            #passRef="ngModel" />
+          <img src="assets/img/sign-in/pass.svg" class="input-icon" alt="" />
+        </div>
+        @if (passRef.invalid && passRef.touched) {
+        <p class="error-text">Password is required.</p>
+        }
+      </div>
+
+      <div class="input-container">
+        <div class="input-wrapper">
+          <input type="password" name="repeatPassword" placeholder="Confirm Password" [(ngModel)]="repeatPassword"
+            required #repeatPassRef="ngModel" />
+          <img src="assets/img/sign-in/pass.svg" class="input-icon" alt="" />
+        </div>
+        @if (repeatPassRef.touched && repeatPassword !== password) {
+        <p class="error-text">Passwords do not match.</p>
+        }
+      </div>
+
+      @if (errorMessage) {
+      <p class="error-text">{{ errorMessage }}</p>
+      }
+
+      <label class="terms-line">
+        <input type="checkbox" [(ngModel)]="acceptedTerms" name="acceptedTerms" required />
+        I accept the <a routerLink="/privacy-policy">Privacy policy</a>
+      </label>
+
+      <button type="submit" class="primary-btn single"
+        [disabled]="formRef.invalid || repeatPassword !== password || !acceptedTerms">
+        Sign up
+      </button>
+    </form>
+  </section>
+
+  <div class="legal-links">
+    <a routerLink="/privacy-policy">Privacy Policy</a>
+    <a routerLink="/legal-notice">Legal notice</a>
+  </div>
+
+</div>

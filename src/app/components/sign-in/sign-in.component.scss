@@ -92,7 +92,7 @@
 }
 
 .login-box {
-    width: 800px;
+    width: 600px;
     height: 480px;
     background: white;
     border-radius: 30px;
@@ -105,7 +105,7 @@
 
 .login-title {
     margin: 0;
-    font: 700 91px/1.2 "Inter", sans-serif;
+    font: 700 61px/1.2 "Inter", sans-serif;
     color: black;
     text-align: center;
 }
@@ -193,12 +193,17 @@ input[type="password"] {
     font: 400 16px/1.2 "Inter", sans-serif;
     color: black;
     padding-top: 12px;
+    cursor: pointer;
+
+    &:hover {
+        color: var(--light-blue);
+    }
 }
 
 .btn-row {
     display: flex;
     gap: 16px;
-    padding-bottom: 24px;
+    margin-top: 16px;
 }
 
 .primary-btn,
@@ -222,7 +227,7 @@ input[type="password"] {
 
 .primary-btn:disabled {
     opacity: 0.5;
-    cursor: default;
+    cursor: not-allowed;
 }
 
 .secondary-btn {
@@ -242,10 +247,9 @@ input[type="password"] {
     display: flex;
     position: fixed;
     left: 50%;
-    bottom: 80px;
+    bottom: 24px;
     gap: 40px;
     transform: translateX(-50%);
-
 
     a {
         color: #a8a8a8;
