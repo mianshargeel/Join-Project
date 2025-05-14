@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { generateInitials } from '../../models/contact.model';
+import { ElementRef, HostListener, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +20,8 @@ export class HeaderComponent {
   private firestore = inject(Firestore);
   private auth = inject(Auth);
   initials: string = '';
+  @ViewChild('menuRef') menuRef!: ElementRef;
+
 
   constructor(private router: Router) { }
   
@@ -57,4 +60,15 @@ export class HeaderComponent {
     console.log('You are Successfully Logout!');
     
   }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = this.menuRef?.nativeElement.contains(event.target);
+    const clickedButton = (event.target as HTMLElement).closest('.btnHamburgerMenu');
+
+    if (!clickedInside && !clickedButton) {
+      this.menuOpen = false;
+    }
+  }
+  
 }

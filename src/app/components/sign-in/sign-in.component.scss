@@ -269,3 +269,23 @@ input[type="password"] {
 .remember-line input[type="checkbox"]:checked {
     background: url('/assets/img/board/checked.svg') center/contain no-repeat;
 }
+
+.success-dialog {
+    position: fixed;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1c2b3a;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-family: "Inter", sans-serif;
+    opacity: 1;
+}
+
+.success-dialog.show {
+    animation: slideInFromRightToCenter 0.7s ease-out forwards;
+}
