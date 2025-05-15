@@ -57,9 +57,9 @@
                     (click)="openDialog(task)">
               <!--  Mobile Move Dropdown -->
                     @if (isMobileView) {
-                      <div class="mobile-move-menu" (mouseenter)="hoveredTaskId = task.id" (mouseleave)="hoveredTaskId = null" (click)="$event.stopPropagation()">
+                      <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
                         <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
-                        @if (dropdownTaskId === task.id && hoveredTaskId === task.id) {
+                        @if (dropdownTaskId === task.id) {
                         <ul class="move-dropdown">
                           @for (columnOption of columns; track columnOption.title) {
                             @if (columnOption.title !== column.title) {

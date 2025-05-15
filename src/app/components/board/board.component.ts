@@ -10,7 +10,7 @@ import { generateRandomColor } from '../../models/contact.model';
 import { BoardDialogComponent } from './board-dialog/board-dialog.component';
 import { ContactInterface } from '../../interfaces/contact-interface';
 import { AddTaskComponent } from '../add-task/add-task.component';
-import { TaskDialogComponent } from './task-dialog/task-dialog.component';
+import { ElementRef, HostListener, ViewChild } from '@angular/core';
 
 
 @Component({
@@ -37,7 +37,7 @@ export class BoardComponent {
   dialogTaskStatus: string = 'To do';
   isMobileView = false;
   dropdownTaskId: string | null = null;
-  hoveredTaskId: string | null = null;
+  @ViewChild('menuRef') menuRef!: ElementRef;
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -251,6 +251,14 @@ export class BoardComponent {
   closeAddTaskDialog() {
     this.showAddTaskDialog = false;
     document.body.classList.remove('modal-open');
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = this.menuRef?.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.dropdownTaskId = null;
+    }
   }
 
 }
