@@ -255,7 +255,7 @@ export class BoardDialogComponent implements AfterViewInit {
       title: trimmed,
       isdone: false
     });
-    console.log('Subtasks:', this.editableTask.subtasks.map(s => s.id));
+    // console.log('Subtasks:', this.editableTask.subtasks.map(s => s.id));
     this.editedSubtaskInput = '';
     this.isTyping = false;
   }
