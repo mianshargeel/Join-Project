@@ -8,7 +8,7 @@ import { generateRandomColor, generateInitials } from '../models/contact.model';
   providedIn: 'root'
 })
 export class AuthService {
-  private auth: Auth = inject(Auth);//It refers to the Firebase Authentication instance.
+  public auth: Auth = inject(Auth);//It refers to the Firebase Authentication instance.
   private firestore: Firestore = inject(Firestore);
   private userName: string = '';
 

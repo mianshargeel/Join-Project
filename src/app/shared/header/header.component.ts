@@ -22,6 +22,7 @@ export class HeaderComponent {
   initials: string = '';
   @ViewChild('menuRef') menuRef!: ElementRef;
   menuHover: boolean = false;
+  isAuthenticated = false;
 
 
   constructor(private router: Router) { }
@@ -45,6 +46,9 @@ export class HeaderComponent {
         this.initials = '??';
       }
     });
+    onAuthStateChanged(this.authServics.auth, (user) => {
+          this.isAuthenticated = !!user;
+        });
   }
 
   toggleMenu() {

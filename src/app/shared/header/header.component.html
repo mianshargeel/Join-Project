@@ -3,24 +3,31 @@
     <p class="title" aria-hidden="true">Kanban Project Management Tool</p>
     <a [routerLink]="['/summary']" class="logoMedia"><img class="imgLogoMedia"
         src="../../../assets/imgs/imgs_story1/Logo.png" alt="logo-btn Home"></a>
-    <div class="header-icons">
-      <a [routerLink]="['/help']" routerLinkActive="hidden" class="btnHelp" aria-label="Hilfe öffnen"></a>
-      <button class="btnHamburgerMenu" aria-label="Open menu" aria-haspopup="true" [attr.aria-expanded]="menuOpen" (click)="toggleMenu()" [ngClass]="{ active: menuOpen}">
-      {{ initials || '??' }}</button>
-           <!-- Menü -->
-      @if(menuOpen) {
-        <div #menuRef class="dropdown-menu">
-          <div class="menuOpenHamb" *ngIf="menuOpen">
-            <a [routerLink]="['/legal-notice']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Legal
-              Notice</a>
-            <a [routerLink]="['/help']" routerLinkActive="active" class="btnMenu help-view" (click)="toggleMenu()">
-              Help</a>
-            <a [routerLink]="['/privacy-policy']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Privacy
-              Policy</a>
-            <a [routerLink]="['/logout']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()" (click)="logout()">Log out</a>
+
+        @if (isAuthenticated) {
+          <div class="header-icons">
+            <a [routerLink]="['/help']" routerLinkActive="hidden" class="btnHelp" aria-label="Hilfe öffnen"></a>
+        
+            <button class="btnHamburgerMenu"
+                    aria-label="Open menu"
+                    aria-haspopup="true"
+                    [attr.aria-expanded]="menuOpen"
+                    (click)="toggleMenu()"
+                    [ngClass]="{ active: menuOpen }">
+              {{ initials || '??' }}
+            </button>
+        
+            @if (menuOpen) {
+              <div #menuRef class="dropdown-menu">
+                <div class="menuOpenHamb">
+                  <a [routerLink]="['/legal-notice']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Legal Notice</a>
+                  <a [routerLink]="['/help']" routerLinkActive="active" class="btnMenu help-view" (click)="toggleMenu()">Help</a>
+                  <a [routerLink]="['/privacy-policy']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Privacy Policy</a>
+                  <a [routerLink]="['/logout']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu(); logout()">Log out</a>
+                </div>
+              </div>
+            }
           </div>
-        </div>
-      }
-    </div>
+        }
   </div>
 </header>
