@@ -13,6 +13,8 @@
           <div class="menuOpenHamb" *ngIf="menuOpen">
             <a [routerLink]="['/legal-notice']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Legal
               Notice</a>
+            <a [routerLink]="['/help']" routerLinkActive="active" class="btnMenu help-view" (click)="toggleMenu()">
+              Help</a>
             <a [routerLink]="['/privacy-policy']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()">Privacy
               Policy</a>
             <a [routerLink]="['/logout']" routerLinkActive="active" class="btnMenu" (click)="toggleMenu()" (click)="logout()">Log out</a>

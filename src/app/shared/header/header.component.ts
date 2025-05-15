@@ -21,6 +21,7 @@ export class HeaderComponent {
   private auth = inject(Auth);
   initials: string = '';
   @ViewChild('menuRef') menuRef!: ElementRef;
+  menuHover: boolean = false;
 
 
   constructor(private router: Router) { }

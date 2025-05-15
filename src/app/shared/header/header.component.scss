@@ -116,6 +116,9 @@
     }
   }
 }
+.help-view{
+  display: none;
+}
 
 @media (max-width: 936px) {
   .header {
@@ -147,6 +150,10 @@
 
     .btnHamburgerMenu {
       display: flex;
+    }
+
+    .help-view {
+      display: block;   
     }
 
     // falls Logo hier rein soll:
