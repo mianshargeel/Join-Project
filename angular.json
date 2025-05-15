@@ -40,6 +40,8 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/angular-projects/join/",
+              "deployUrl": "/angular-projects/join/",
               "budgets": [
                 {
                   "type": "initial",
