@@ -37,7 +37,7 @@ export class BoardComponent {
   dialogTaskStatus: string = 'To do';
   isMobileView = false;
   dropdownTaskId: string | null = null;
-  menuHover: boolean = false;
+  hoveredTaskId: string | null = null;
 
   openDialog(task: Task) {
     if (this.dragging) {
@@ -113,25 +113,13 @@ export class BoardComponent {
   moveToColumn(task: Task, targetColumn: string) {
     if (task.status === targetColumn.toLowerCase()) return;
   
-    const currentColumn = this.columns.find(col => col.title.toLowerCase() === task.status);
-    const newColumn = this.columns.find(col => col.title.toLowerCase() === targetColumn.toLowerCase());
+    this.firebaseTaskService.updateTaskInDatabase(task.id, {
+      status: targetColumn.toLowerCase()
+    });
   
-    if (currentColumn && newColumn) {
-      // Remove from old column
-      const index = currentColumn.tasks.findIndex(t => t.id === task.id);
-      if (index !== -1) currentColumn.tasks.splice(index, 1);
-  
-      // Add to new column
-      const updatedTask: Task = { ...task, status: targetColumn.toLowerCase() };
-      newColumn.tasks.push(updatedTask);
-  
-      this.firebaseTaskService.updateTaskInDatabase(task.id, {
-        status: targetColumn.toLowerCase()
-      });
-  
-      this.dropdownTaskId = null; // close dropdown
-    }
+    this.dropdownTaskId = null;
   }
+  
   
   toggleTaskDropdown(taskId: string) {
     this.dropdownTaskId = this.dropdownTaskId === taskId ? null : taskId;
