@@ -35,7 +35,6 @@
   .header-icons {
     display: flex;
     align-items: center;
-    gap: 16px;
     position: relative;
 
     .btnHelp {
@@ -46,6 +45,7 @@
       height: 20px;
       background: url("/assets/imgs/imgs_story1/help.png") no-repeat center;
       background-size: contain;
+      margin-right: 16px;
 
       &:hover {
         width: 24px;
@@ -83,11 +83,11 @@
     // Menü direkt innerhalb der Icons platzieren
     .menuOpenHamb {
       position: absolute;
-      top: 76px;
-      right: 0px;
+      top: 46px;
+      right: 40px;
       background-color: $darkblue;
       color: $nav-button;
-      z-index: 100;
+      z-index: 100000;
       border-radius: 20px 0 20px 20px;
       padding: 10px;
       display: flex;
@@ -116,7 +116,8 @@
     }
   }
 }
-.help-view{
+
+.help-view {
   display: none;
 }
 
@@ -153,7 +154,7 @@
     }
 
     .help-view {
-      display: block;   
+      display: block;
     }
 
     // falls Logo hier rein soll:
