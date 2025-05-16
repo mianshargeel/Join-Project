@@ -1,6 +1,6 @@
 
 import { TaskService } from '../../services/task.service';
-import { Component, inject } from '@angular/core';
+import { Component, inject, } from '@angular/core';
 import { CdkDragDrop, CdkDrag, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem, } from '@angular/cdk/drag-drop';
 import { FirebaseService } from '../../services/firebase.service';
 import { CommonModule } from '@angular/common';
@@ -94,20 +94,26 @@ export class BoardComponent {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      const movedTask = event.previousContainer.data[event.previousIndex];
+      movedTask.status = columnTitle.toLowerCase();
+  
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
         event.previousIndex,
         event.currentIndex
       );
-
-      const movedTask = event.container.data[event.currentIndex];
-
-      // Updating only the changed field
-      this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
-        status: columnTitle.toLowerCase()
-      });
+      // Delay Firebase write to prevent UI flicker
+      setTimeout(() => {
+        this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
+          status: movedTask.status
+        });
+      }, 100);
     }
+  }
+  //Without trackBy, Angular assumes every item in a list is new whenever the array changes
+  trackByTaskId(index: number, task: Task): string {
+    return task.id;
   }
 
   moveToColumn(task: Task, targetColumn: string) {
@@ -124,6 +130,7 @@ export class BoardComponent {
   toggleTaskDropdown(taskId: string) {
     this.dropdownTaskId = this.dropdownTaskId === taskId ? null : taskId;
   }
+
   updateColumnsFromFirebase(): void {
     // Clear columns
     this.columns.forEach(col => col.tasks = []);

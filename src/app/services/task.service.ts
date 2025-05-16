@@ -36,41 +36,50 @@ export class TaskService {
       };
     }
   
-  loadAllTasks() {
-    const tasksRef = collection(this.firestore, 'tasks');
-
-    onSnapshot(tasksRef, (querySnap) => {
-      this.allTasks = []; // Reset old data
-
-      querySnap.forEach((doc) => {
-        const task = this.setTaskObject(doc.data(), doc.id);
-        this.allTasks.push(task);
-        // console.log(task);
-
-        // Setup subtasks
-        const subtaskRef = collection(this.firestore, `tasks/${task.id}/subtasks`);
-        this.subtaskUnsubscribe[task.id]?.(); // Unsubscribe old
-
-        this.subtaskUnsubscribe[task.id] = onSnapshot(subtaskRef, (subSnap) => {
-          this.allSubtasks = [];
-          subSnap.docs.forEach((sdoc) => {
-            this.allSubtasks.push({
+    loadAllTasks() {
+      const tasksRef = collection(this.firestore, 'tasks');
+    
+      onSnapshot(tasksRef, (querySnap) => {
+        const changes = querySnap.docChanges();//This gives us a list of only the changed docs Each with a type: 'added' | 'modified' | 'removed', This avoids having to clear and rebuild the whole list every time
+    
+        for (const change of changes) {
+          const doc = change.doc;
+          const task = this.setTaskObject(doc.data(), doc.id);
+          const index = this.allTasks.findIndex(t => t.id === task.id);
+    
+          if (change.type === 'added') {
+            this.allTasks.push(task);
+          } else if (change.type === 'modified') {
+            if (index !== -1) {
+              this.allTasks[index] = task;
+            }
+          } else if (change.type === 'removed') {
+            if (index !== -1) {
+              this.allTasks.splice(index, 1);
+            }
+          }
+    
+          // Subtasks setup (always refresh for modified/added tasks)
+          const subtaskRef = collection(this.firestore, `tasks/${task.id}/subtasks`);
+          this.subtaskUnsubscribe[task.id]?.(); // Unsubscribe previous
+          this.subtaskUnsubscribe[task.id] = onSnapshot(subtaskRef, (subSnap) => {
+            const subtasks: Subtask[] = subSnap.docs.map((sdoc) => ({
               id: sdoc.id,
               ...(sdoc.data() as Omit<Subtask, 'id'>),
-            });
+            }));
+    
+            const taskIndex = this.allTasks.findIndex(t => t.id === task.id);
+            if (taskIndex !== -1) {
+              this.allTasks[taskIndex].subtasks = subtasks;
+            }
+    
+            this.tasks$.next(this.allTasks); //Still needed to trigger update
           });
-          const index = this.allTasks.findIndex((t) => t.id === task.id);
-          if (index !== -1) {
-            this.allTasks[index].subtasks = this.allSubtasks;
-          }
-        });
+        }
+        // Only push tasks$ once after task-level changes
+        this.tasks$.next(this.allTasks);
       });
-
-      //After all tasks are processed
-      this.tasks$.next(this.allTasks);
-    });
-  }
-
+    }
 
   setTaskObject(task: any, id: string): Task {
       return {
