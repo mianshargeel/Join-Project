@@ -40,329 +40,339 @@ export class BoardDialogComponent implements AfterViewInit {
   @ViewChild('editDueDateInput') editDueDateInput!: ElementRef<HTMLInputElement>;
   todayString = new Date().toISOString().split('T')[0];
 
-  onClose() {
-    this.close.emit();
+  /** Emits the close event to parent component. */
+onClose() {
+  this.close.emit();
+}
+
+/** Initializes the dialog component by parsing the due date and preparing the editable task. */
+ngOnInit() {
+  this.dueDateInput = this.parseDueDate(this.task.duedate);
+
+  this.editableTask = {
+    ...this.task,
+    subtasks: this.task.subtasks.map(sub => ({
+      ...sub,
+      id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+    }))
+  };
+}
+
+/** Safely converts various date formats to a yyyy-MM-dd string (for form input binding). */
+private parseDueDate(raw: any): string {
+  try {
+    if (raw?.toDate instanceof Function) return raw.toDate().toISOString().split('T')[0];
+    if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined)
+      return new Timestamp(raw.seconds, raw.nanoseconds).toDate().toISOString().split('T')[0];
+    if (typeof raw === 'string' || raw instanceof Date)
+      return new Date(raw).toISOString().split('T')[0];
+    throw new Error('Invalid date format in task');
+  } catch {
+    return '';
   }
+}
 
-  ngOnInit() {
-    const raw: any = this.task.duedate;
-    let dateObj: Date;
+/** Toggles the visibility of the assignee dropdown. */
+toggleDropdown() {
+  this.dropdownOpen = !this.dropdownOpen;
+}
 
-    try {
-      if (raw?.toDate && typeof raw.toDate === 'function') {
-        dateObj = raw.toDate();
-      } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
-        const ts = new Timestamp(raw.seconds, raw.nanoseconds);
-        dateObj = ts.toDate();
-      } else if (typeof raw === 'string' || raw instanceof Date) {
-        dateObj = new Date(raw);
-      } else {
-        throw new Error('Invalid date format in task');
-      }
-
-      this.dueDateInput = dateObj.toISOString().split('T')[0];
-    } catch {
-      this.dueDateInput = '';
-    }
-
-    this.editableTask = {
-      ...this.task,
-      subtasks: this.task.subtasks.map(sub => ({
-        ...sub,
-        id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
-      }))
-    };
+/** Returns the correct priority icon path based on the given level. */
+priorityIcon(p: string) {
+  switch (p.toLowerCase()) {
+    case 'low': return '/assets/img/board/low.svg';
+    case 'medium': return '/assets/img/board/medium.svg';
+    default: return '/assets/img/board/urgent.svg';
   }
+}
 
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
+/** Returns class object for category-based CSS styling. */
+categoryClass(category: string) {
+  const key = category?.toLowerCase();
+  return {
+    'user-story': key === 'user story',
+    'technical-task': key === 'technical task'
+  };
+}
+
+/** Deletes the current task from Firestore and closes the dialog. */
+async onDelete() {
+  if (!this.task?.id) return;
+  await this.firebaseTaskService.deleteTaskByIdFromDatabase(this.task.id);
+  this.close.emit(); 
+}
+
+/** Enables task edit mode by cloning the task object. */
+enableEditMode() {
+  this.editableTask = structuredClone(this.task); 
+  this.editableTask.assignees = this.editableTask.assignees ?? [];
+  this.editMode = true;
+}
+
+/** Disables edit mode and switches back to view mode. */
+disableEditMode() {
+  this.editMode = false;
+}
+
+/** Sets the task's priority to the specified level. */
+setPriority(level: 'urgent' | 'medium' | 'low') {
+  this.editableTask.priority = level;
+}
+
+/** Submits all task edits including main task and subtasks, and closes the dialog. */
+async submitEdit() {
+  if (!this.task?.id) return;
+  this.prepareDueDate();
+  const updatedTaskData = this.buildUpdatedTaskData();
+  try {
+    await this.updateMainTask(updatedTaskData);
+    await this.syncSubtasks();
+    await this.removeDeletedSubtasks();
+    this.finalizeViewState();
+  } catch (error) {
+    console.error('Error during submitEdit:', error);
   }
+}
 
-  priorityIcon(p: string) {
-    switch (p.toLowerCase()) {
-      case 'low': return '/assets/img/board/low.svg';
-      case 'medium': return '/assets/img/board/medium.svg';
-      default: return '/assets/img/board/urgent.svg';
-    }
-  }
-  categoryClass(category: string) {
-    const key = category?.toLowerCase();
-    return {
-      'user-story': key === 'user story',
-      'technical-task': key === 'technical task'
-    };
-  }
+/** Converts due date input string into Firestore Timestamp. */
+private prepareDueDate(): void {
+  this.editableTask.duedate = Timestamp.fromDate(new Date(this.dueDateInput));
+}
 
-  async onDelete() {
-    if (!this.task?.id) return;
-    await this.firebaseTaskService.deleteTaskByIdFromDatabase(this.task.id);
-    this.close.emit(); // close the dialog after deletion
-  }
+/** Returns a task update object based on editable form fields. */
+private buildUpdatedTaskData(): Partial<Task> {
+  return {
+    title: this.editableTask.title,
+    description: this.editableTask.description,
+    duedate: this.editableTask.duedate,
+    assignees: this.editableTask.assignees,
+    status: this.task.status,
+    priority: this.editableTask.priority,
+  };
+}
 
-  enableEditMode() {
-    this.editableTask = structuredClone(this.task); // deep copy, This allows two-way binding in the edit form without affecting the original until saved.
-    this.editableTask.assignees = this.editableTask.assignees ?? [];
-    this.editMode = true;
-    // console.log('edit mode clicked');
+/** Updates the main task document in Firestore. */
+private async updateMainTask(data: Partial<Task>): Promise<void> {
+  await this.firebaseTaskService.updateTaskInDatabase(this.task.id, data);
+}
 
-  }
-
-  disableEditMode() {
-    this.editMode = false;
-  }
-
-  setPriority(level: 'urgent' | 'medium' | 'low') {
-    this.editableTask.priority = level;
-  }
-
-  async submitEdit() {
-    if (!this.task?.id) return;
-
-    this.prepareDueDate();
-    const updatedTaskData = this.buildUpdatedTaskData();
-
-    try {
-      await this.updateMainTask(updatedTaskData);
-      await this.syncSubtasks();
-      await this.removeDeletedSubtasks();
-      this.finalizeViewState();
-    } catch (error) {
-      console.error('Error during submitEdit:', error);
-    }
-  }
-
-  private prepareDueDate(): void {
-    this.editableTask.duedate = Timestamp.fromDate(new Date(this.dueDateInput));
-  }
-
-  private buildUpdatedTaskData(): Partial<Task> {
-    return {
-      title: this.editableTask.title,
-      description: this.editableTask.description,
-      duedate: this.editableTask.duedate,
-      assignees: this.editableTask.assignees,
-      status: this.task.status,
-      priority: this.editableTask.priority,
-    };
-  }
-
-  private async updateMainTask(data: Partial<Task>): Promise<void> {
-    await this.firebaseTaskService.updateTaskInDatabase(this.task.id, data);
-  }
-
-  private async syncSubtasks(): Promise<void> {
-    for (const subtask of this.editableTask.subtasks) {
-      if (subtask.id.startsWith('local-')) {
-        // NEW subtask: add to Firebase
-        const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
-          this.task.id,
-          { title: subtask.title, isdone: subtask.isdone }
-        );
-        subtask.id = docRef.id; // replace local ID with real Firestore ID
-      } else {
-        // EXISTING subtask: update in Firebase
-        await this.firebaseTaskService.updateSubtaskInDatabase(
-          this.task.id,
-          subtask.id,
-          { title: subtask.title, isdone: subtask.isdone }
-        );
-      }
-    }
-  }
-
-  private async removeDeletedSubtasks(): Promise<void> {
-    for (const subtaskId of this.deletedSubtaskIds) {
-      await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
-    }
-    this.deletedSubtaskIds = [];
-  }
-
-  private finalizeViewState(): void {
-    this.assignees = this.getTaskAssignees({ ...this.editableTask });
-    this.task = {
-      ...this.editableTask,
-      subtasks: [...this.editableTask.subtasks],
-    };
-    this.disableEditMode();
-    this.close.emit();
-  }
-  /**
- * Returns a user-friendly due date string (dd/MM/yyyy) for display in the view dialog.
- * Safely handles Firestore Timestamp, string, or Date formats to prevent runtime errors.
- * Used as a read-only computed property for clean binding in the template.
- */
-  get formattedDueDate(): string {
-    const raw: any = this.task.duedate;
-
-    try {
-      if (raw?.toDate && typeof raw.toDate === 'function') {
-        // Firestore Timestamp
-        return raw.toDate().toLocaleDateString('en-GB');
-      } else if (typeof raw === 'string' || raw instanceof Date) {
-        // String or native Date
-        return new Date(raw).toLocaleDateString('en-GB');
-      } else {
-        return 'Invalid date';
-      }
-    } catch {
-      return 'Invalid date';
-    }
-  }
-
-  onCheckboxChange(event: Event) {
-    const checkbox = event.target as HTMLInputElement;
-    const contactId = checkbox.value;
-
-    if (checkbox.checked) {
-      // Add if not already there
-      if (!this.editableTask.assignees.includes(contactId)) {
-        this.editableTask.assignees.push(contactId);
-      }
+/** Creates or updates all subtasks in Firestore. */
+private async syncSubtasks(): Promise<void> {
+  for (const subtask of this.editableTask.subtasks) {
+    if (subtask.id.startsWith('local-')) {
+      const docRef = await this.firebaseTaskService.addSubtaskToDatabase(this.task.id, { title: subtask.title, isdone: subtask.isdone });
+      subtask.id = docRef.id; 
     } else {
-      // Remove if unchecked
-      this.editableTask.assignees = this.editableTask.assignees.filter(id => id !== contactId);
-    }
-  }
-
-  getAvatarColor(id: string): string {
-    const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
-    return contact?.color ?? "#000000";
-  }
-
-  getContactInitials(contactId: string): string {
-    const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
-    return contact ? generateInitials(contact.name) : '?';
-  }
-
-  getTaskAssignees(task: Task) {
-    return task.assignees.map(id => {
-      const contact = this.firebaseTaskService.contactList.find(c => c.id === id);
-      return {
-        id,
-        name: contact?.name || 'Unknown',
-        initials: this.getContactInitials(id),
-        color: this.getAvatarColor(id)
-      };
-    });
-  }
-  // following functionality for edit-dialog subtasks
-  confirmSubtask() {
-    const trimmed = this.editedSubtaskInput.trim();
-    if (!trimmed) return;
-
-    this.editableTask.subtasks.push({
-      id: 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2),//generating random id to store new title 
-      title: trimmed,
-      isdone: false
-    });
-    // console.log('Subtasks:', this.editableTask.subtasks.map(s => s.id));
-    this.editedSubtaskInput = '';
-    this.isTyping = false;
-  }
-
-  cancelSubtask() {
-    this.editedSubtaskInput = '';
-    this.isTyping = false;
-  }
-
-  enableTyping() {
-    this.isTyping = true;
-  }
-
-  startEdit(subtaskId: string) {
-    const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
-    if (index !== -1) {
-      this.subtaskEditIndex = index;
-      this.editedSubtaskText = this.editableTask.subtasks[index].title;
-    }
-  }
-
-  saveEdit(subtaskId: string) {
-    if (!this.editedSubtaskText.trim()) return;
-
-    const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
-    if (index !== -1) {
-      this.editableTask.subtasks[index].title = this.editedSubtaskText.trim();
-    }
-    this.subtaskEditIndex = -1;
-    this.editedSubtaskText = '';
-  }
-
-  deleteSubtask(subtaskId: string) {
-    const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
-    if (index !== -1) {
-      const deleted = this.editableTask.subtasks[index];
-      if (deleted.id && !deleted.id.startsWith('local-')) {
-        this.deletedSubtaskIds.push(deleted.id);
-      }
-      this.editableTask.subtasks.splice(index, 1);
-    }
-    // Exit edit mode if it was the edited one
-    this.subtaskEditIndex = -1;
-    this.editedSubtaskText = '';
-  }
-
-  async onSubtaskToggle(subtask: Subtask) {
-    if (!this.task) return;
-
-    try {
-      // Update in Firebase
       await this.firebaseTaskService.updateSubtaskInDatabase(
         this.task.id,
         subtask.id,
-        { isdone: subtask.isdone }
+        { title: subtask.title, isdone: subtask.isdone }
       );
-      // Emit updated task to parent
-      this.taskUpdated.emit({ ...this.task });
-    } catch (error) {
-      console.error('Error updating subtask in Firebase:', error);
     }
   }
+}
 
-  ngAfterViewInit(): void {
-    if (this.editDueDateInput?.nativeElement) {
-      this.editDueDateInput.nativeElement.min = this.todayString;
-    }
+/** Deletes all subtasks marked for removal. */
+private async removeDeletedSubtasks(): Promise<void> {
+  for (const subtaskId of this.deletedSubtaskIds) {
+    await this.firebaseTaskService.deleteSubtaskFromDatabase(this.task.id, subtaskId);
   }
+  this.deletedSubtaskIds = [];
+}
 
-  validateDueDateEdit(): void {
-    const inputEl = this.editDueDateInput?.nativeElement;
-    if (!inputEl) { return; }
+/** Finalizes edit process: updates UI, switches to view mode, emits close. */
+private finalizeViewState(): void {
+  this.assignees = this.getTaskAssignees({ ...this.editableTask });
+  this.task = {
+    ...this.editableTask,
+    subtasks: [...this.editableTask.subtasks],
+  };
+  this.disableEditMode();
+  this.close.emit();
+}
 
-    const value = inputEl.value;
-    if (!value) { return; }
+/**
+ * Returns a localized due date string in dd/MM/yyyy format for display.
+ * Handles both Firestore Timestamp and raw date formats safely.
+ */
+get formattedDueDate(): string {
+  const raw: any = this.task.duedate;
 
-    const chosen = new Date(value);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    if (chosen < today) {
-      const todayISO = this.todayString;
-      inputEl.value = todayISO;
-      this.dueDateInput = todayISO;
-      console.warn('Selected date was in the past – resetting to today.');
-    }
-  }
-
-  removeAssignee(id: string) { //in edit-dialog uset can remove selected Initial just by click
-    this.editableTask.assignees = this.editableTask.assignees.filter(aid => aid !== id);
-  }
-
-  get filteredContacts(): ContactInterface[] {
-    const term = this.contactSearchTerm.toLowerCase();
-    return this.firebaseTaskService.contactList.filter(contact =>
-      contact.name.toLowerCase().includes(term)
-    );
-  }
-
-  toggleContactSelection(contactId: string) {
-    const index = this.editableTask.assignees.indexOf(contactId);
-    if (index === -1) {
-      this.editableTask.assignees.push(contactId);
+  try {
+    if (raw?.toDate && typeof raw.toDate === 'function') {
+      return raw.toDate().toLocaleDateString('en-GB');
+    } else if (typeof raw === 'string' || raw instanceof Date) {
+      return new Date(raw).toLocaleDateString('en-GB');
     } else {
-      this.editableTask.assignees.splice(index, 1);
+      return 'Invalid date';
     }
+  } catch {
+    return 'Invalid date';
   }
+}
+
+/** Adds or removes assignee based on checkbox selection. */
+onCheckboxChange(event: Event) {
+  const checkbox = event.target as HTMLInputElement;
+  const contactId = checkbox.value;
+
+  if (checkbox.checked) {
+    if (!this.editableTask.assignees.includes(contactId)) {
+      this.editableTask.assignees.push(contactId);
+    }
+  } else {
+    this.editableTask.assignees = this.editableTask.assignees.filter(id => id !== contactId);
+  }
+}
+
+/** Returns the avatar color for a contact ID. */
+getAvatarColor(id: string): string {
+  const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
+  return contact?.color ?? "#000000";
+}
+
+/** Returns contact initials by ID. */
+getContactInitials(contactId: string): string {
+  const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
+  return contact ? generateInitials(contact.name) : '?';
+}
+
+/** Returns a list of assignee info objects for display (name, initials, color). */
+getTaskAssignees(task: Task) {
+  return task.assignees.map(id => {
+    const contact = this.firebaseTaskService.contactList.find(c => c.id === id);
+    return {
+      id,
+      name: contact?.name || 'Unknown',
+      initials: this.getContactInitials(id),
+      color: this.getAvatarColor(id)
+    };
+  });
+}
+
+/** Confirms creation of a new subtask and appends it to the task. */
+confirmSubtask() {
+  const trimmed = this.editedSubtaskInput.trim();
+  if (!trimmed) return;
+
+  this.editableTask.subtasks.push({
+    id: 'local-' + Date.now() + '-' + Math.random().toString(36).substring(2),
+    title: trimmed,
+    isdone: false
+  });
+  this.editedSubtaskInput = '';
+  this.isTyping = false;
+}
+
+/** Cancels subtask input editing. */
+cancelSubtask() {
+  this.editedSubtaskInput = '';
+  this.isTyping = false;
+}
+
+/** Enables the input field for a new subtask. */
+enableTyping() {
+  this.isTyping = true;
+}
+
+/** Enables edit mode for a specific subtask by ID. */
+startEdit(subtaskId: string) {
+  const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
+  if (index !== -1) {
+    this.subtaskEditIndex = index;
+    this.editedSubtaskText = this.editableTask.subtasks[index].title;
+  }
+}
+
+/** Saves edited subtask title back into the list. */
+saveEdit(subtaskId: string) {
+  if (!this.editedSubtaskText.trim()) return;
+
+  const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
+  if (index !== -1) {
+    this.editableTask.subtasks[index].title = this.editedSubtaskText.trim();
+  }
+  this.subtaskEditIndex = -1;
+  this.editedSubtaskText = '';
+}
+
+/** Deletes a subtask and adds its ID to the deletion queue if already stored in Firebase. */
+deleteSubtask(subtaskId: string) {
+  const index = this.editableTask.subtasks.findIndex(sub => sub.id === subtaskId);
+  if (index !== -1) {
+    const deleted = this.editableTask.subtasks[index];
+    if (deleted.id && !deleted.id.startsWith('local-')) {
+      this.deletedSubtaskIds.push(deleted.id);
+    }
+    this.editableTask.subtasks.splice(index, 1);
+  }
+  this.subtaskEditIndex = -1;
+  this.editedSubtaskText = '';
+}
+
+/** Toggles the `isdone` property of a subtask and updates it in Firestore. */
+async onSubtaskToggle(subtask: Subtask) {
+  if (!this.task) return;
+
+  try {
+    await this.firebaseTaskService.updateSubtaskInDatabase(
+      this.task.id,
+      subtask.id,
+      { isdone: subtask.isdone }
+    );
+    this.taskUpdated.emit({ ...this.task });
+  } catch (error) {
+    console.error('Error updating subtask in Firebase:', error);
+  }
+}
+
+/** Lifecycle hook to restrict the due date picker to today or later. */
+ngAfterViewInit(): void {
+  if (this.editDueDateInput?.nativeElement) {
+    this.editDueDateInput.nativeElement.min = this.todayString;
+  }
+}
+
+/** Ensures selected due date is not before today (used in edit mode). */
+validateDueDateEdit(): void {
+  const inputEl = this.editDueDateInput?.nativeElement;
+  if (!inputEl) return;
+  const value = inputEl.value;
+  if (!value) return;
+
+  const chosen = new Date(value);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (chosen < today) {
+    const todayISO = this.todayString;
+    inputEl.value = todayISO;
+    this.dueDateInput = todayISO;
+  }
+}
+
+/** Removes an assignee by ID from the task. */
+removeAssignee(id: string) { 
+  this.editableTask.assignees = this.editableTask.assignees.filter(aid => aid !== id);
+}
+
+/** Returns contact list filtered by search input term. */
+get filteredContacts(): ContactInterface[] {
+  const term = this.contactSearchTerm.toLowerCase();
+  return this.firebaseTaskService.contactList.filter(contact =>
+    contact.name.toLowerCase().includes(term)
+  );
+}
+
+/** Toggles a contact's selection in the assignee list. */
+toggleContactSelection(contactId: string) {
+  const index = this.editableTask.assignees.indexOf(contactId);
+  if (index === -1) {
+    this.editableTask.assignees.push(contactId);
+  } else {
+    this.editableTask.assignees.splice(index, 1);
+  }
+}
 
 
 }

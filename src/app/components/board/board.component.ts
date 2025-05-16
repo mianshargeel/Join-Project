@@ -39,6 +39,10 @@ export class BoardComponent {
   dropdownTaskId: string | null = null;
   @ViewChild('menuRef') menuRef!: ElementRef;
 
+  /**
+ * Opens the task dialog for viewing/editing the given task.
+ * Skips if a drag operation is in progress.
+ */
   openDialog(task: Task) {
     if (this.dragging) {
       return;
@@ -47,7 +51,9 @@ export class BoardComponent {
     this.dialogOpen = true;
     this.selectedAssignees = this.getTaskAssignees(task);
   }
-
+  /**
+ * Closes the open task dialog and resets the selected task.
+ */
   closeDialog() {
     this.dialogOpen = false;
     this.selectedTask = null;
@@ -55,7 +61,10 @@ export class BoardComponent {
 
   constructor() { }
 
-  //When the app starts, it reads the status of each task from Firebase and places it into the correct column.
+  /**
+ * Angular lifecycle method called after component initialization.
+ * Subscribes to task updates, sets up real-time task loading, and screen width detection.
+ */
   ngOnInit() {
     this.contacts = this.firebaseTaskService.contactList;
 
@@ -69,15 +78,22 @@ export class BoardComponent {
     this.checkScreenWidth();
     window.addEventListener('resize', this.checkScreenWidth.bind(this));
   }
-
+  /**
+ * Checks current screen width to determine mobile view.
+ */
   checkScreenWidth() {
     this.isMobileView = window.innerWidth <= 1500;
   }
-
+  /**
+ * Deletes the task with the given ID from Firestore.
+ */
   async deleteTask(taskId: string) {
     await this.firebaseTaskService.deleteTaskByIdFromDatabase(taskId);
   }
-
+  /**
+ * Returns the contact name for a given contact ID.
+ * Returns 'unknown' if the contact is not found.
+ */
   getContactNameById(id: string): string {
     let contact = this.firebaseTaskService.contactList.find(c => c.id === id);
     return contact ? contact.name : 'unknown';
@@ -89,7 +105,10 @@ export class BoardComponent {
     { title: 'Await feedback', tasks: [] },
     { title: 'Done', tasks: [] }
   ];
-
+  /**
+ * Handles drag-and-drop movement of tasks between or within columns.
+ * Updates the task's status if moved to a different column.
+ */
   drop(event: CdkDragDrop<Task[]>, columnTitle: string) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -100,16 +119,15 @@ export class BoardComponent {
         event.previousIndex,
         event.currentIndex
       );
-
       const movedTask = event.container.data[event.currentIndex];
-
-      // Updating only the changed field
       this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
         status: columnTitle.toLowerCase()
       });
     }
   }
-
+  /**
+ * Moves a task to a different column (triggered from dropdown menu).On Mobile-screen
+ */
   moveToColumn(task: Task, targetColumn: string) {
     if (task.status === targetColumn.toLowerCase()) return;
   
@@ -119,58 +137,65 @@ export class BoardComponent {
   
     this.dropdownTaskId = null;
   }
-  
-  
+  /**
+ * Toggles the dropdown menu for a specific task (for mobile).
+ */
   toggleTaskDropdown(taskId: string) {
     this.dropdownTaskId = this.dropdownTaskId === taskId ? null : taskId;
   }
-  
-
-
+  /**
+ * Organizes tasks into their corresponding columns based on status.
+ */
   updateColumnsFromFirebase(): void {
-    // Clear columns
     this.columns.forEach(col => col.tasks = []);
-
     for (const task of this.filteredTasks) {
       const status = task.status?.toLowerCase();
-
       const column = this.columns.find(col =>
         col.title.toLowerCase() === status
       );
-
       if (column) {
         column.tasks.push(task);
       } else {
-        // If no matching column, put it into "To do"
         this.columns[0].tasks.push(task);
       }
     }
   }
-
+  /**
+ * Returns the avatar background color for a given contact ID.
+ */
   getAvatarColor(id: string): string {
     const contact = this.firebaseTaskService.contactList.find(contact => contact.id === id);
     return contact?.color ?? "#000000";
-  } //This guarantees that each assigneeId always gets the same color every time Angular runs change detection.
-
+  } 
+  /**
+ * Returns a list of connected column IDs for drag-and-drop linking.
+ */
   getConnectedColumns() {
     return this.columns.map(c => this.normalizeId(c.title));
   }
-  //Taher for you: Fixed drag-and-drop error by assigning explicit id to each cdkDropList, ensuring they match the values returned by getConnectedColumns()
+  /**
+ * Converts a column title to a lowercase hyphenated ID (e.g., 'To do' -> 'to-do').
+ */
   normalizeId(title: string) {
     return title.toLowerCase().replace(/\s+/g, '-');
   }
-
+  /**
+ * Returns the count of completed subtasks for a given task.
+ */
   getCompletedSubtasksCount(task: Task): number {
     return task.subtasks.filter(sub => sub.isdone).length;
   }
-
-
+  /**
+ * Returns initials (e.g., "AB") for a contact based on their name.
+ */
   getContactInitials(contactId: string): string {
     const contact = this.firebaseTaskService.contactList.find(c => c.id === contactId);
     if (!contact) return '?';
     return contact.name.split(' ').map(n => n[0]).join('');
   }
-
+  /**
+ * Returns the label text shown in an empty column.
+ */
   emptyLabel(title: string): string {
     switch (title.toLowerCase()) {
       case 'to do': return 'No tasks to do';
@@ -180,7 +205,9 @@ export class BoardComponent {
       default: return 'No tasks';
     }
   }
-  //You want to pass enriched assignee info (name, initials, avatar color) to the dialog so it can display the full assignee details without having to re-implement logic from the BoardComponent
+  /**
+ * Returns full contact details for each assignee of a task.
+ */
   getTaskAssignees(task: Task) {
     return task.assignees.map(id => {
       const contact = this.firebaseTaskService.contactList.find(c => c.id === id);
@@ -192,7 +219,9 @@ export class BoardComponent {
       };
     });
   }
-
+  /**
+ * Filters tasks based on the current search term.
+ */
   get filteredTasks(): Task[] {
     if (this.searchTerm) {
       let term = this.searchTerm.toLowerCase();
@@ -218,41 +247,38 @@ export class BoardComponent {
    */
 
   handleTaskUpdate(updatedTask: Task) {
-    // console.log('Board received updated task:', updatedTask);
-    for (let colIndex = 0; colIndex < this.columns.length; colIndex++) { //looping through each column to find where this task currently exists (based on matching id).
+    for (let colIndex = 0; colIndex < this.columns.length; colIndex++) {
       const column = this.columns[colIndex];
       const taskIndex = column.tasks.findIndex(t => t.id === updatedTask.id);
-
       if (taskIndex !== -1) {
         const clonedTask = JSON.parse(JSON.stringify(updatedTask));
-
         const updatedTasks = [...column.tasks];
         updatedTasks[taskIndex] = clonedTask;
-
-        this.columns[colIndex] = {
-          ...column,
-          tasks: updatedTasks
-        };
-
+        this.columns[colIndex] = { ...column, tasks: updatedTasks };
         this.columns = [...this.columns];
         break;
       }
     }
   }
-
-  //Marian: Add Task Dialog
+  /**
+ * Opens the add-task modal and sets the initial column status in Board on addTask-btn
+ */
   openAddTaskDialog(status: string) {
     this.showAddTaskDialog = true;
     document.body.classList.add('modal-open');
     this.dialogTaskStatus = status;
     console.log(status);
   }
-
+  /**
+ * Closes the add-task modal.
+ */
   closeAddTaskDialog() {
     this.showAddTaskDialog = false;
     document.body.classList.remove('modal-open');
   }
-
+  /**
+ * Closes the dropdown menu if user clicks outside of it.
+ */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const clickedInside = this.menuRef?.nativeElement.contains(event.target);
