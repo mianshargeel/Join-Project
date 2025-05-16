@@ -53,7 +53,7 @@
                 }
                 
                 @for (task of column.tasks; track task.id) {
-                <div class="example-box" cdkDrag (cdkDragStarted)="dragging = true" (cdkDragEnded)="dragging = false"
+                <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true" (cdkDragEnded)="dragging = false"
                     (click)="openDialog(task)">
               <!--  Mobile Move Dropdown -->
                     @if (isMobileView) {

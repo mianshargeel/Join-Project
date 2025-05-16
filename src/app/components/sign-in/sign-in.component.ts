@@ -74,14 +74,19 @@ export class SignInComponent implements OnInit, OnDestroy {
   async login() {
     this.errorMessage = '';
     this.loading = true;
-
     const credentials: SignInCredentials = {
       email: this.email,
       password: this.password
     };
-
     try {
       await this.authService.signIn(credentials);
+      // Store or clear credentials based on rememberMe
+      if (this.rememberMe) {
+        this.saveCredentials();
+      } else {
+        localStorage.removeItem('savedEmail');
+        localStorage.removeItem('savedPassword');
+      }
       this.router.navigate(['/summary']); // redirect on success
     } catch (error: any) {
       switch (error.code) {
@@ -102,7 +107,17 @@ export class SignInComponent implements OnInit, OnDestroy {
       }
     } finally {
       this.loading = false;
+      // Clear form only if not remembering
+      if (!this.rememberMe) {
+        this.clearForm();
+      }
     }
+  }
+  
+
+  clearForm() {
+    this.email = '';
+    this.password = '';
   }
 
   async loginAsGuest() {
