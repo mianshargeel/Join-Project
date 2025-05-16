@@ -131,15 +131,15 @@
     vertical-align: middle;
 
     &.low {
-        background-image: url('/assets/img/board/low.svg');
+        background-image: url('../../../../assets/img/board/low.svg');
     }
 
     &.medium {
-        background-image: url('/assets/img/board/medium.svg');
+        background-image: url('../../../../assets/img/board/medium.svg');
     }
 
     &.urgent {
-        background-image: url('/assets/img/board/urgent.svg');
+        background-image: url('../../../../assets/img/board/urgent.svg');
     }
 }
 
@@ -222,14 +222,14 @@ input[type=checkbox] {
         display: block;
         width: 24px;
         height: 24px;
-        background-image: url('/assets/img/board/unchecked.svg');
+        background-image: url('../../../../assets/img/board/unchecked.svg');
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
     }
 
     &:checked::before {
-        background-image: url('/assets/img/board/checked.svg');
+        background-image: url('../../../../assets/img/board/checked.svg');
         filter: brightness(0) saturate(100%) invert(15%) sepia(23%) saturate(2000%) hue-rotate(200deg) brightness(90%) contrast(90%);
     }
 }
@@ -265,7 +265,7 @@ input[type=checkbox] {
         color: var(--light-blue);
 
         img {
-            filter: brightness(0) saturate(100%) invert(39%) sepia(57%) saturate(1558%) hue-rotate(176deg) brightness(89%) contrast(87%); // Change SVG color to --light-blue
+            filter: brightness(0) saturate(100%) invert(39%) sepia(57%) saturate(1558%) hue-rotate(176deg) brightness(89%) contrast(87%);
         }
     }
 }

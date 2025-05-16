@@ -158,15 +158,15 @@
             background-repeat: no-repeat;
 
             &.low {
-                background-image: url('/assets/img/board/low.svg');
+                background-image: url('../../../assets/img/board/low.svg');
             }
 
             &.medium {
-                background-image: url('/assets/img/board/medium.svg');
+                background-image: url('../../../assets/img/board/medium.svg');
             }
 
             &.urgent {
-                background-image: url('/assets/img/board/urgent.svg');
+                background-image: url('../../../assets/img/board/urgent.svg');
             }
         }
     }
