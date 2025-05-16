@@ -4,10 +4,10 @@
       <div class="contact-dialog">
             <div class="left-panel">
             <div class="logo">
-                <img class="join-ing" src="./../../../../assets/img/contact-dialog/contact-logo.png" alt="">
+                <img class="join-ing" src="assets/img/contact-dialog/contact-logo.png" alt="">
                 <h2>Add contact</h2>
                 <p>Tasks are better with a team!</p>
-                <img class="vector-line" src="./../../../../assets/img/contact-dialog/Vector 5.png" alt="">
+                <img class="vector-line" src="assets/img/contact-dialog/Vector 5.png" alt="">
             </div>
       </div>
       <div class="right-panel">
@@ -15,25 +15,25 @@
 
         <form #contactForm="ngForm" (ngSubmit)="onSubmit()" class="contact-form">
           <div class="form-body">
-              <div class="avatar"><img src="./../../../../assets/img/contact-dialog/contact-avatar.png" alt="avatar"></div>
+              <div class="avatar"><img src="assets/img/contact-dialog/contact-avatar.png" alt="avatar"></div>
           <div class="form-fields">
                 <div class="input-group">
                   <input type="text" #name="ngModel" [(ngModel)]="contact.name" placeholder="Name" required minlength="3" pattern="^[a-zA-Z\s]*$" name="name"/>
-                  <span><img src="./../../../../assets/img/contact-dialog/person.png" alt=""></span>
+                  <span><img src="assets/img/contact-dialog/person.png" alt=""></span>
                 </div>
                   @if(!name.valid && name.touched) {
                     <div class="error-msg"><span >please enter valid name</span></div>
                   }
                 <div class="input-group">
                   <input type="email" [(ngModel)]="contact.mail" placeholder="Email" required #email="ngModel" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" name="email"/>
-                  <span><img src="./../../../../assets/img/contact-dialog/mail.png" alt=""></span>
+                  <span><img src="assets/img/contact-dialog/mail.png" alt=""></span>
                 </div>
                 @if(!email.valid && email.touched) {
                     <div class="error-msg"><span >please enter valid email</span></div>
                   }
                 <div class="input-group">
                   <input type="tel" [(ngModel)]="contact.phone" placeholder="Phone"   pattern="^(?:\+|00|0)[1-9]\d{6,14}$" #phone="ngModel"   name="phone" required/>
-                  <span><img src="./../../../../assets/img/contact-dialog/call.png" alt=""></span>
+                  <span><img src="assets/img/contact-dialog/call.png" alt=""></span>
                 </div>
                 @if(!phone.valid && phone.touched) {
                     <div class="error-msg"><span >please enter valid phone</span></div>
