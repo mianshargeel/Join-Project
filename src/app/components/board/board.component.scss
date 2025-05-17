@@ -494,21 +494,26 @@ body.modal-open {
 }
 
 //Dropdown Menu Shardzhil
+
+.task-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
 .mobile-move-menu {
     position: relative;
-    margin-top: 10px;
     display: flex;
     justify-content: flex-end;
-    // z-index: 10;
 
     .menu-icon {
         font-size: 20px;
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         background-color: #e0e0e0;
         border: none;
         border-radius: 50%;
-        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;

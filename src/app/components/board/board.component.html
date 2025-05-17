@@ -57,7 +57,7 @@
                 <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true"
                     (cdkDragEnded)="dragging = false" (click)="openDialog(task)">
                     <!--  Mobile Move Dropdown -->
-                    @if (isMobileView) {
+                    <!-- @if (isMobileView) {
                     <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
                         <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
                         @if (dropdownTaskId === task.id) {
@@ -70,13 +70,30 @@
                         </ul>
                         }
                     </div>
-                    }
+                    } -->
 
-                    <!-- ----------------------------------- -->
-                    <div class="task-category" [ngClass]="{
-                        'user-story':      task.category.toLowerCase() === 'user story',
-                        'technical-task':  task.category.toLowerCase() === 'technical task'
-                      }">{{ task.category }}</div>
+                    <div class="task-header-row">
+                        <div class="task-category" [ngClass]="{
+    'user-story': task.category.toLowerCase() === 'user story',
+    'technical-task': task.category.toLowerCase() === 'technical task'
+  }">{{ task.category }}</div>
+
+                        @if (isMobileView) {
+                        <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
+                            <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
+                            @if (dropdownTaskId === task.id) {
+                            <ul class="move-dropdown">
+                                @for (columnOption of columns; track columnOption.title) {
+                                @if (columnOption.title !== column.title) {
+                                <li (click)="moveToColumn(task, columnOption.title)">Move to "{{ columnOption.title }}"
+                                </li>
+                                }
+                                }
+                            </ul>
+                            }
+                        </div>
+                        }
+                    </div>
                     <h3 class="task-title">{{ task.title }}</h3>
                     <p class="task-description">{{ task.description }}</p>
 
@@ -95,7 +112,8 @@
 
                     <div class="task-footer">
                         <div class="assignees">
-                            @for (assigneeId of getDisplayedAssignees(task.assignees); track assigneeId; let i = $index)
+                            @for (assigneeId of getDisplayedAssignees(task.assignees); track assigneeId; let i =
+                            $index)
                             {
                             <span class="avatar" [style.backgroundColor]="getAvatarColor(assigneeId)">
                                 {{ getContactInitials(assigneeId) }}
