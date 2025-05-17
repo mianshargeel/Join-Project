@@ -125,7 +125,6 @@
         .assignees {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
             flex: 0 1 130px;
             gap: 2px;
 
@@ -139,12 +138,22 @@
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                font: 400 10px "Inter", sans-serif;
+                font: 400 12px "Inter", sans-serif;
                 color: #fff;
 
                 &:not(:first-child) {
                     margin-left: -6px;
                 }
+            }
+
+            .avatar-counter {
+                font: 400 16px "Inter", sans-serif;
+                color: var(--light-blue);
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                margin-bottom: 14px;
+
             }
         }
 
@@ -483,6 +492,7 @@ body.modal-open {
     padding-right: 17px;
     /* Breite der Scrollbar kompensieren (ggf. anpassen) */
 }
+
 //Dropdown Menu Shardzhil
 .mobile-move-menu {
     position: relative;
@@ -495,14 +505,15 @@ body.modal-open {
         font-size: 20px;
         width: 32px;
         height: 32px;
-        background-color: #e0e0e0; 
+        background-color: #e0e0e0;
         border: none;
         border-radius: 50%;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        &:hover{
+
+        &:hover {
             background-color: rgb(94, 187, 218);
             color: white;
         }

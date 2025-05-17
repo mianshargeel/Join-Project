@@ -10,10 +10,10 @@
 
 .helpContainer {
   max-width: 900px;
-  margin: 0 auto;
+  margin-top: 60px;
   padding: 40px 20px;
   font: 400 16px/1.6 "Inter", sans-serif;
-  color: #2c3e50;
+  color: black;
 
   .visually-hidden {
     position: absolute;
@@ -28,12 +28,12 @@
   h3 {
     margin-top: 32px;
     font-size: 1.5rem;
-    color: #1e88e5;
+    color: #2c3e50;
   }
 
   span {
     font-weight: 600;
-    color: #1e88e5;
+    color: #2c3e50;
   }
 
   ol {
@@ -52,7 +52,7 @@
   }
 
   a {
-    color: #1e88e5;
+    color: #2c3e50;
     text-decoration: none;
 
     &:hover {

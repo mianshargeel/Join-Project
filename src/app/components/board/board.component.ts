@@ -96,7 +96,7 @@ export class BoardComponent {
     } else {
       const movedTask = event.previousContainer.data[event.previousIndex];
       movedTask.status = columnTitle.toLowerCase();
-  
+
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -118,15 +118,15 @@ export class BoardComponent {
 
   moveToColumn(task: Task, targetColumn: string) {
     if (task.status === targetColumn.toLowerCase()) return;
-  
+
     this.firebaseTaskService.updateTaskInDatabase(task.id, {
       status: targetColumn.toLowerCase()
     });
-  
+
     this.dropdownTaskId = null;
   }
-  
-  
+
+
   toggleTaskDropdown(taskId: string) {
     this.dropdownTaskId = this.dropdownTaskId === taskId ? null : taskId;
   }
@@ -242,6 +242,11 @@ export class BoardComponent {
         break;
       }
     }
+  }
+
+  // To Limit the numer of Avatars shown in the card
+  getDisplayedAssignees(assignees: string[]): string[] {
+    return assignees.slice(0, 5);
   }
 
   //Marian: Add Task Dialog

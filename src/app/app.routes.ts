@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { HomeComponent } from './components/home/home.component';
 import { LegalNoticeComponent } from './legal/legal-notice/legal-notice.component';
 import { PrivacyPolicyComponent } from './legal/privacy-policy/privacy-policy.component';
 import { SummaryComponent } from './components/summary/summary.component';
@@ -21,10 +20,10 @@ export const routes: Routes = [
   { path: 'summary', component: SummaryComponent, canActivate: [authGuard] },
   { path: 'add-task', component: AddTaskComponent, canActivate: [authGuard] },
   { path: 'board', component: BoardComponent, canActivate: [authGuard] },
-  { 
-    path: 'contacts', 
-    loadComponent: () => import('./components/contacts-list/contacts-list.component').then(m => m.ContactsListComponent), 
-    canActivate: [authGuard] 
+  {
+    path: 'contacts',
+    loadComponent: () => import('./components/contacts-list/contacts-list.component').then(m => m.ContactsListComponent),
+    canActivate: [authGuard]
   },
 
   // Legal/help routes (usually public)

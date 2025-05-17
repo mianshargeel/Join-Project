@@ -9,7 +9,8 @@
             <div class="header-controls">
                 <div class="search-bar">
                     <div class="search-input-wrapper">
-                        <input id="searchInput" type="text" [(ngModel)]="searchTerm" (keyup)="this.updateColumnsFromFirebase()" placeholder="Suchen..." />
+                        <input id="searchInput" type="text" [(ngModel)]="searchTerm"
+                            (keyup)="this.updateColumnsFromFirebase()" placeholder="Suchen..." />
                         <span class="divider"></span>
                     </div>
                     <button class="search-icon">
@@ -25,15 +26,15 @@
     </div>
 
     @if (showAddTaskDialog) {
-        <div class="overlay">
-            <div class="dialog scaled-dialog">
-                <p class="closing-p" (click)="closeAddTaskDialog()">X</p>
-                <app-add-task [status]="dialogTaskStatus"></app-add-task>
-            </div>
-            
+    <div class="overlay">
+        <div class="dialog scaled-dialog">
+            <p class="closing-p" (click)="closeAddTaskDialog()">X</p>
+            <app-add-task [status]="dialogTaskStatus"></app-add-task>
         </div>
-        }
-      
+
+    </div>
+    }
+
     <div cdkDropListGroup class="content-container">
         @for (column of columns; track column.title) {
         <div class="example-container">
@@ -51,27 +52,27 @@
                 <div class="empty-placeholder" [attr.data-msg]="emptyLabel(column.title)">
                 </div>
                 }
-                
+
                 @for (task of column.tasks; track task.id) {
-                <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true" (cdkDragEnded)="dragging = false"
-                    (click)="openDialog(task)">
-              <!--  Mobile Move Dropdown -->
+                <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true"
+                    (cdkDragEnded)="dragging = false" (click)="openDialog(task)">
+                    <!--  Mobile Move Dropdown -->
                     @if (isMobileView) {
-                      <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
+                    <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
                         <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
                         @if (dropdownTaskId === task.id) {
                         <ul class="move-dropdown">
-                          @for (columnOption of columns; track columnOption.title) {
+                            @for (columnOption of columns; track columnOption.title) {
                             @if (columnOption.title !== column.title) {
                             <li (click)="moveToColumn(task, columnOption.title)">Move to "{{ columnOption.title }}"</li>
                             }
-                          }
+                            }
                         </ul>
                         }
-                      </div>
-                      }
+                    </div>
+                    }
 
-<!-- ----------------------------------- -->
+                    <!-- ----------------------------------- -->
                     <div class="task-category" [ngClass]="{
                         'user-story':      task.category.toLowerCase() === 'user story',
                         'technical-task':  task.category.toLowerCase() === 'technical task'
@@ -94,10 +95,14 @@
 
                     <div class="task-footer">
                         <div class="assignees">
-                            @for (assigneeId of task.assignees; track assigneeId) {
+                            @for (assigneeId of getDisplayedAssignees(task.assignees); track assigneeId; let i = $index)
+                            {
                             <span class="avatar" [style.backgroundColor]="getAvatarColor(assigneeId)">
                                 {{ getContactInitials(assigneeId) }}
                             </span>
+                            @if (i === 4 && task.assignees.length > 5) {
+                            <span class="avatar-counter">+{{task.assignees.length - 5}}</span>
+                            }
                             }
                         </div>
 
