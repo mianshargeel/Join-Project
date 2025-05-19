@@ -1,0 +1,48 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+.dialog {
+  width: 100%;
+  max-width: 1000px; //controlled width for content
+  max-height: 90vh; //handle overflow
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.scaled-dialog {
+  transform: none !important; // ✅ remove unwanted scaling
+}
+
+.closing-p {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  z-index: 10;
+  font-weight: bold;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+body.modal-open {
+  overflow: hidden;
+  padding-right: 0 !important;
+}

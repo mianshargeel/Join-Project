@@ -24,14 +24,13 @@
             </div>
         </div>
     </div>
-
+    <!-- Add-New-task Dialog -->
     @if (showAddTaskDialog) {
     <div class="overlay">
         <div class="dialog scaled-dialog">
             <p class="closing-p" (click)="closeAddTaskDialog()">X</p>
-            <app-add-task [status]="dialogTaskStatus"></app-add-task>
+            <app-add-task class="dialog-mode" [status]="dialogTaskStatus"></app-add-task>
         </div>
-
     </div>
     }
 

@@ -18,7 +18,7 @@ import { ElementRef, HostListener, ViewChild } from '@angular/core';
   standalone: true,
   imports: [CdkDropListGroup, CdkDropList, CdkDrag, CommonModule, FormsModule, BoardDialogComponent, AddTaskComponent],
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.scss', './board.responsive.scss']
+  styleUrls: ['./board.component.scss', './board.responsive.scss', './add-task-dialog.scss']
 })
 
 export class BoardComponent {

@@ -438,62 +438,7 @@ $header: 96px;
     }
 }
 
-//Marian Add task
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.2);
-    /* Leichteres Overlay, damit man die Seite besser sieht */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    /* Abstand zum Rand oben, unten, links, rechts */
-    z-index: 1000;
-    box-sizing: border-box;
-}
-
-.dialog {
-    max-width: 1560px;
-    max-height: 1200px;
-    width: 100%;
-    overflow: hidden;
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.scaled-dialog {
-    transform: scale(0.7);
-    transform-origin: center;
-}
-
-.closing-p {
-    position: absolute;
-    top: 5%;
-    left: 92%;
-    z-index: 10;
-    font-weight: bold;
-    font-size: xx-large;
-    cursor: pointer;
-}
-
-body.modal-open {
-    overflow: hidden;
-    padding-right: 17px;
-    /* Breite der Scrollbar kompensieren (ggf. anpassen) */
-}
-
-//Dropdown Menu Shardzhil
+//Dropdown-Menu of each task in Board for Mobile-Version[Shardzhil]
 
 .task-header-row {
     display: flex;

@@ -1,10 +1,13 @@
 .addTask {
   background-color: #f9f9f9;
-  padding: 40px;
+  padding: 40px;// default full-page layout
   font-family: 'Inter', sans-serif;
   // overflow-x: hidden !important;
   // overflow: hidden !important;
   // scrollbar-width: none;
+    &.dialog-mode {
+      padding: 0 !important; // remove padding inside dialog
+    }
 
   .addTaskMaxWidth {
     max-width: 1000px;
