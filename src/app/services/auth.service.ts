@@ -65,9 +65,10 @@ export class AuthService {
     this.setUserName(name);
   }
   
-   async logout() {
+  async logout() {
     const user = this.auth.currentUser;
-    if (user && user.isAnonymous) { // only guest as Anonymous user
+  
+    if (user && user.email !== 'guest@join-app.com') {
       await deleteDoc(doc(this.firestore, 'contacts', user.uid));
     }
     return signOut(this.auth);

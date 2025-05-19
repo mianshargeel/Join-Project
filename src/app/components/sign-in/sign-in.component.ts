@@ -5,7 +5,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { SignInCredentials } from '../../interfaces/auth-interface';
 import { RouterModule } from '@angular/router';
-import { Auth, signInAnonymously } from '@angular/fire/auth';
+import { Auth } from '@angular/fire/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Firestore, doc, setDoc, serverTimestamp } from '@angular/fire/firestore';
 
 
@@ -120,23 +121,9 @@ export class SignInComponent implements OnInit, OnDestroy {
     this.password = '';
   }
 
-  async loginAsGuest() {
+  async loginAsGuest() { 
     try {
-      const credential = await signInAnonymously(this.auth);
-      const uid = credential.user.uid;
-
-      //store guest contact in Firestore if not already there
-      const contactRef = doc(this.firestore, 'contacts', uid);
-      await setDoc(contactRef, {
-        id: uid,
-        name: 'Guest User',
-        email: '',
-        telephone: '',
-        createdAt: serverTimestamp(),
-        isGuest: true
-      });
-
-      // Redirect to summary or home
+      await signInWithEmailAndPassword(this.auth, 'guest@join-app.com', '123456');
       this.router.navigate(['/board']);
     } catch (error) {
       console.error('Guest login failed', error);
