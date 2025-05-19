@@ -40,7 +40,7 @@ export class TaskService {
       const tasksRef = collection(this.firestore, 'tasks');
     
       onSnapshot(tasksRef, (querySnap) => {
-        const changes = querySnap.docChanges();//This gives us a list of only the changed docs Each with a type: 'added' | 'modified' | 'removed', This avoids having to clear and rebuild the whole list every time
+        const changes = querySnap.docChanges();
     
         for (const change of changes) {
           const doc = change.doc;
@@ -48,7 +48,9 @@ export class TaskService {
           const index = this.allTasks.findIndex(t => t.id === task.id);
     
           if (change.type === 'added') {
-            this.allTasks.push(task);
+            if (index === -1) {
+              this.allTasks.push(task);
+            }
           } else if (change.type === 'modified') {
             if (index !== -1) {
               this.allTasks[index] = task;
@@ -59,9 +61,9 @@ export class TaskService {
             }
           }
     
-          // Subtasks setup (always refresh for modified/added tasks)
+          // Setup subtasks
           const subtaskRef = collection(this.firestore, `tasks/${task.id}/subtasks`);
-          this.subtaskUnsubscribe[task.id]?.(); // Unsubscribe previous
+          this.subtaskUnsubscribe[task.id]?.(); // Unsubscribe if exists
           this.subtaskUnsubscribe[task.id] = onSnapshot(subtaskRef, (subSnap) => {
             const subtasks: Subtask[] = subSnap.docs.map((sdoc) => ({
               id: sdoc.id,
@@ -73,13 +75,14 @@ export class TaskService {
               this.allTasks[taskIndex].subtasks = subtasks;
             }
     
-            this.tasks$.next(this.allTasks); //Still needed to trigger update
+            this.tasks$.next([...this.allTasks]); // Spread for immutability
           });
         }
-        // Only push tasks$ once after task-level changes
-        this.tasks$.next(this.allTasks);
+    
+        this.tasks$.next([...this.allTasks]); // Push final update once
       });
     }
+    
 
   setTaskObject(task: any, id: string): Task {
       return {

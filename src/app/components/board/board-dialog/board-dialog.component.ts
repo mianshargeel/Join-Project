@@ -73,7 +73,6 @@ export class BoardDialogComponent implements AfterViewInit {
         : []
     };
   }
-  
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
@@ -150,7 +149,7 @@ export class BoardDialogComponent implements AfterViewInit {
   private async updateMainTask(data: Partial<Task>): Promise<void> {
     await this.firebaseTaskService.updateTaskInDatabase(this.task.id, data);
   }
-  /**
+/**
  * Synchronizes all subtasks of the current editable task with Firestore.
  * - If a subtask has a temporary `local-` ID, it is considered new and will be added to Firestore.
  * - If a subtask has a valid Firestore ID, it is considered existing and will be updated.replace local ID with real Firestore ID
@@ -159,23 +158,23 @@ export class BoardDialogComponent implements AfterViewInit {
  * @async
  * @returns {Promise<void>} A promise that resolves when all subtasks have been processed.
  */
-  private async syncSubtasks(): Promise<void> {
-    for (const subtask of this.editableTask.subtasks) {
-      if (subtask.id.startsWith('local-')) {
-        const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
-          this.task.id,
-          { title: subtask.title, isdone: subtask.isdone }
-        );
-        subtask.id = docRef.id; 
-      } else {
-        await this.firebaseTaskService.updateSubtaskInDatabase(
-          this.task.id,
-          subtask.id,
-          { title: subtask.title, isdone: subtask.isdone }
-        );
-      }
+private async syncSubtasks(): Promise<void> {
+  for (const subtask of this.editableTask.subtasks) {
+    if (subtask.id.startsWith('local-')) {
+      const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
+        this.task.id,
+        { title: subtask.title, isdone: subtask.isdone }
+      );
+      subtask.id = docRef.id; 
+    } else {
+      await this.firebaseTaskService.updateSubtaskInDatabase(
+        this.task.id,
+        subtask.id,
+        { title: subtask.title, isdone: subtask.isdone }
+      );
     }
   }
+}
 
   private async removeDeletedSubtasks(): Promise<void> {
     for (const subtaskId of this.deletedSubtaskIds) {

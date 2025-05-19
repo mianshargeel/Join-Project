@@ -94,23 +94,21 @@ export class BoardComponent {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      const movedTask = event.previousContainer.data[event.previousIndex];
-      movedTask.status = columnTitle.toLowerCase();
-
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      // Delay Firebase write to prevent UI flicker
+      // Clone task to avoid reference issues
+      const originalTask = event.previousContainer.data[event.previousIndex];
+      const movedTask: Task = { ...originalTask, status: columnTitle.toLowerCase() };
+  
+      // Remove from old and insert into new
+      event.previousContainer.data.splice(event.previousIndex, 1);
+      event.container.data.splice(event.currentIndex, 0, movedTask);
+  
+      // Update Firestore
       setTimeout(() => {
-        this.firebaseTaskService.updateTaskInDatabase(movedTask.id, {
-          status: movedTask.status
-        });
+        this.firebaseTaskService.updateTaskInDatabase(movedTask.id, { status: movedTask.status });
       }, 100);
     }
   }
+  
   //Without trackBy, Angular assumes every item in a list is new whenever the array changes
   trackByTaskId(index: number, task: Task): string {
     return task.id;
