@@ -48,7 +48,7 @@ export class SignInComponent implements OnInit, OnDestroy {
         this.showSuccessMsgDialog = true;
 
         // Optional auto-hide after delay
-        setTimeout(() => this.showSuccessMsgDialog = false, 2000);
+        setTimeout(() => this.showSuccessMsgDialog = false, 4000);
       }
     });
 

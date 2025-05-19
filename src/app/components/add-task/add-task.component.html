@@ -30,18 +30,21 @@
       <div class="rightSide">
         <p class="layoutLeftName">Priority</p>
         <div class="priority layoutLeftName">
-          <a class="prioTasks" (click)="priority = 'urgent'">Urgent
-            <img src="assets/imgs/imgs_story2/addTask/Urgent1.png" alt="img Task" /></a>
-
-          <a class="prioTasks" (click)="priority = 'medium'">Medium
-            <img src="assets/imgs/imgs_story2/addTask/Medium1.png" alt="img Task" /></a>
-          <a class="prioTasks" (click)="priority = 'low'">Low
-            <img src="assets/imgs/imgs_story2/addTask/Low1.png" alt="img Task" /></a>
+          <a class="prioTasks urgent" [ngClass]="{ selected: priority === 'urgent' }" (click)="priority = 'urgent'">
+            Urgent <img src="assets/imgs/imgs_story2/addTask/Urgent1.png" />
+          </a>
+          <a class="prioTasks medium" [ngClass]="{ selected: priority === 'medium' }" (click)="priority = 'medium'">
+            Medium <img src="assets/imgs/imgs_story2/addTask/Medium1.png" />
+          </a>
+          <a class="prioTasks low" [ngClass]="{ selected: priority === 'low' }" (click)="priority = 'low'">
+            Low <img src="assets/imgs/imgs_story2/addTask/Low1.png" />
+          </a>
+          
         </div>
 
         <!-- Assignees field -->
         <div class="form-group" #assigneeDropdown>
-          <label for="">Assign to*</label>
+          <label class="assign-lebal" for="">Assign to</label>
           <div class="assignee-dropdown">
             <div class="assignee-input-wrapper">
               <input type="text" class="assignee-input" placeholder="Search contacts..." [(ngModel)]="contactSearchTerm"
@@ -53,7 +56,7 @@
             @if (dropdownOpen) {
             <div class="dropdown-content">
               @for (contact of filteredContacts; track contact.id) {
-              <div class="dropdown-item">
+              <div class="dropdown-item"  [class.selected]="selectedAssignees.includes(contact.id ?? '')">
                 <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
                   {{ generateInitials(contact.name) }}
                 </span>
@@ -140,7 +143,7 @@
     <footer class="addTaskFooter">
       <p class="layoutLeftName"><span class="requred">*</span>This field is required</p>
       <div class="footerButtons">
-        <a type="reset" class="clear">Clear</a>
+        <a type="reset" class="clear">Clear X</a>
         <a type="submit" class="create" (click)="createNewTask()">Create Tasks</a>
       </div>
     </footer>
