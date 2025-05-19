@@ -45,34 +45,35 @@ export class BoardDialogComponent implements AfterViewInit {
   }
 
   ngOnInit() {
-    const raw: any = this.task.duedate;
-    let dateObj: Date;
-
+    this.dueDateInput = this.parseDueDate(this.task.duedate);
+    this.editableTask = this.prepareEditableTask(this.task);
+  }
+  
+  private parseDueDate(raw: any): string {
     try {
-      if (raw?.toDate && typeof raw.toDate === 'function') {
-        dateObj = raw.toDate();
-      } else if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined) {
-        const ts = new Timestamp(raw.seconds, raw.nanoseconds);
-        dateObj = ts.toDate();
-      } else if (typeof raw === 'string' || raw instanceof Date) {
-        dateObj = new Date(raw);
-      } else {
-        throw new Error('Invalid date format in task');
-      }
-
-      this.dueDateInput = dateObj.toISOString().split('T')[0];
+      if (raw?.toDate instanceof Function) return raw.toDate().toISOString().split('T')[0];
+      if (raw?.seconds !== undefined && raw?.nanoseconds !== undefined)
+        return new Timestamp(raw.seconds, raw.nanoseconds).toDate().toISOString().split('T')[0];
+      if (typeof raw === 'string' || raw instanceof Date)
+        return new Date(raw).toISOString().split('T')[0];
+      throw new Error('Invalid date format in task');
     } catch {
-      this.dueDateInput = '';
+      return '';
     }
-
-    this.editableTask = {
-      ...this.task,
-      subtasks: this.task.subtasks.map(sub => ({
-        ...sub,
-        id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
-      }))
+  }
+  
+  private prepareEditableTask(task: Task): Task {
+    return {
+      ...task,
+      subtasks: Array.isArray(task.subtasks)
+        ? task.subtasks.map(sub => ({
+            ...sub,
+            id: sub.id || 'local-' + Date.now() + '-' + Math.random().toString(36).slice(2)
+          }))
+        : []
     };
   }
+  
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;
@@ -149,18 +150,24 @@ export class BoardDialogComponent implements AfterViewInit {
   private async updateMainTask(data: Partial<Task>): Promise<void> {
     await this.firebaseTaskService.updateTaskInDatabase(this.task.id, data);
   }
-
+  /**
+ * Synchronizes all subtasks of the current editable task with Firestore.
+ * - If a subtask has a temporary `local-` ID, it is considered new and will be added to Firestore.
+ * - If a subtask has a valid Firestore ID, it is considered existing and will be updated.replace local ID with real Firestore ID
+ * After adding a new subtask, its ID is replaced with the generated Firestore document ID.
+ * @private
+ * @async
+ * @returns {Promise<void>} A promise that resolves when all subtasks have been processed.
+ */
   private async syncSubtasks(): Promise<void> {
     for (const subtask of this.editableTask.subtasks) {
       if (subtask.id.startsWith('local-')) {
-        // NEW subtask: add to Firebase
         const docRef = await this.firebaseTaskService.addSubtaskToDatabase(
           this.task.id,
           { title: subtask.title, isdone: subtask.isdone }
         );
-        subtask.id = docRef.id; // replace local ID with real Firestore ID
+        subtask.id = docRef.id; 
       } else {
-        // EXISTING subtask: update in Firebase
         await this.firebaseTaskService.updateSubtaskInDatabase(
           this.task.id,
           subtask.id,
