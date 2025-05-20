@@ -81,6 +81,11 @@
         font-weight: 600;
       }
     }
+    .selectCategory{
+      &:hover{
+        cursor: pointer;
+      }
+    }
 
     .priority {
       display: flex;
@@ -110,6 +115,9 @@
           &.selected {
             background-color: #ff3d00;
             color: white;
+            img {
+                filter: brightness(0) invert(1);
+              }
           }
         }
   
@@ -119,6 +127,9 @@
           &.selected {
             background-color: #ffa500;
             color: white;
+            img {
+                filter: brightness(0) invert(1); 
+              }
           }
         }
   
@@ -128,6 +139,9 @@
           &.selected {
             background-color: #34c759;
             color: white;
+            img {
+                filter: brightness(0) invert(1);
+              }
           }
         }
       }
@@ -197,6 +211,9 @@
       outline: none;
       border-radius: 8px;
       background: transparent;
+      &:hover{
+        cursor: pointer;
+      }
     }
 
     .dropdown-arrow {
