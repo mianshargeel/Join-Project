@@ -12,7 +12,7 @@ import { Timestamp } from '@angular/fire/firestore';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './board-dialog.component.html',
-  styleUrl: './board-dialog.component.scss'
+  styleUrls: ['./board-dialog.component.scss', './edit-styles.scss']
 })
 export class BoardDialogComponent implements AfterViewInit {
   @Input() task!: Task;

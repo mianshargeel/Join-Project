@@ -4,37 +4,36 @@
       <img class="logoJoin" src="assets/imgs/imgs_story1/LogoWhite.png" alt="Join Logo" />
     </div>
 
-    <!-- Show when user is authenticated -->
-@if (isAuthenticated) {
-  <div class="menuElements">
-    <a [routerLink]="['/summary']" routerLinkActive="active" class="nav-link">
-      <img src="assets/imgs/imgs_story1/Summary.png" alt="" />
-      <span>Summary</span>
-    </a>
+    @if (isAuthenticated) {
+    <div class="menuElements">
+      <a [routerLink]="['/summary']" routerLinkActive="active" class="nav-link">
+        <img src="assets/imgs/imgs_story1/Summary.png" alt="" />
+        <span>Summary</span>
+      </a>
 
-    <a [routerLink]="['/add-task']" routerLinkActive="active" class="nav-link">
-      <img src="assets/imgs/imgs_story1/addTask.png" alt="" />
-      <span>Add Task</span>
-    </a>
+      <a [routerLink]="['/add-task']" routerLinkActive="active" class="nav-link">
+        <img src="assets/imgs/imgs_story1/addTask.png" alt="" />
+        <span>Add Task</span>
+      </a>
 
-    <a [routerLink]="['/board']" routerLinkActive="active" class="nav-link">
-      <img src="assets/imgs/imgs_story1/Board.png" alt="" />
-      <span>Board</span>
-    </a>
+      <a [routerLink]="['/board']" routerLinkActive="active" class="nav-link">
+        <img src="assets/imgs/imgs_story1/Board.png" alt="" />
+        <span>Board</span>
+      </a>
 
-    <a [routerLink]="['/contacts']" routerLinkActive="active" class="nav-link">
-      <img src="assets/imgs/imgs_story1/Contacts.png" alt="" />
-      <span>Contacts</span>
-    </a>
-  </div>
-} @else {<!-- Show when NOT authenticated -->
-  <div class="menuElements">
-    <a [routerLink]="['/sign-in']" routerLinkActive="active" class="nav-link">
-      <img src="assets/img/navbar/login.png" alt="" />
-      <span>Log in</span>
-    </a>
-  </div>
-}
+      <a [routerLink]="['/contacts']" routerLinkActive="active" class="nav-link">
+        <img src="assets/imgs/imgs_story1/Contacts.png" alt="" />
+        <span>Contacts</span>
+      </a>
+    </div>
+    } @else {
+    <div class="menuElements">
+      <a [routerLink]="['/sign-in']" routerLinkActive="active" class="nav-link">
+        <img src="assets/img/navbar/login.png" alt="" />
+        <span>Log in</span>
+      </a>
+    </div>
+    }
 
   </div>
 

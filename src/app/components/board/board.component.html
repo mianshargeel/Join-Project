@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <!-- Add-New-task Dialog -->
+
     @if (showAddTaskDialog) {
     <div class="overlay" (click)="handleBackdropClick($event)">
         <div class="dialog scaled-dialog" #dialogRef (click)="$event.stopPropagation()">
@@ -33,106 +33,90 @@
         </div>
     </div>
     }
-
-    <div cdkDropListGroup class="content-container">
-        @for (column of columns; track column.title) {
-        <div class="example-container">
-            <div class="column-header">
-                <h2>{{ column.title }}</h2>
-                @if (column.title !== 'Done') {
-                <button class="add-column-btn" (click)="openAddTaskDialog(column.title)">
-                    <img src="assets/img/board/add.svg" alt="Add Task" />
-                </button>
-                }
-            </div>
-            <div class="example-list" cdkDropList [id]="normalizeId(column.title)" [cdkDropListData]="column.tasks"
-                [cdkDropListConnectedTo]="getConnectedColumns()" (cdkDropListDropped)="drop($event, column.title)">
-                @if (column.tasks.length === 0) {
-                <div class="empty-placeholder" [attr.data-msg]="emptyLabel(column.title)">
+    <div class="board-header-spacer">
+        <div cdkDropListGroup class="content-container">
+            @for (column of columns; track column.title) {
+            <div class="example-container">
+                <div class="column-header">
+                    <h2>{{ column.title }}</h2>
+                    @if (column.title !== 'Done') {
+                    <button class="add-column-btn" (click)="openAddTaskDialog(column.title)">
+                        <img src="assets/img/board/add.svg" alt="Add Task" />
+                    </button>
+                    }
                 </div>
-                }
-
-                @for (task of column.tasks; track task.id) {
-                <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true"
-                    (cdkDragEnded)="dragging = false" (click)="openDialog(task)">
-                    <!--  Mobile Move Dropdown -->
-                    <!-- @if (isMobileView) {
-                    <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
-                        <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
-                        @if (dropdownTaskId === task.id) {
-                        <ul class="move-dropdown">
-                            @for (columnOption of columns; track columnOption.title) {
-                            @if (columnOption.title !== column.title) {
-                            <li (click)="moveToColumn(task, columnOption.title)">Move to "{{ columnOption.title }}"</li>
-                            }
-                            }
-                        </ul>
-                        }
-                    </div>
-                    } -->
-
-                    <div class="task-header-row">
-                        <div class="task-category" [ngClass]="{
-    'user-story': task.category.toLowerCase() === 'user story',
-    'technical-task': task.category.toLowerCase() === 'technical task'
-  }">{{ task.category }}</div>
-
-                        @if (isMobileView) {
-                        <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
-                            <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
-                            @if (dropdownTaskId === task.id) {
-                            <ul class="move-dropdown">
-                                @for (columnOption of columns; track columnOption.title) {
-                                @if (columnOption.title !== column.title) {
-                                <li (click)="moveToColumn(task, columnOption.title)">Move to "{{ columnOption.title }}"
-                                </li>
-                                }
-                                }
-                            </ul>
-                            }
-                        </div>
-                        }
-                    </div>
-                    <h3 class="task-title">{{ task.title }}</h3>
-                    <p class="task-description">{{ task.description }}</p>
-
-                    @if (task.subtasks.length > 0) {
-                    <div class="subtasks-line">
-                        <div class="subtasks-bar">
-                            <div class="subtasks-progress"
-                                [style.width.%]="(getCompletedSubtasksCount(task)/task.subtasks.length)*100">
-                            </div>
-                        </div>
-                        <span class="subtasks-count">
-                            {{ getCompletedSubtasksCount(task) }}/{{ task.subtasks.length }} Subtasks
-                        </span>
+                <div class="example-list" cdkDropList [id]="normalizeId(column.title)" [cdkDropListData]="column.tasks"
+                    [cdkDropListConnectedTo]="getConnectedColumns()" (cdkDropListDropped)="drop($event, column.title)">
+                    @if (column.tasks.length === 0) {
+                    <div class="empty-placeholder" [attr.data-msg]="emptyLabel(column.title)">
                     </div>
                     }
 
-                    <div class="task-footer">
-                        <div class="assignees">
-                            @for (assigneeId of getDisplayedAssignees(task.assignees); track assigneeId; let i =
-                            $index)
-                            {
-                            <span class="avatar" [style.backgroundColor]="getAvatarColor(assigneeId)">
-                                {{ getContactInitials(assigneeId) }}
-                            </span>
-                            @if (i === 4 && task.assignees.length > 5) {
-                            <span class="avatar-counter">+{{task.assignees.length - 5}}</span>
-                            }
+                    @for (task of column.tasks; track task.id) {
+                    <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true"
+                        (cdkDragEnded)="dragging = false" (click)="openDialog(task)">
+
+                        <div class="task-header-row">
+                            <div class="task-category" [ngClass]="{'user-story': task.category.toLowerCase() === 'user story',
+                        'technical-task': task.category.toLowerCase() === 'technical task' }">{{ task.category }}</div>
+
+                            @if (isMobileView) {
+                            <div class="mobile-move-menu" #menuRef (click)="$event.stopPropagation()">
+                                <button class="menu-icon" (click)="toggleTaskDropdown(task.id)">⋮</button>
+                                @if (dropdownTaskId === task.id) {
+                                <ul class="move-dropdown">
+                                    @for (columnOption of columns; track columnOption.title) {
+                                    @if (columnOption.title !== column.title) {
+                                    <li (click)="moveToColumn(task, columnOption.title)">Move to "{{ columnOption.title
+                                        }}"
+                                    </li>
+                                    }
+                                    }
+                                </ul>
+                                }
+                            </div>
                             }
                         </div>
+                        <h3 class="task-title">{{ task.title }}</h3>
+                        <p class="task-description">{{ task.description }}</p>
 
-                        <span class="priority-badge {{task.priority}}">{{ task.priority }}</span>
+                        @if (task.subtasks.length > 0) {
+                        <div class="subtasks-line">
+                            <div class="subtasks-bar">
+                                <div class="subtasks-progress"
+                                    [style.width.%]="(getCompletedSubtasksCount(task)/task.subtasks.length)*100">
+                                </div>
+                            </div>
+                            <span class="subtasks-count">
+                                {{ getCompletedSubtasksCount(task) }}/{{ task.subtasks.length }} Subtasks
+                            </span>
+                        </div>
+                        }
+
+                        <div class="task-footer">
+                            <div class="assignees">
+                                @for (assigneeId of getDisplayedAssignees(task.assignees); track assigneeId; let i =
+                                $index)
+                                {
+                                <span class="avatar" [style.backgroundColor]="getAvatarColor(assigneeId)">
+                                    {{ getContactInitials(assigneeId) }}
+                                </span>
+                                @if (i === 4 && task.assignees.length > 5) {
+                                <span class="avatar-counter">+{{task.assignees.length - 5}}</span>
+                                }
+                                }
+                            </div>
+
+                            <span class="priority-badge {{task.priority}}">{{ task.priority }}</span>
+                        </div>
                     </div>
+                    }
                 </div>
-                }
             </div>
+            }
         </div>
-        }
     </div>
 </div>
-
 
 @if (dialogOpen && selectedTask) {
 <app-board-dialog [task]="selectedTask" [assignees]="selectedAssignees" [contacts]="contacts" (close)="closeDialog()"

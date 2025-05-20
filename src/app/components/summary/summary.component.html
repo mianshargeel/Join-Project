@@ -1,16 +1,13 @@
 <div class="summary-wrapper">
-    <!-- Header -->
+
     <header class="summary-header">
         <h1 class="summary-title">Join 360</h1>
         <div class="vertical-divider"></div>
         <span class="summary-subtitle">Key Metrics at a Glance</span>
     </header>
     <div class="summary-layout">
-        <!-- Meta infos gridbox -->
         <section class="summary-infos">
-            <!-- Row 1 -->
             <div class="info-row">
-                <!-- To‑do -->
                 <div class="info-box todo" [routerLink]="['/board']">
                     <div class="box-left">
                         <img class="icon default" src="assets/img/summary/todo-default.svg" alt="to-do">
@@ -21,7 +18,6 @@
                         <span class="label">To-do</span>
                     </div>
                 </div>
-                <!-- Done -->
                 <div class="info-box done" [routerLink]="['/board']">
                     <div class="box-left">
                         <img class="icon default" src="assets/img/summary/done-default.svg" alt="done">
@@ -33,7 +29,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Row 2 -->
             <div class="info-row">
                 <div class="info-box deadline" [routerLink]="['/board']">
                     <div class="deadline-left">
@@ -52,7 +47,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Row 3 -->
             <div class="info-row">
                 <div class="info-box board" [routerLink]="['/board']">
                     <span class="count">{{ totalTasks }}</span>
@@ -68,7 +62,6 @@
                 </div>
             </div>
         </section>
-        <!-- Greetings -->
         <div class="greeting-box">
             <h2 class="greeting-text">
                 {{ greeting }},
