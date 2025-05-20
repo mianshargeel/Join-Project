@@ -48,7 +48,7 @@
           <div class="assignee-dropdown">
             <div class="assignee-input-wrapper">
               <input type="text" class="assignee-input" placeholder="Search contacts..." [(ngModel)]="contactSearchTerm"
-                name="contactSearchTerm" [ngModelOptions]="{standalone: true}" (focus)="handleInputClick()"
+                name="contactSearchTerm" [ngModelOptions]="{standalone: true}"
                 (click)="handleInputClick()" />
               <span class="dropdown-arrow" (click)="toggleDropdown()"></span>
             </div>
@@ -56,15 +56,24 @@
             @if (dropdownOpen) {
             <div class="dropdown-content">
               @for (contact of filteredContacts; track contact.id) {
-              <div class="dropdown-item"  [class.selected]="selectedAssignees.includes(contact.id ?? '')">
-                <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
-                  {{ generateInitials(contact.name) }}
-                </span>
-                <span class="contact-name">{{ contact.name }}</span>
-                <input type="checkbox" [value]="contact.id" [checked]="selectedAssignees.includes(contact.id ?? '')"
-                  (change)="onCheckboxChange($event)" />
-              </div>
-              }
+                <div
+                    class="dropdown-item"
+                    [class.selected]="selectedAssignees.includes(contact.id ?? '')"
+                    (click)="toggleAssignee(contact.id ?? '')" >
+                    <span class="avatar" [style.backgroundColor]="getAvatarColor(contact.id ?? '')">
+                      {{ generateInitials(contact.name) }}
+                    </span>
+                    <span class="contact-name">{{ contact.name }}</span>
+                    <input
+                      type="checkbox"
+                      [value]="contact.id"
+                      [checked]="selectedAssignees.includes(contact.id ?? '')"
+                      (click)="$event.stopPropagation()" 
+                      (change)="onCheckboxChange($event)"
+                    />
+                  </div>
+                  
+                }
             </div>
             }
           </div>

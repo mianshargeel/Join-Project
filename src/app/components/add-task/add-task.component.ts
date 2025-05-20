@@ -183,6 +183,17 @@ export class AddTaskComponent implements AfterViewInit {
     this.inputClicked = !this.inputClicked;
   }
 
+  toggleAssignee(contactId: string) {//to toggle selected contact in assignees
+    if (!contactId) return;
+  
+    const index = this.selectedAssignees.indexOf(contactId);
+    if (index === -1) {
+      this.selectedAssignees.push(contactId);
+    } else {
+      this.selectedAssignees.splice(index, 1);
+    }
+  }
+  
   /**
    * Returns selected contacts with their initials and random colors.
    */
