@@ -61,15 +61,19 @@ export class SummaryComponent {
     }
   }
 
-  async loadUserName() {
-    const user = this.auth.currentUser;
-    if (user?.uid) {
-      await this.authService.loadUserNameFromFirestore(user.uid);
-      this.userName = this.authService.getUserName();
-    } else {
-      this.userName = 'Guest';
-    }
+  loadUserName() {
+    this.authService.getCurrentUser(async user => {
+      if (user?.uid) {
+        const name = await this.authService.loadUserNameFromFirestore(user.uid);
+        this.userName = name; // DIRECTLY use the returned value
+      } else {
+        this.userName = 'Guest';
+      }
+    });
   }
+  
+  
+  
 
   normalizeStatus(status: string): string {
     return status.toLowerCase().replace(/\s+/g, '-'); // e.g. "To do" → "to-do"

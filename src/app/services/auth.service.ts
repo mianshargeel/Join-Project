@@ -25,12 +25,12 @@ export class AuthService {
   async signUp({ name, email, password }: SignUpCredentials): Promise<AuthResponse> {
     const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
     const uid = userCredential.user.uid;
-
+  
     // Store in contacts collection
     await setDoc(doc(this.firestore, 'contacts', uid), {
       id: uid,
       name,
-      mail: email,
+      email, // fix from 'mail' to 'email'
       phone: '',
       color: generateRandomColor(),
       initials: generateInitials(name),
@@ -42,39 +42,32 @@ export class AuthService {
       email
     };
   }
-
+  
   async signIn(credentials: SignInCredentials): Promise<AuthResponse> {
     const result = await signInWithEmailAndPassword(
       this.auth,
       credentials.email,
       credentials.password
     );
-  
-    const uid = result.user.uid;
-  
     return {
-      uid: uid,
+      uid: result.user.uid,
       email: result.user.email,
     };
   }
+  
  //getting name from firebase to show in summary
-  async loadUserNameFromFirestore(uid: string) {
-    const contactRef = doc(this.firestore, 'contacts', uid);
-    const contactSnap = await getDoc(contactRef);
-    const name = contactSnap.exists() ? contactSnap.data()?.['name'] || '' : '';
-    this.setUserName(name);
-  }
-  
-  async logout() {
-    const user = this.auth.currentUser;
-  
-    if (user && user.email !== 'guest@join-app.com') {
-      await deleteDoc(doc(this.firestore, 'contacts', user.uid));
-    }
-    return signOut(this.auth);
-  }
-  
+ async loadUserNameFromFirestore(uid: string): Promise<string> {
+  const contactRef = doc(this.firestore, 'contacts', uid);
+  const contactSnap = await getDoc(contactRef);
+  const name = contactSnap.exists() ? contactSnap.data()?.['name'] || '' : '';
+  this.setUserName(name); 
+  return name; //RETURN this so component can use directly
+}
 
+async logout() {
+  return signOut(this.auth); // Just sign out, do not delete anything
+}
+  
   getCurrentUser(callback: (user: User | null) => void): void {
     onAuthStateChanged(this.auth, callback);
   }

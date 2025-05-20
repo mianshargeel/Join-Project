@@ -30,26 +30,33 @@ export class HeaderComponent {
   ngOnInit() {
     onAuthStateChanged(this.auth, async (user: User | null) => {
       if (!user) return;
-
+  
       const uid = user.uid;
-
+  
       // Check Firestore for user contact
       const docRef = doc(this.firestore, 'contacts', uid);
       const snap = await getDoc(docRef);
-
+  
       if (snap.exists()) {
         const data = snap.data();
-        this.initials = generateInitials(data?.['name'] ?? '');
-      } else if (user.isAnonymous) {
-        this.initials = 'GU';
+        const name = data?.['name'] ?? '';
+  
+        this.initials = name ? generateInitials(name) : '??';
       } else {
-        this.initials = '??';
+        // Fallback if contact doc doesn't exist
+        if (user.email === 'guest@join-app.com') {
+          this.initials = 'GU'; // Guest User
+        } else {
+          this.initials = '??';
+        }
       }
     });
+  
     onAuthStateChanged(this.authServics.auth, (user) => {
-          this.isAuthenticated = !!user;
-        });
+      this.isAuthenticated = !!user;
+    });
   }
+  
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
