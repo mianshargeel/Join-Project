@@ -15,9 +15,9 @@
 
 .dialog {
   width: 100%;
-  max-width: 1000px; //controlled width for content
-  max-height: 90vh; //handle overflow
-  overflow-y: auto;
+  max-width: clamp(1000px, 80vw, 1200px);
+  max-height: clamp(640px, 80vh, 750px);
+  overflow-y: hidden;
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -48,54 +48,9 @@ body.modal-open {
 }
 
 @media (max-width: 936px) {
-  .addTask.dialog-mode {
-    padding: 0;
+  .dialog{
+    overflow-y: auto;
+    scrollbar-width: none;
   }
-
-  .add-task.dialog-mode .addTaskMaxWidth {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 0;
-    padding: 24px 16px;
-  }
-
-  .add-task.dialog-mode .addTaskContent {
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  .add-task.dialog-mode .leftSide,
-  .add-task.dialog-mode .rightSide {
-    width: 100%;
-  }
-
-  .add-task.dialog-mode .priority {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 8px;
-  }
-
-  .add-task.dialog-mode .addTaskFooter {
-    padding: 16px;
-    position: relative;
-  }
-
-  .add-task.dialog-mode .footerButtons {
-    flex-direction: row;
-    gap: 12px;
-    position: fixed;
-    bottom: 10%;
-    right: 8%;
-
-    .clear {
-      background: #ffffff !important;
-      color: #333;
-      width: 90px;
-      z-index: 1000;
-    }
-
-    .create {
-      width: 136px;
-    }
-  }
+    
 }

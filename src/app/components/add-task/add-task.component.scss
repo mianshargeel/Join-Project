@@ -1,21 +1,19 @@
 .addTask {
-  background-color: #f9f9f9;
-  padding: 40px;// default full-page layout
-  font-family: 'Inter', sans-serif;
-  // overflow-x: hidden !important;
-  // overflow: hidden !important;
-  // scrollbar-width: none;
+    background-color: var(--secondary-bg); 
+    min-height: calc(100vh - 100px); 
+    width: 100%;
+    padding: 40px 40px 80px 40px; 
+    font-family: 'Inter', sans-serif;
     &.dialog-mode {
-      padding: 0 !important; // remove padding inside dialog
-    }
+        padding: 0 !important; 
+      }
 
   .addTaskMaxWidth {
-    max-width: 1000px;
-    margin: 0 auto;
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 40px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+     width: 100%;
+      max-width: 1960px;
+      margin-left: 0;
+      border-radius: 12px;
+      padding: 40px;
   }
 
   .addTaskHeader {
@@ -468,12 +466,12 @@
     flex-direction: row;
     gap: 12px;
     position: fixed;
-    bottom: 10%;
-    right: 2%;
+    bottom: 14%;
+    right: 8%;
     .clear {
       background: #ffffff !important;
         color: #333;
-      width: 90px;
+      width: 95px;
       z-index: 1000;
     }
     .create {

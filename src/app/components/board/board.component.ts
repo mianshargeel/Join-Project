@@ -267,5 +267,8 @@ export class BoardComponent {
       this.dropdownTaskId = null;
     }
   }
+  handleBackdropClick(event: MouseEvent) { // to close add-task-dialog on click outside it
+    this.closeAddTaskDialog();
+  }
 
 }
