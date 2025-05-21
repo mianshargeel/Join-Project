@@ -117,7 +117,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   
 
   clearForm() {
-    this.email = '';
+    // this.email = '';
     this.password = '';
   }
 

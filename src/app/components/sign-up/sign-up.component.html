@@ -27,11 +27,11 @@
 
       <div class="input-container">
         <div class="input-wrapper">
-          <input type="email" name="email" placeholder="Email" [(ngModel)]="email" required #emailRef="ngModel" />
+          <input type="email" name="email" placeholder="Email" [(ngModel)]="email" required #emailRef="ngModel" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" />
           <img src="assets/img/sign-in/mail.svg" class="input-icon" alt="" />
         </div>
         @if (emailRef.invalid && emailRef.touched) {
-        <p class="error-text">Email is required.</p>
+        <p class="error-text">Valid Email is required.</p>
         }
       </div>
 
@@ -43,7 +43,9 @@
         </div>
         @if (passRef.invalid && passRef.touched) {
         <p class="error-text">Password is required.</p>
-        }
+        } @else if (errorMessage) {
+          <p class="error-text">{{ errorMessage }}</p>
+          }
       </div>
 
       <div class="input-container">
@@ -56,10 +58,6 @@
         <p class="error-text">Passwords do not match.</p>
         }
       </div>
-
-      @if (errorMessage) {
-      <p class="error-text">{{ errorMessage }}</p>
-      }
 
       <label class="terms-line">
         <input type="checkbox" [(ngModel)]="acceptedTerms" name="acceptedTerms" required />

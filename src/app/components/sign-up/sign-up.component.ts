@@ -48,7 +48,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
       await this.authService.signUp(credentials);
       this.router.navigate(['/sign-in'], { queryParams: { registered: 'true' } }); //It appends a query parameter (?registered=true) to the URL when navigating between routes.using it to pass a signal from the sign-up page to the sign-in page.
       this.errorMessage = '';
-      console.log('You are successfully Registered');
+      // console.log('You are successfully Registered');
       this.clearForm();
     } catch (error: any) {
       switch (error.code) {
