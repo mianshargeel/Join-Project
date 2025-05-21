@@ -446,6 +446,11 @@
     }
   }
 }
+.create.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
 //Media-Queries
 @media (max-width: 936px) {
   .addTask{

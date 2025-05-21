@@ -98,8 +98,7 @@
             <option value="User Story">User Story</option>
           </select>
         </label><br />
-        <!-- ----------------------------- -->
-
+  
         <div>
           <label class="subtask-label">Subtasks</label>
 
@@ -143,9 +142,6 @@
           }
         </div>
 
-
-
-        <!-- --------------------------------------------- -->
       </div>
     </main>
 
@@ -153,7 +149,8 @@
       <p class="layoutLeftName"><span class="requred">*</span>This field is required</p>
       <div class="footerButtons">
         <a type="reset" class="clear">Clear X</a>
-        <a type="submit" class="create" (click)="createNewTask()">Create Tasks</a>
+        <a type="submit" class="create" [class.disabled]="!isFormValid()" [attr.disabled]="!isFormValid() ? true : null"
+        (click)="isFormValid() && createNewTask()" (click)="createNewTask()">Create Tasks</a>
       </div>
     </footer>
   </div>

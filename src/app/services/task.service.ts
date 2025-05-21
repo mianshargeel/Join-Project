@@ -107,7 +107,7 @@ export class TaskService {
 
       //adding task-document to database
       const taskDocRef = await addDoc(taskCollectionRef, { ...taskData });
-      console.log('Task added with ID:', taskDocRef.id);
+      // console.log('Task added with ID:', taskDocRef.id);
 
       // Adding each subtask to the 'subtasks' subcollection
       const subTaskCollectionRef = collection(firestore, `tasks/${taskDocRef.id}/subtasks`);
@@ -141,7 +141,7 @@ export class TaskService {
       //  Deleting the main task
       await deleteDoc(taskDocRef);
 
-      console.log('Task with ID: ', taskId, ' Deleted');
+      // console.log('Task with ID: ', taskId, ' Deleted');
     } catch (error) {
       console.error('Error deleting task:', error);
     }
@@ -152,7 +152,7 @@ export class TaskService {
       const taskDocRef = doc(this.firestore, 'tasks', taskId);
       await updateDoc(taskDocRef, updateData);
 
-      console.log('Task updated successfully');
+      // console.log('Task updated successfully');
     } catch (error) {
        console.error('Error updating task:', error);
     }
@@ -164,7 +164,7 @@ export class TaskService {
       const subtaskDocRef = doc(this.firestore, 'tasks', taskId, 'subtasks', subTaskId);
       await updateDoc(subtaskDocRef, updateData);
 
-      console.log('Subtask updated successfully');
+      // console.log('Subtask updated successfully');
     } catch (error) {
       console.error('Error updating subtask:', error);
     }

@@ -252,7 +252,7 @@ export class BoardComponent {
     this.showAddTaskDialog = true;
     document.body.classList.add('modal-open');
     this.dialogTaskStatus = status;
-    console.log(status);
+    // console.log(status);
   }
 
   closeAddTaskDialog() {

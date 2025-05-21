@@ -43,6 +43,10 @@ export class AddTaskComponent implements AfterViewInit {
   dropdownOpen = false;
   inputClicked = false;
 
+  isFormValid(): boolean {
+    return !!this.title && !!this.duedate && !!this.category;
+  }
+
   /**
   * Creates a new task along with its subtasks and navigates back to the board.
   */
