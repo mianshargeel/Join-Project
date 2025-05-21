@@ -31,10 +31,10 @@
         </div>
         @if (passRef.invalid && passRef.touched) {
         <p class="error-text">Password is required.</p>
-        }
-        @if (errorMessage) {
+        } @else if (errorMessage) {
         <p class="error-text">{{ errorMessage }}</p>
         }
+
       </div>
 
       <label class="remember-line">
