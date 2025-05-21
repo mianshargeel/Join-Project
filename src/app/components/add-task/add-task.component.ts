@@ -1,6 +1,6 @@
 import { Timestamp } from '@angular/fire/firestore';
 import { TaskService } from '../../services/task.service';
-import { Component, inject, ElementRef, ViewChild, AfterViewInit, Input, HostListener } from '@angular/core';
+import { Component, inject, ElementRef, ViewChild, AfterViewInit, Input, HostListener, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { generateInitials, generateRandomColor } from '../../models/contact.model';
@@ -42,6 +42,8 @@ export class AddTaskComponent implements AfterViewInit {
   selectedAssignees: string[] = [];
   dropdownOpen = false;
   inputClicked = false;
+  isCreatingTask = false;
+  @Output() taskCreated = new EventEmitter<void>();
 
   isFormValid(): boolean {
     return !!this.title && !!this.duedate && !!this.category;
@@ -51,17 +53,26 @@ export class AddTaskComponent implements AfterViewInit {
   * Creates a new task along with its subtasks and navigates back to the board.
   */
   async createNewTask() {
+    if (this.isCreatingTask) return; // Prevent double clicks
+  
+    this.isCreatingTask = true;
+  
     const taskData = this.buildTaskData();
     const subtasks = this.buildSubtasks();
-
-    await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
-      this.firebaseTaskService.firestore,
-      taskData,
-      subtasks
-    );
-
-    this.resetForm();
-    this.router.navigate(['/board']);
+  
+    try {
+      await this.firebaseTaskService.addTaskWithSubtaskToDatabase(
+        this.firebaseTaskService.firestore,
+        taskData,
+        subtasks
+      );
+  
+      this.resetForm();
+      this.taskCreated.emit(); //Notify parent to close dialog
+      this.router.navigate(['/board']); 
+    } finally {
+      this.isCreatingTask = false;
+    }
   }
 
   /**

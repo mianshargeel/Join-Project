@@ -29,7 +29,7 @@
     <div class="overlay" (click)="handleBackdropClick($event)">
         <div class="dialog scaled-dialog" #dialogRef (click)="$event.stopPropagation()">
             <p class="closing-p" (click)="closeAddTaskDialog()">X</p>
-            <app-add-task class="dialog-mode" [status]="dialogTaskStatus"></app-add-task>
+            <app-add-task class="dialog-mode" [status]="dialogTaskStatus"  (taskCreated)="closeAddTaskDialog()"></app-add-task>
         </div>
     </div>
     }

@@ -370,6 +370,11 @@
   }
 }
 
+.subtask-scroll-wrapper {
+  max-height: 100px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
 .subtask-list {
   list-style: none;
   padding-left: 0;

@@ -114,7 +114,7 @@ export class TaskService {
       for (let subtask of subtasks) {
         await addDoc(subTaskCollectionRef, subtask);
     }
-    console.log('Subtasks added successfully.');
+    // console.log('Subtasks added successfully.');
       } catch (error) {
       console.error('Error adding task and subtasks:', error);
     }
@@ -192,7 +192,7 @@ export class TaskService {
     try {
       const subtaskRef = doc(this.firestore, 'tasks', taskId, 'subtasks', subtaskId);
       await deleteDoc(subtaskRef);
-      console.log('Subtask deleted from Firebase:', subtaskId);
+      // console.log('Subtask deleted from Firebase:', subtaskId);
     } catch (error) {
       console.error('Error deleting subtask:', error);
     }

@@ -117,28 +117,30 @@
 
           <!-- Subtasks list -->
           @if (addedSubtasks.length > 0) {
-          <ul class="subtask-list">
-            @for (sub of addedSubtasks; track $index) {
-            <li class="subtask-item" (mouseenter)="hoveredIndex = $index" (mouseleave)="hoveredIndex = -1">
-              @if (editIndex === $index) {
-              <!-- Editable subtask with inline icons -->
-              <div class="subtask-edit-wrapper">
-                <input [(ngModel)]="editedSubtaskText" (keydown.enter)="saveEdit($index)" class="subtask-edit-input" />
-                <span (click)="deleteSubtask($index)" class="input-icon cancel">🗑️</span>
-                <span (click)="saveEdit($index)" class="input-icon confirm">✔</span>
-              </div>
-              } @else {
-              • {{ sub }}
-              @if (hoveredIndex === $index) {
-              <div class="subtask-actions">
-                <button (click)="startEdit($index)">✏️</button>
-                <button (click)="deleteSubtask($index)">🗑️</button>
-              </div>
-              }
-              }
-            </li>
-            }
-          </ul>
+            <div class="subtask-scroll-wrapper">
+              <ul class="subtask-list">
+                @for (sub of addedSubtasks; track $index) {
+                <li class="subtask-item" (mouseenter)="hoveredIndex = $index" (mouseleave)="hoveredIndex = -1">
+                  @if (editIndex === $index) {
+                  <!-- Editable subtask with inline icons -->
+                  <div class="subtask-edit-wrapper">
+                    <input [(ngModel)]="editedSubtaskText" (keydown.enter)="saveEdit($index)" class="subtask-edit-input" />
+                    <span (click)="deleteSubtask($index)" class="input-icon cancel">🗑️</span>
+                    <span (click)="saveEdit($index)" class="input-icon confirm">✔</span>
+                  </div>
+                  } @else {
+                  • {{ sub }}
+                  @if (hoveredIndex === $index) {
+                  <div class="subtask-actions">
+                    <button (click)="startEdit($index)">✏️</button>
+                    <button (click)="deleteSubtask($index)">🗑️</button>
+                  </div>
+                  }
+                  }
+                </li>
+                }
+              </ul>
+            </div>
           }
         </div>
 
@@ -146,7 +148,7 @@
     </main>
 
     <footer class="addTaskFooter">
-      <p class="layoutLeftName"><span class="requred">*</span>This field is required</p>
+      <p class="layoutLeftName"><span class="requred" style="color: red;">*</span>This field is required</p>
       <div class="footerButtons">
         <a type="reset" class="clear">Clear X</a>
         <a type="submit" class="create" [class.disabled]="!isFormValid()" [attr.disabled]="!isFormValid() ? true : null"
