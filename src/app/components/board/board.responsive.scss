@@ -42,97 +42,116 @@
         overflow-x: auto !important;
         gap: 10px;
         padding: 0 20px 16px 10px !important;
-    }
 
-    .example-box {
-        margin-bottom: 0 !important;
-        width: 272px !important;
-        flex-shrink: 0 !important;
-    }
-
-    .empty-placeholder {
-        position: relative !important;
-        width: 100% !important;
-    }
-}
-
-@media (max-width: 1000px) {
-    .board-header-wrapper {
-        padding: 20px 0 125px 0;
-    }
-
-    .board-header {
-        position: relative;
-        flex-direction: row;
-        flex-wrap: wrap;
-        align-items: center;
-        padding: 0 16px;
-        height: auto;
-    }
-
-    .header-title {
-        flex: 1;
-        font-size: 47px;
-        min-width: 0;
-        padding-right: 60px;
-        line-height: 0.8;
-    }
-
-    .header-controls {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        gap: 16px;
-        margin-top: 24px;
-    }
-
-    .search-bar {
-        order: 2;
-        width: 100%;
-        max-width: 312px;
-        margin: 0 auto;
-    }
-
-    .add-task-btn {
-        position: absolute;
-        right: 16px;
-        top: 0;
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        border-radius: 10px;
-        border: none;
-        background-color: var(--darkblue);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        .add-task-text {
-            display: none;
+        &::-webkit-scrollbar {
+            height: 18px !important;
+            width: 18px !important;
         }
 
-        .add-task-text-mobile {
+        &::-webkit-scrollbar-track {
+            background: #f0f0f0 !important;
+            border-radius: 15px !important;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: #a8a8a8 !important;
+            border-radius: 15px !important;
+        }
+
+        &::-webkit-scrollbar-thumb:hover {
+            background-color: darken(#a8a8a8, 10%) !important;
+        }
+
+        .example-box {
+            margin-bottom: 0 !important;
+            width: 272px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .empty-placeholder {
+            position: relative !important;
+            width: 100% !important;
+        }
+    }
+
+    @media (max-width: 1000px) {
+        .board-header-wrapper {
+            padding: 20px 0 125px 0;
+        }
+
+        .board-header {
+            position: relative;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 0 16px;
+            height: auto;
+        }
+
+        .header-title {
+            flex: 1;
+            font-size: 47px;
+            min-width: 0;
+            padding-right: 60px;
+            line-height: 0.8;
+        }
+
+        .header-controls {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .search-bar {
+            order: 2;
+            width: 100%;
+            max-width: 312px;
+            margin: 0 auto;
+        }
+
+        .add-task-btn {
+            position: absolute;
+            right: 16px;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 10px;
+            border: none;
+            background-color: var(--darkblue);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: "Inter", sans-serif;
-            font-weight: 700;
-            font-size: 38px;
-            line-height: 1;
-            color: #fff;
-            pointer-events: none;
-        }
 
-        &:hover {
-            background-color: var(--light-blue);
+            .add-task-text {
+                display: none;
+            }
+
+            .add-task-text-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: "Inter", sans-serif;
+                font-weight: 700;
+                font-size: 38px;
+                line-height: 1;
+                color: #fff;
+                pointer-events: none;
+            }
+
+            &:hover {
+                background-color: var(--light-blue);
+            }
         }
     }
-}
 
-@media (max-width: 936px) {
+    @media (max-width: 936px) {
 
-    .board-container {
-        width: 100vw;
-        height: calc(100vh - 72px - 80px);
+        .board-container {
+            width: 100vw;
+            height: calc(100vh - 72px - 80px);
+        }
     }
 }

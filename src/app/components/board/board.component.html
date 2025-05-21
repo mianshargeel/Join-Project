@@ -29,7 +29,8 @@
     <div class="overlay" (click)="handleBackdropClick($event)">
         <div class="dialog scaled-dialog" #dialogRef (click)="$event.stopPropagation()">
             <p class="closing-p" (click)="closeAddTaskDialog()">X</p>
-            <app-add-task class="dialog-mode" [status]="dialogTaskStatus"  (taskCreated)="closeAddTaskDialog()"></app-add-task>
+            <app-add-task class="dialog-mode" [status]="dialogTaskStatus"
+                (taskCreated)="closeAddTaskDialog()"></app-add-task>
         </div>
     </div>
     }
@@ -53,8 +54,8 @@
                     }
 
                     @for (task of column.tasks; track task.id) {
-                    <div class="example-box" [cdkDragData]="task" cdkDrag (cdkDragStarted)="dragging = true"
-                        (cdkDragEnded)="dragging = false" (click)="openDialog(task)">
+                    <div class="example-box" [cdkDragDisabled]="DisableDrag()" [cdkDragData]="task" cdkDrag
+                        (cdkDragStarted)="dragging = true" (cdkDragEnded)="dragging = false" (click)="openDialog(task)">
 
                         <div class="task-header-row">
                             <div class="task-category" [ngClass]="{'user-story': task.category.toLowerCase() === 'user story',

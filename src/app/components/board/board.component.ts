@@ -97,18 +97,18 @@ export class BoardComponent {
       // Clone task to avoid reference issues
       const originalTask = event.previousContainer.data[event.previousIndex];
       const movedTask: Task = { ...originalTask, status: columnTitle.toLowerCase() };
-  
+
       // Remove from old and insert into new
       event.previousContainer.data.splice(event.previousIndex, 1);
       event.container.data.splice(event.currentIndex, 0, movedTask);
-  
+
       // Update Firestore
       setTimeout(() => {
         this.firebaseTaskService.updateTaskInDatabase(movedTask.id, { status: movedTask.status });
       }, 100);
     }
   }
-  
+
   //Without trackBy, Angular assumes every item in a list is new whenever the array changes
   trackByTaskId(index: number, task: Task): string {
     return task.id;
@@ -267,8 +267,13 @@ export class BoardComponent {
       this.dropdownTaskId = null;
     }
   }
+
   handleBackdropClick(event: MouseEvent) { // to close add-task-dialog on click outside it
     this.closeAddTaskDialog();
+  }
+  // To turn off the dragging possibility once at 1500px width
+  DisableDrag(): boolean {
+    return this.isMobileView;
   }
 
 }
