@@ -29,6 +29,7 @@ export class SignInComponent implements OnInit, OnDestroy {
   rememberMe = false;
   showSuccessMsgDialog: boolean = false;
   showSuccessMsg: string = '';
+  passTouched: boolean = false; 
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -73,8 +74,10 @@ export class SignInComponent implements OnInit, OnDestroy {
   }
 
   async login() {
+    this.password = this.password.trim();
     this.errorMessage = '';
     this.loading = true;
+
     const credentials: SignInCredentials = {
       email: this.email,
       password: this.password
@@ -115,7 +118,6 @@ export class SignInComponent implements OnInit, OnDestroy {
     }
   }
   
-
   clearForm() {
     // this.email = '';
     this.password = '';

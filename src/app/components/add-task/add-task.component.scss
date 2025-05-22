@@ -13,7 +13,7 @@
       max-width: 1960px;
       margin-left: 0;
       border-radius: 12px;
-      padding: 40px;
+      padding: 20px 20px 0px 20px;
   }
 
   .addTaskHeader {
@@ -35,7 +35,7 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 24px; // consistent spacing between form sections
+        gap: 14px; // consistent spacing between form sections
       }
   
       // Fix specific layout issue for priority label + buttons
@@ -149,7 +149,7 @@
 
 
   .addTaskFooter {
-    margin-top: 40px;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -457,52 +457,151 @@
   cursor: not-allowed;
 }
 //Media-Queries
-@media (max-width: 936px) {
-  .addTask{
-    padding: 0px;
+@media screen and (max-width: 936px) {
+  .addTask.dialog-mode {
+    position: fixed;
+    top: 80px;
+    /* Below header */
+    left: 0;
+    right: 0;
+    bottom: 80px;
+    
+    background-color: #f6f7f8;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 0;
   }
+
   .addTaskMaxWidth {
     width: 100%;
     max-width: 100%;
     border-radius: 0;
-    padding: 24px 16px;
+    box-shadow: none;
+    background-color: #f6f7f8;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .addTaskHeader {
+    padding: 24px 16px 0;
+    background-color: #f6f7f8;
+
+    .headingAddTask {
+      font-size: 24px;
+      font-weight: 700;
+      color: #2A3647;
+      margin: 0;
+    }
   }
 
   .addTaskContent {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
     flex-direction: column;
     gap: 24px;
-  }
 
-  .leftSide,
-  .rightSide {
-    width: 100%;
-  }
+    .leftSide,
+    .rightSide {
+      width: 100%;
+    }
 
-  .priority {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 8px;
+    label {
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .layoutLeftName {
+      font-size: 16px;
+      font-weight: 400;
+      color: #2A3647;
+      margin-bottom: 8px;
+
+      .requred {
+        color: red;
+      }
+    }
+
+    .enterTitle {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #D1D1D1;
+      font-size: 16px;
+      background-color: white;
+
+      &:focus {
+        outline: none;
+        border-color: #29ABE2;
+      }
+    }
+
+    .priority {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+
+    }
   }
 
   .addTaskFooter {
-    padding: 16px;
-    position: relative;
-  }
+    padding: 16px 16px 80px 16px;
+    background-color: #f6f7f8;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
 
-  .footerButtons {
-    flex-direction: row;
-    gap: 12px;
-    position: fixed;
-    bottom: 14%;
-    right: 8%;
-    .clear {
-      background: #ffffff !important;
-        color: #333;
-      width: 95px;
-      z-index: 1000;
+    p {
+      font-size: 12px;
+      color: #42526E;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .requred {
+        color: red;
+        font-size: 16px;
+      }
     }
-    .create {
-      width:  136px;
+
+    .footerButtons {
+      display: flex;
+      gap: 16px;
+
+      a {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+
+        &.clear {
+          background-color: #F5F5F5;
+          color: #2A3647;
+          border: 1px solid #D1D1D1;
+        }
+
+        &.create {
+          background-color: #2A3647;
+          color: white;
+
+          &.disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+        }
+      }
     }
   }
 }

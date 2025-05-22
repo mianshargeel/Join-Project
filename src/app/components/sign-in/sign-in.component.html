@@ -15,28 +15,27 @@
       <div class="input-container">
         <div class="input-wrapper">
           <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required (input)="saveCredentials()"
-            #emailRef="ngModel" />
+            #emailRef="ngModel" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" />
           <img src="assets/img/sign-in/mail.svg" alt="" class="input-icon" />
         </div>
         @if (emailRef.invalid && emailRef.touched) {
-        <p class="error-text">Email is required.</p>
+        <p class="error-text">Please enter valid email.</p>
         }
       </div>
 
       <div class="input-container">
         <div class="input-wrapper">
-          <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required
-            (input)="saveCredentials()" #passRef="ngModel" />
+          <input type="password" name="password" [(ngModel)]="password" placeholder="Password" required #passRef="ngModel" (input)="saveCredentials()" (blur)="passTouched = true" />
           <img src="assets/img/sign-in/pass.svg" alt="" class="input-icon" />
         </div>
-        @if (passRef.invalid && passRef.touched) {
-        <p class="error-text">Password is required.</p>
-        } @else if (errorMessage) {
-        <p class="error-text">{{ errorMessage }}</p>
+      
+        @if (errorMessage && passTouched) {
+          <p class="error-text">{{ errorMessage }}</p>
+        } @else if (!password && passTouched) {
+          <p class="error-text">Password is required</p>
         }
-
       </div>
-
+      
       <label class="remember-line">
         <input type="checkbox" [(ngModel)]="rememberMe" (change)="toggleRemember()" name="rememberMe" />
         Remember Me
