@@ -36,7 +36,6 @@ export class AuthService {
       initials: generateInitials(name),
       createdAt: serverTimestamp()
     });
-    console.log('Saving contact:', { uid, name, email });
     return {
       uid,
       email

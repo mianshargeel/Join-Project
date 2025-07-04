@@ -69,8 +69,7 @@ export class HeaderComponent {
 
   logout() {
     this.authServics.logout();
-    console.log('You are Successfully Logout!');
-    
+    // console.log('You are Successfully Logout!');
   }
 
   @HostListener('document:click', ['$event'])
