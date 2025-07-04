@@ -115,7 +115,7 @@ export class ContactsListComponent implements OnInit {
   ngOnInit() {
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
-        this.loadContacts(); // ✅ only load when user is known
+        this.loadContacts(); // only load when user is known
       }
     });
   }
@@ -130,7 +130,7 @@ export class ContactsListComponent implements OnInit {
       this.contacts = data.map(c => ({
         ...c,
         name: c.name ?? 'Unnamed',
-        mail: c.mail ?? '',
+        email: c.email ?? c.mail ?? '',
         phone: c.phone ?? '',
         color: c.color ?? generateRandomColor(),
         initials: c.initials ?? generateInitials(c.name ?? 'U'),

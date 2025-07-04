@@ -19,7 +19,7 @@ export class AddContactComponent {
 
   contact: IContact = {
     name: '',
-    mail: '',
+    email : '',
     phone: '',
     color: generateRandomColor(),
   }
@@ -30,7 +30,7 @@ export class AddContactComponent {
 
   onSubmit() {
     this.save.emit(this.contact);
-    this.contact ={name: '', mail: '', phone: '', color: generateRandomColor()} 
+    this.contact ={name: '', email : '', phone: '', color: generateRandomColor()} 
   }
  
 }

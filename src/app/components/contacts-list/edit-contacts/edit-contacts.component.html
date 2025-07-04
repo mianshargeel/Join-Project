@@ -28,7 +28,7 @@
                     <div class="error-msg"><span >please enter valid name</span></div>
                   }
               <div class="input-group">
-                <input type="email" [(ngModel)]="contact.mail" name="email" placeholder="Email" required #email="ngModel" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" />
+                <input type="email" [(ngModel)]="contact.email " name="email" placeholder="Email" required #email="ngModel" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" />
                 <span><img src="assets/img/contact-dialog/mail.png" alt=""></span>
               </div>
               @if(!email.valid && email.touched) {

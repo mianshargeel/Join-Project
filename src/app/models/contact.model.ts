@@ -1,7 +1,7 @@
 export interface Contact {
     id: string;
     name: string;
-    mail: string; //changed by Shardzhil
+    email: string;
     phone: string;
     color: string;
     initials: string;

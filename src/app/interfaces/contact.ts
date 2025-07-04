@@ -1,7 +1,7 @@
 export interface IContact {
-  id?: string; // hat Marian ergänzt
+  id?: string; 
   name: string;
-  mail: string;
+  email: string;
   phone: string;
   color?: string;
 }

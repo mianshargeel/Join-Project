@@ -26,14 +26,14 @@ export class FirebaseService implements ContactService {
   }
 
   getContacts(): Observable<Contact[]> {
-    const contactsRef = collection(this.firestore, 'contacts'); // 🔒 Must be used *directly*
+    const contactsRef = collection(this.firestore, 'contacts'); //Must be used *directly*
     
     return collectionData(contactsRef, { idField: 'id' }).pipe(
       map((docs: any[]) =>
         docs.map(c => ({
           ...c,
           name: c.name ?? 'Unnamed',
-          mail: c.mail ?? '',
+          email: c.email ?? c.mail ?? '',
           phone: c.phone ?? '',
           color: c.color ?? generateRandomColor(),
           initials: c.initials ?? generateInitials(c.name ?? 'U'),
@@ -71,7 +71,7 @@ export class FirebaseService implements ContactService {
     return {
       id: id,
       name: contact.name || "",
-      mail: contact.mail || "",
+      email: contact.email || '',
       phone: contact.phone || "",
       color: fixedColor,
     };
@@ -98,7 +98,7 @@ export class FirebaseService implements ContactService {
   getCleanJson(changedContact: IContact) {
     return {
       name: changedContact.name,
-      mail: changedContact.mail,
+      email: changedContact.email,
       phone: changedContact.phone,
       color: changedContact.color,
     };

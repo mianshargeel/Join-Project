@@ -30,7 +30,7 @@ export class TaskService {
     return {
         id: id,
         name: obj.name,
-        mail: obj.mail,
+        email: obj.email,
         phone: obj.phone,
         color: obj.color
       };
@@ -179,7 +179,7 @@ export class TaskService {
   async editContactInDatabase(id: string, contact: ContactInterface) {
       await updateDoc(doc(this.firestore, 'contacts', id), {
         name: contact.name,
-        mail: contact.mail,
+        email: contact.email,
         phone: contact.phone
       });
   } 

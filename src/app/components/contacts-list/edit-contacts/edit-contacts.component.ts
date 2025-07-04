@@ -17,14 +17,24 @@ export class EditContactsComponent {
   @Output() save = new EventEmitter<IContact>();
   @Output() delete = new EventEmitter<Contact>();
   
-  constructor (private firebaseService: FirebaseService) {
-
+  constructor(private firebaseService: FirebaseService) { }
+  
+  toIContact(contact: Contact): IContact {
+    return {
+      id: contact.id,
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+      color: contact.color,
+    };
   }
 
   onSave() {
-    this.firebaseService.updateContactInFirebase(this.contact.id, this.contact);
-    this.save.emit(this.contact);
+    const contactToEmit = this.toIContact(this.contact);
+    this.firebaseService.updateContactInFirebase(this.contact.id, contactToEmit);
+    this.save.emit(contactToEmit);
   }
+  
 
   onDelete() {
     this.firebaseService.deleteContactInFirebase(this.contact.id);

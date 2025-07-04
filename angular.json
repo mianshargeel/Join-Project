@@ -40,8 +40,7 @@
           },
           "configurations": {
             "production": {
-              "baseHref": "/join/",
-              "deployUrl": "/join/",
+              "baseHref": "/",
               "budgets": [
                 {
                   "type": "initial",
